@@ -42,14 +42,16 @@ And open in a browser the localhost:8000/docs
 For running the Formaters and Linters run in a terminal the following commands:
 
 ```bash
+make fix-lint
 ```
 
 For cleaning the cache run in a terminal the following commands:
 
 ```bash
+make clean
 ```
 
-## Testing
+## Testing - TODO
 
 For running the tests run in a terminal the following commands:
 
