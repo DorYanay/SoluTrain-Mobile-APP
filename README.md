@@ -1,12 +1,53 @@
-# sport-fields
+# Fitness Groups
 
-Managment sport fields mobile platform
+## Requirements
+
+* conda - For managing python environment
+* docker
+* docker compose
+
+## Installation
+
+Run the following commands to install:
+
+```bash
+```
+
+## Get Started
+
+For running the backend run in a terminal the following commands:
+
+```bash
+```
+
+## CI
+
+For running the Formaters and Linters run in a terminal the following commands:
+
+```bash
+```
+
+For cleaning the cache run in a terminal the following commands:
+
+```bash
+```
+
+## Testing
+
+For running the tests run in a terminal the following commands:
+
+```bash
+```
+
+## Doucmentation - TODO 
 
 * Superuser
 * Manager
 * Customer
 
-DB
+### Diagrams
+
+Database
 
 ```mermaid
 flowchart TD
@@ -21,3 +62,15 @@ Network diagram flow
 flowchart LR
     Flutter(Flutter Dart) --> API(FastAPI python) --> PostgresSQL
 ```
+
+## License
+
+MIT
+
+## Author
+
+Dor
+Omer Priel
+Ori Sharaby
+Stav Avitan
+Stav Sharon001
