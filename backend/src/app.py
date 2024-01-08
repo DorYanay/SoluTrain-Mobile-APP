@@ -8,4 +8,4 @@ app = FastAPI(
 
 @app.get("/")
 async def root() -> dict:
-    return {"message": "Hello World test"}
+    return {"message": "Hello World"}
