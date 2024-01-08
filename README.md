@@ -1,4 +1,4 @@
-# Fitness Groups
+# SoluTrain
 
 ## Requirements
 
