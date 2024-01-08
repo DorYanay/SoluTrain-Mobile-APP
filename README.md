@@ -11,6 +11,8 @@
 Run the following commands to install:
 
 ```bash
+git clone git@github.com:omer-priel/solutrain.git
+cd solutrain
 ```
 
 ## Get Started
