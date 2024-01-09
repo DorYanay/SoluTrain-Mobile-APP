@@ -5,6 +5,8 @@
 * conda - For managing python environment
 * docker
 * docker compose
+* flutter
+* Android Studio
 
 ## Installation
 
