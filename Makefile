@@ -16,6 +16,12 @@ fix-lint: fix lint
 migrate:
 	cd backend && make migrate
 
+rebuild-db:
+	docker-compose rm -f -s db
+	docker-compose up -d db
+	sleep 1
+	cd backend && make migrate
+
 start-db:
 	docker-compose up db -d
 

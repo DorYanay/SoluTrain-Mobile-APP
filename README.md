@@ -83,8 +83,9 @@ make clean
 For rebuild the database run in a terminal the following commands:
 
 ```bash
-docker-compose down -v
+docker-compose rm -f -s db
 docker-compose up -d db
+sleep 1
 cd backend
 python -m src migrate
 ```
