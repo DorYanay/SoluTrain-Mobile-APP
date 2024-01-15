@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from src.config import init_config
 from src.logger import get_logger, init_loggers
 from src.models import close_db, init_db
+from src.routers.users import router as users_router
 
 
 @asynccontextmanager
@@ -29,6 +30,8 @@ app = FastAPI(
     description="SoluTrain API",
     lifespan=lifespan,
 )
+
+app.include_router(users_router, prefix="/users")
 
 
 @app.get("/")
