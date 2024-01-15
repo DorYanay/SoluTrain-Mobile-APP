@@ -51,6 +51,13 @@ For starting the database run in a terminal the following commands:
 docker-compose up -d db
 ```
 
+For create the tables in the database run in a terminal the following commands:
+
+```bash
+cd backend
+python -m src migrate
+```
+
 For running the backend run in a terminal the following commands:
 
 ```bash
@@ -71,6 +78,15 @@ For cleaning the cache run in a terminal the following commands:
 
 ```bash
 make clean
+```
+
+For rebuild the database run in a terminal the following commands:
+
+```bash
+docker-compose down -v
+docker-compose up -d db
+cd backend
+python -m src migrate
 ```
 
 ## Testing - TODO
