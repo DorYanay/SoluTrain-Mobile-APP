@@ -13,6 +13,9 @@ lint:
 # Run the formatters and linters
 fix-lint: fix lint
 
+migrate:
+	cd backend && make migrate
+
 start-db:
 	docker-compose up db -d
 

@@ -31,5 +31,8 @@ lint: flake8 black-check mypy
 # Run the formatters and linters
 fix-lint: fix lint
 
+migrate:
+	python -m src migrate
+
 start: clean
 	python -m src
