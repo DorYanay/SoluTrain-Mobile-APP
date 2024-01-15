@@ -90,29 +90,11 @@ cd backend
 python -m src migrate
 ```
 
-## Testing - TODO
-
-For running the tests run in a terminal the following commands:
-
-```bash
-```
-
-## Doucmentation - TODO 
-
-* Superuser
-* Manager
-* Customer
-
 ### Diagrams
 
 Database
 
-```mermaid
-flowchart TD
-    Users --> Trainer --> Groups
-    Groups --> Meets
-    Users --> Groups & Meets
-```
+![Database](database-diagram.jpeg)
 
 Network diagram flow
 
