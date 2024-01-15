@@ -23,6 +23,26 @@ cd backend
 poetry install
 ```
 
+## Environment Variables
+
+Table of the reqired environment variables for the backend:
+
+| Variable    | Description               |
+|-------------|---------------------------|
+| PG_DATABASE | PostgresSQL database name |
+| PG_USER     | PostgresSQL user          |
+| PG_PASSWORD | PostgresSQL password      |
+| PG_HOST     | PostgresSQL host          |
+
+Table of the optional environment variables for the backend:
+
+| Variable | Description      | Default |
+|----------|------------------|---------|
+| PG_PORT  | PostgresSQL port | 5432    |
+
+For local development add .env file to backend directory that contains the environment variables. \
+Exists .env.example file as example.
+
 ## Get Started
 
 For starting the database run in a terminal the following commands:
