@@ -13,9 +13,10 @@ def create_database(cursor: psycopg.Cursor) -> None:
             email VARCHAR(255) NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
             phone VARCHAR(255) NOT NULL,
-            gender INTEGER NOT NULL,
+            gender VARCHAR(10) NOT NULL,
             description VARCHAR(255) NOT NULL,
-            role INTEGER NOT NULL
+            is_trainer BOOLEAN NOT NULL,
+            is_coach BOOLEAN NOT NULL
         );
 
         CREATE TABLE notifications (

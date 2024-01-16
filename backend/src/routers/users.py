@@ -14,7 +14,7 @@ class UserSchema(BaseModel):
     user_id: str
     name: str
     email: str
-    gender: int
+    gender: Gender
     description: str
 
 
@@ -29,7 +29,7 @@ async def route_get_user(user_id: UUID, db: psycopg.Connection = Depends(db_depe
         user_id=str(user.user_id),
         name=user.name,
         email=user.email,
-        gender=int(user.gender),
+        gender=user.gender,
         description=user.description,
     )
 
@@ -45,6 +45,6 @@ async def route_create_user(name: str, email: str, gender: Gender, db: psycopg.C
         user_id=str(user.user_id),
         name=user.name,
         email=user.email,
-        gender=int(user.gender),
+        gender=user.gender,
         description=user.description,
     )

@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import StrEnum
 from uuid import UUID, uuid4
 
 import psycopg
@@ -6,9 +6,9 @@ import psycopg
 from src.models import db_named_query
 
 
-class Gender(IntEnum):
-    male = 0
-    female = 1
+class Gender(StrEnum):
+    male = "female"
+    female = "male"
 
 
 class User:
@@ -37,7 +37,7 @@ def get_user_by_id(db: psycopg.Connection, user_id: UUID) -> User | None:
         if row is None:
             return None
 
-        return User(user_id=row[0], name=str(row[1]), email=str(row[2]), gender=Gender(int(row[3])), description=str(row[4]))
+        return User(user_id=row[0], name=str(row[1]), email=str(row[2]), gender=Gender(str(row[3])), description=str(row[4]))
 
 
 @db_named_query
@@ -51,7 +51,7 @@ def get_user_by_email(db: psycopg.Connection, email: str) -> User | None:
         if row is None:
             return None
 
-        return User(user_id=row[0], name=str(row[1]), email=str(row[2]), gender=Gender(int(row[3])), description=str(row[4]))
+        return User(user_id=row[0], name=str(row[1]), email=str(row[2]), gender=Gender(str(row[3])), description=str(row[4]))
 
 
 @db_named_query
@@ -62,7 +62,7 @@ def create_user(db: psycopg.Connection, name: str, email: str, gender: Gender) -
     with db.cursor() as cursor:
         cursor.execute(
             "INSERT INTO public.users (id, name, email, gender, description) VALUES (%s, %s, %s, %s, %s);",
-            (str(user.user_id), str(user.name), str(user.email), int(user.gender), str(user.description)),
+            (str(user.user_id), str(user.name), str(user.email), str(user.gender), str(user.description)),
         )
         db.commit()
 
