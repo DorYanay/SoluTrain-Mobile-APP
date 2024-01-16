@@ -13,6 +13,8 @@ from src.routers.users import router as users_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Initialize and close the server"""
+
     init_config()
     init_loggers()
 
@@ -33,6 +35,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Include routers
 app.include_router(auth_router, prefix="/auth")
 app.include_router(users_router, prefix="/users")
 

@@ -46,6 +46,7 @@ class LoginResponseSchema(BaseModel):
 
 @router.post("/login")
 def route_login(email: str, password: str, db: psycopg.Connection = Depends(db_dependency)) -> LoginResponseSchema:
+    # validation
     user = get_user_by_email(db, email)
 
     if user is None:
@@ -54,6 +55,7 @@ def route_login(email: str, password: str, db: psycopg.Connection = Depends(db_d
     if not verify_hash(password, user.password_hash):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="email or password is incorrect")
 
+    # login
     auth_token = login_user(user)
 
     return LoginResponseSchema(auth_token=auth_token, user=UserSchema.from_model(user))

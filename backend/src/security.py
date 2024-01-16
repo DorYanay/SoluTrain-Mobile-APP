@@ -49,6 +49,8 @@ def logout_user(auth_token: UUID, user: User) -> None:
 
 
 def get_current_user(auth_token: UUID) -> User:
+    """FastAPI dependency to get the current logged user (from the auth token)"""
+
     user = auth_logged_users.get(auth_token)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
