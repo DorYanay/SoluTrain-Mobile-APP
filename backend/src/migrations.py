@@ -30,14 +30,16 @@ def create_database(cursor: psycopg.Cursor) -> None:
             id UUID PRIMARY KEY,
             user_id UUID NOT NULL
                 REFERENCES public.users (id),
-            name VARCHAR(255) NOT NULL
+            name VARCHAR(255) NOT NULL,
+            body BYTEA NOT NULL
         );
 
         CREATE TABLE public.certificates (
             id UUID PRIMARY KEY,
             user_id UUID NOT NULL
                 REFERENCES public.users (id),
-            name VARCHAR(255) NOT NULL
+            name VARCHAR(255) NOT NULL,
+            body BYTEA NOT NULL
         );
 
         CREATE TABLE public.areas (
