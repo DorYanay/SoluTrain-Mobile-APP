@@ -2,6 +2,8 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+from starlette.responses import RedirectResponse
 
 from src.config import init_config
 from src.logger import get_logger, init_loggers
@@ -34,6 +36,6 @@ app = FastAPI(
 app.include_router(users_router, prefix="/users")
 
 
-@app.get("/")
-async def root() -> dict:
-    return {"message": "Hello World"}
+@app.get("/", include_in_schema=False)
+async def root() -> RedirectResponse:
+    return RedirectResponse("/docs")
