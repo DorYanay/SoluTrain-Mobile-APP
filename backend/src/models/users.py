@@ -45,6 +45,14 @@ class User:
         self.is_coach = is_coach
 
 
+def validate_email(email: str) -> bool:
+    if "@" not in email:
+        return False
+    if "." not in email.split("@")[1]:
+        return False
+    return True
+
+
 @db_named_query
 def create_user(
     db: psycopg.Connection, name: str, email: str, password_hash: str, phone: str, gender: Gender, is_trainer: bool, is_coach: bool
