@@ -6,6 +6,8 @@ from src.exceptions import CriticalException
 
 
 class Config:
+    """Configuration for the server"""
+
     pg_database: str = ""
     pg_user: str = ""
     pg_password: str = ""
@@ -26,6 +28,8 @@ def _get_envioment_variable(variable_name: str) -> str:
 
 
 def init_config() -> None:
+    """Initialize configuration from environment variables"""
+
     if os.path.exists(".env"):
         load_dotenv()
 

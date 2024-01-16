@@ -5,6 +5,8 @@ from src.models import get_db, init_db
 
 
 def create_database(cursor: psycopg.Cursor) -> None:
+    """Create the database DDL"""
+
     cursor.execute(
         """
         CREATE TABLE public.users (
@@ -98,6 +100,8 @@ def create_database(cursor: psycopg.Cursor) -> None:
 
 
 def migrate_db() -> None:
+    """Command to create the database DDL"""
+
     init_config()
     init_db()
 

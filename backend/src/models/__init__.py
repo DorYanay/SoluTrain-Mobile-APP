@@ -20,6 +20,8 @@ def _get_pool() -> psycopg_pool.ConnectionPool:
 
 
 def init_db() -> None:
+    """Initialize database connection pool"""
+
     global g_pool
     if g_pool is not None:
         return
@@ -46,6 +48,7 @@ def init_db() -> None:
 
 
 def close_db() -> None:
+    """Close database connection pool"""
     global g_pool
 
     if g_pool is None:
@@ -56,6 +59,8 @@ def close_db() -> None:
 
 
 def db_dependency() -> Generator[psycopg.Connection, None, None]:
+    """FastAPI dependency for database connection, used in the endpoints of the API"""
+
     db = _get_pool().getconn()
     try:
         yield db
@@ -65,6 +70,8 @@ def db_dependency() -> Generator[psycopg.Connection, None, None]:
 
 @contextmanager
 def get_db() -> Generator[psycopg.Connection, None, None]:
+    """Return database connection"""
+
     return db_dependency()
 
 
@@ -72,6 +79,8 @@ ReturnT = TypeVar("ReturnT")
 
 
 def db_named_query(func: Callable[..., ReturnT]) -> Callable[..., ReturnT]:
+    """Decorator for database named queries in the models."""
+
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> ReturnT:
         try:

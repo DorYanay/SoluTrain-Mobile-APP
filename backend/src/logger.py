@@ -6,6 +6,8 @@ from src.config import config
 
 
 def init_loggers() -> None:
+    """Initialize the loggers for the application"""
+
     logger_config = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -36,4 +38,5 @@ def init_loggers() -> None:
 
 
 def get_logger() -> logging.Logger:
+    """Get the logger for the application"""
     return logging.getLogger("app")
