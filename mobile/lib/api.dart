@@ -28,7 +28,7 @@ class API {
       Uri(
           scheme: Config.apiIsHttps ? 'https' : 'http',
           host: Config.apiHost,
-          port: Config.apiPort == 80 ? null : Config.apiPort,
+          port: Config.apiPort,
           path: endpoint,
           queryParameters: params
       ),
