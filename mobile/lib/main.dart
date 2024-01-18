@@ -1,4 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
+
+import 'api.dart';
+import 'schemas.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,8 +15,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    String title = 'DEMO';
+
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: title,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -31,13 +38,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: title),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -48,7 +55,7 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -58,6 +65,26 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
+
+    // For check sending request to db
+
+    if (false) {
+      debugPrint('Send request');
+      API.post('/users/get', params: {
+        'user_id': 'eeb84d98-140b-45ac-9b46-fb5b8c800fcb',
+      }).then((res) {
+        debugPrint('Return: ${res.statusCode}: ${res.errorMessage}');
+
+        if (res.hasError) {
+          return;
+        }
+
+        User user = User.fromJson(res.data);
+        debugPrint('User: ${user.name} -> res{user.email}');
+        return;
+      });
+    }
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
