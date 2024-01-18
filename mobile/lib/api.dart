@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+import 'config.dart' show Config;
 import 'schemas.dart' show Schema;
 
 // This file handle the communication with the API
@@ -15,10 +17,6 @@ class Response {
 }
 
 class API {
-  static const String serverScheme = 'http';
-  static const String serverHost = '10.9.7.195';
-  static const int serverPort = 8000;
-
   static Future<Response> post(String endpoint, {Map<String, dynamic>? params, Schema? body}) async {
     String bodyJson = '{}';
 
@@ -28,15 +26,15 @@ class API {
 
     final response = await http.post(
       Uri(
-          scheme: serverScheme,
-          host: serverHost,
-          port: serverPort,
+          scheme: Config.apiIsHttps ? 'https' : 'http',
+          host: Config.apiHost,
+          port: Config.apiPort == 80 ? null : Config.apiPort,
           path: endpoint,
           queryParameters: params
       ),
       body: bodyJson,
       headers: {'Content-Type': 'application/json'},
-    );
+    ).timeout(const Duration(seconds: 10));
 
     dynamic data = jsonDecode(response.body);
 
