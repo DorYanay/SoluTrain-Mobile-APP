@@ -103,6 +103,43 @@ Note: the **API** means the backend and the **app** means the mobile app.
 * LICENSE - License file
 * README.md - This file
 
+## Diagrams
+
+Database
+
+![Database](database-diagram.jpeg)
+
+Network diagram flow
+
+```mermaid
+flowchart LR
+    Flutter(Flutter Dart) --> API(FastAPI python) --> PostgresSQL
+```
+
+Modules diagram
+
+```mermaid
+flowchart RL
+  subgraph mobile
+    UI --> State --> Logic
+  end
+  Logic --> routers
+  subgraph backend
+    routers --> models
+  end
+  subgraph database
+    models --> PostgresSQL
+    PostgresSQL --> models
+  end
+  subgraph backend
+    models --> routers
+  end
+  routers --> Logic
+  subgraph mobile
+    Logic --> State --> UI
+  end
+```
+
 ## Get Started
 
 For starting the database run in a terminal the following commands:
@@ -148,19 +185,6 @@ docker-compose up -d db
 sleep 1
 cd backend
 python -m src migrate
-```
-
-### Diagrams
-
-Database
-
-![Database](database-diagram.jpeg)
-
-Network diagram flow
-
-```mermaid
-flowchart LR
-    Flutter(Flutter Dart) --> API(FastAPI python) --> PostgresSQL
 ```
 
 ## License
