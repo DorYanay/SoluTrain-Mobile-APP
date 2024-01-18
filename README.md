@@ -25,7 +25,9 @@ poetry install
 
 ## Environment Variables
 
-Table of the reqired environment variables for the backend:
+### Backend
+
+Table of the required environment variables for the backend:
 
 | Variable    | Description               |
 |-------------|---------------------------|
@@ -42,6 +44,19 @@ Table of the optional environment variables for the backend:
 
 For local development add .env file to backend directory that contains the environment variables. \
 Exists .env.example file as example.
+
+### Mobile
+
+Table of the optional environment variables for the mobile:
+
+| Variable     | Description          | Default                        |
+|--------------|----------------------|--------------------------------|
+| API_IS_HTTPS | API is HTTPS of HTTP | true                           |
+| API_HOST     | API host             | solutrain-backend.onrender.com |
+| API_PORT     | API port             | 443                            |
+
+For local development in Android Studio you can change the environment variables, in the configuration. \
+Recommended to add different configuration for production and local development.
 
 ## Get Started
 
