@@ -34,7 +34,7 @@ class API {
       ),
       body: bodyJson,
       headers: {'Content-Type': 'application/json'},
-    ).timeout(const Duration(seconds: 10));
+    );
 
     dynamic data = jsonDecode(response.body);
 
