@@ -2,11 +2,23 @@
 
 ## Requirements
 
-* conda - For managing python environment
+* conda
 * docker
 * docker compose
 * flutter
 * Android Studio
+
+## Technologies
+
+* python - As programming language for the backend
+* conda - For managing python environment
+* poetry - For managing python dependencies
+* FastAPI - As framework for the backend
+* PostgresSQL - As database
+* docker - For development in production of the backend
+* docker compose - For local development
+* flutter - As framework for the mobile app
+* Dart - As programming language for the mobile app
 
 ## Installation
 
