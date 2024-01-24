@@ -152,6 +152,25 @@ flowchart RL
   end
 ```
 
+Pages diagram
+
+```mermaid
+flowchart TD
+  Open-The-App ---> Login --> SignUp
+  Profile --> Group & Select-Area
+  Profile -->|Logout| Login
+  Profile --> Create-Group --> Group
+  Group <---> Update-Group-Calander
+  Group <--> Create-Meeting --> Group-Meeting
+  Group <--> Group-Meeting
+  Login & SignUp --> Select-Area
+  Select-Area <--> Search-Groups
+  Search-Groups <--> Group
+  Group <---> Trainer
+```
+
+* Note: Any page can navigate to the Profile page.
+
 ## Get Started
 
 For starting the database run in a terminal the following commands:
