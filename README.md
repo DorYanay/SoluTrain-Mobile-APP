@@ -156,14 +156,15 @@ Pages diagram
 
 ```mermaid
 flowchart TD
-  Open-The-App ---> Login --> SignUp
+  Login --> SignUp & Select-Area
+  SignUp --> Login
+  Select-Area --> Profile
   Profile --> Group & Select-Area
-  Profile -->|Logout| Login
+  Profile --> Login
   Profile --> Create-Group --> Group
   Group <---> Update-Group-Calander
   Group <--> Create-Meeting --> Group-Meeting
   Group <--> Group-Meeting
-  Login & SignUp --> Select-Area
   Select-Area <--> Search-Groups
   Search-Groups <--> Group
   Group <---> Trainer
