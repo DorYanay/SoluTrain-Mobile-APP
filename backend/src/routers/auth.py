@@ -7,7 +7,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 
 from src.models import db_dependency
-from src.models.users import Gender, User, create_user, get_user_by_email, validate_email
+from src.models.users import Gender, User, create_user, get_user_by_email
+from src.validators import validate_email
 from src.routers.users import UserSchema
 from src.security import create_hash, get_current_user, login_user, logout_user, verify_hash
 
