@@ -1,42 +1,14 @@
-from __future__ import annotations
-
 from uuid import UUID
 
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
 
 from src.models import db_dependency
-from src.models.users import Gender, User, get_user_by_id
+from src.models.users import User, get_user_by_id
+from src.schemas import UserSchema
 from src.security import get_current_user
 
 router = APIRouter()
-
-
-class UserSchema(BaseModel):
-    """User schema for the API"""
-
-    user_id: str
-    name: str
-    email: str
-    phone: str
-    gender: Gender
-    description: str
-    is_trainer: bool
-    is_coach: bool
-
-    @staticmethod
-    def from_model(user: User) -> UserSchema:
-        return UserSchema(
-            user_id=str(user.user_id),
-            name=user.name,
-            email=user.email,
-            phone=user.phone,
-            gender=user.gender,
-            description=user.description,
-            is_trainer=user.is_trainer,
-            is_coach=user.is_coach,
-        )
 
 
 # Examples of endpoints.

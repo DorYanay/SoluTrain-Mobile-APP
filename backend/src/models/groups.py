@@ -27,10 +27,11 @@ def create_area(db: psycopg.Connection, name: str) -> Area:
         cursor.execute(
             """INSERT INTO public.areas (id, name)
             VALUES (%s, %s);
-            """, (
+            """,
+            (
                 str(area.area_id),
                 str(area.name),
-            )
+            ),
         )
 
     return area
@@ -68,15 +69,7 @@ class Group:
     group_type: int
 
     def __init__(
-        self,
-        group_id: UUID,
-        trainer_id: UUID,
-        name: str,
-        description: str,
-        area_id: UUID,
-        city: str,
-        street: str,
-        group_type: int
+        self, group_id: UUID, trainer_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str, group_type: int
     ):
         self.group_id = group_id
         self.trainer_id = trainer_id
@@ -90,8 +83,8 @@ class Group:
 
 @db_named_query
 def create_group(
-    db: psycopg.Connection, trainer_id: UUID, name: str, description: str, area_id: UUID, city: str,
-    street: str, group_type: int) -> Group:
+    db: psycopg.Connection, trainer_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str, group_type: int
+) -> Group:
     group_id = uuid4()
 
     group = Group(
@@ -102,14 +95,15 @@ def create_group(
         area_id=area_id,
         city=city,
         street=street,
-        group_type=group_type
+        group_type=group_type,
     )
 
     with db.cursor() as cursor:
         cursor.execute(
             """INSERT INTO public.groups (id, trainer_id, name, description, area_id, city, street, group_type)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
-            """, (
+            """,
+            (
                 str(group.group_id),
                 str(group.trainer_id),
                 str(group.name),
@@ -118,8 +112,10 @@ def create_group(
                 str(group.city),
                 str(group.street),
                 int(group.group_type),
-            )
+            ),
         )
+
+    return group
 
 
 @db_named_query
@@ -144,7 +140,7 @@ def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[Group]:
                 area_id=row[4],
                 city=str(row[5]),
                 street=str(row[6]),
-                group_type=int(row[7])
+                group_type=int(row[7]),
             )
 
             groups.append(group)
@@ -158,10 +154,12 @@ def add_member_to_group(db: psycopg.Connection, group_id: UUID, user_id: UUID) -
         cursor.execute(
             """INSERT INTO public.group_members (group_id, user_id)
             VALUES (%s, %s);
-            """, (
+            """,
+            (
                 str(group_id),
                 str(user_id),
-            ))
+            ),
+        )
         db.commit()
 
 
@@ -171,8 +169,10 @@ def remove_member_from_group(db: psycopg.Connection, group_id: int, user_id: UUI
         cursor.execute(
             """DELETE FROM public.group_members
             WHERE (group_id = %s AND user_id = %s);
-            """, (
+            """,
+            (
                 str(group_id),
                 str(user_id),
-            ))
+            ),
+        )
         db.commit()
