@@ -1,4 +1,5 @@
 from uuid import UUID, uuid4
+from datetime import datetime, date, time
 
 import psycopg
 
@@ -172,6 +173,91 @@ def remove_member_from_group(db: psycopg.Connection, group_id: int, user_id: UUI
             """,
             (
                 str(group_id),
+                str(user_id),
+            ),
+        )
+        db.commit()
+
+
+class Meet:
+    meet_id: UUID
+    group_id: UUID
+    max_numbers: int
+    meet_date: date
+    meet_time: time
+    duration: int
+    location: str
+
+    def __init__(
+        self, meet_id: UUID, group_id: UUID, max_numbers: int, meet_date: date, meet_time: time, duration: int, location: str
+    ):
+        self.meet_id = meet_id
+        self.group_id = group_id
+        self.max_numbers = max_numbers
+        self.meet_date = meet_date
+        self.meet_time = meet_time
+        self.duration = duration
+        self.location = location
+
+
+@db_named_query
+def create_meet(db: psycopg.Connection, group_id: UUID, max_numbers: int, meet_date: date, meet_time: time, duration: int, location: str) -> Meet:
+    meet_id = uuid4()
+
+    meet = Meet(
+        meet_id=meet_id,
+        group_id=group_id,
+        max_numbers=max_numbers,
+        meet_date=meet_date,
+        meet_time=meet_time,
+        duration=duration,
+        location=location,
+    )
+
+    meet_datetime = datetime.combine(meet_date, meet_time)
+
+    with db.cursor() as cursor:
+        cursor.execute(
+            """INSERT INTO public.meetings (id, group_id, max_numbers, date, duration, location)
+            VALUES (%s, %s, %s, %s, %s, %s);
+            """,
+            (
+                str(meet.meet_id),
+                str(meet.group_id),
+                int(meet.max_numbers),
+                meet_datetime,
+                int(meet.duration),
+                str(meet.location),
+            ),
+        )
+
+    return meet
+
+
+@db_named_query
+def add_member_to_meet(db: psycopg.Connection, meet_id: UUID, user_id: UUID) -> None:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """INSERT INTO public.meeting_members (meeting_id, user_id)
+            VALUES (%s, %s);
+            """,
+            (
+                str(meet_id),
+                str(user_id),
+            ),
+        )
+        db.commit()
+
+
+@db_named_query
+def remove_member_from_meet(db: psycopg.Connection, meet_id: int, user_id: UUID) -> None:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """DELETE FROM public.meeting_members
+            WHERE (meeting_id = %s AND user_id = %s);
+            """,
+            (
+                str(meet_id),
                 str(user_id),
             ),
         )
