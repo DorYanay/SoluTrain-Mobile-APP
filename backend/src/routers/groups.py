@@ -13,8 +13,8 @@ from src.security import get_current_user
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
-@router.post("/get-groups-by-area-id")
-def route_get_with_auth(
+@router.post("/get-groups-by-area")
+def route_get_groups_by_area(
     area_id: UUID, db: psycopg.Connection = Depends(db_dependency)
 ) -> list[GroupSchema]:
 
