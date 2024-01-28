@@ -4,8 +4,13 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from src.models.groups import Area, Group
+from src.models.groups import Area, Group, Meet
 from src.models.users import Gender, User
+
+
+class UserBaseSchema(BaseModel):
+    user_id: str
+    name: str
 
 
 class UserSchema(BaseModel):
@@ -61,18 +66,41 @@ class GroupSchema(BaseModel):
     area_id: str
     city: str
     street: str
-    group_type: int
 
     @staticmethod
     def from_model(group: Group, trainer_name: str) -> GroupSchema:
         return GroupSchema(
             group_id=str(group.group_id),
-            trainer_id=group.trainer_id,
+            trainer_id=str(group.trainer_id),
             trainer_name=trainer_name,
             name=group.name,
             description=group.description,
-            area=group.area_id,
+            area_id=str(group.area_id),
             city=group.city,
             street=group.street,
-            group_type=group.group_type
+        )
+
+
+class MeetSchema(BaseModel):
+    meet_id: str
+    group_id: str
+    max_numbers: int
+    meet_date: str
+    meet_time: str
+    duration: int
+    location: str
+
+    members: list[UserBaseSchema]
+
+    @staticmethod
+    def from_model(meet: Meet, members: list[UserBaseSchema]) -> MeetSchema:
+        return MeetSchema(
+            meet_id=str(meet.meet_id),
+            group_id=str(meet.group_id),
+            max_numbers=meet.max_numbers,
+            meet_date=str(meet.meet_date),
+            meet_time=str(meet.meet_time),
+            duration=meet.duration,
+            location=meet.location,
+            members=members,
         )

@@ -1,5 +1,5 @@
+from datetime import date, datetime, time
 from uuid import UUID, uuid4
-from datetime import datetime, date, time
 
 import psycopg
 
@@ -195,9 +195,7 @@ class Meet:
     duration: int
     location: str
 
-    def __init__(
-        self, meet_id: UUID, group_id: UUID, max_numbers: int, meet_date: date, meet_time: time, duration: int, location: str
-    ):
+    def __init__(self, meet_id: UUID, group_id: UUID, max_numbers: int, meet_date: date, meet_time: time, duration: int, location: str):
         self.meet_id = meet_id
         self.group_id = group_id
         self.max_numbers = max_numbers
@@ -208,7 +206,9 @@ class Meet:
 
 
 @db_named_query
-def create_meet(db: psycopg.Connection, group_id: UUID, max_numbers: int, meet_date: date, meet_time: time, duration: int, location: str) -> Meet:
+def create_meet(
+    db: psycopg.Connection, group_id: UUID, max_numbers: int, meet_date: date, meet_time: time, duration: int, location: str
+) -> Meet:
     meet_id = uuid4()
 
     meet = Meet(
