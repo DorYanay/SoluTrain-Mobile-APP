@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from src.models.groups import Area
+from src.models.groups import Area, Group
 from src.models.users import Gender, User
 
 
@@ -50,3 +50,29 @@ class LoginResponseSchema(BaseModel):
     auth_token: UUID
     user: UserSchema
     areas: list[AreaSchema]
+
+
+class GroupSchema(BaseModel):
+    group_id: str
+    trainer_id: str
+    trainer_name: str
+    name: str
+    description: str
+    area_id: str
+    city: str
+    street: str
+    group_type: int
+
+    @staticmethod
+    def from_model(group: Group, trainer_name: str) -> GroupSchema:
+        return GroupSchema(
+            group_id=str(group.group_id),
+            trainer_id=group.trainer_id,
+            trainer_name=trainer_name,
+            name=group.name,
+            description=group.description,
+            area=group.area_id,
+            city=group.city,
+            street=group.street,
+            group_type=group.group_type
+        )

@@ -8,6 +8,7 @@ from src.config import init_config
 from src.logger import get_logger, init_loggers
 from src.models import close_db, init_db
 from src.routers.auth import router as auth_router
+from src.routers.groups import router as groups_router
 from src.routers.users import router as users_router
 
 
@@ -37,6 +38,7 @@ app = FastAPI(
 
 # Include routers
 app.include_router(auth_router, prefix="/auth")
+app.include_router(groups_router, prefix="/groups")
 app.include_router(users_router, prefix="/users")
 
 

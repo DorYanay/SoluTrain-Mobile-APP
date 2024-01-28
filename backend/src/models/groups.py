@@ -120,17 +120,22 @@ def create_group(
 
 
 @db_named_query
-def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[Group]:
+def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[tuple[Group, str]]:
     with db.cursor() as cursor:
         cursor.execute(
-            "SELECT id, trainer_id, name, description, area_id, city, street, group_type FROM groups WHERE area_id = %s;",
+            """
+            SELECT g.id, g.trainer_id, g.name, g.description, g.area_id, g.city, g.street, g.group_type, t.name
+            FROM groups AS g
+            JOIN users AS t ON groups.trainer_id = users.id
+            WHERE area_id = %s;
+            """,
             [str(area_id)],
         )
         db.commit()
 
         rows = cursor.fetchall()
 
-        groups: list[Group] = []
+        groups: list[tuple[Group, str]] = []
 
         for row in rows:
             group = Group(
@@ -144,7 +149,9 @@ def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[Group]:
                 group_type=int(row[7]),
             )
 
-            groups.append(group)
+            trainer_name = str(row[8])
+
+            groups.append((group, trainer_name))
 
         return groups
 
