@@ -22,7 +22,6 @@ async def route_signup(
     password: str,
     phone: str,
     gender: Gender,
-    is_trainer: bool,
     is_coach: bool,
     db: psycopg.Connection = Depends(db_dependency),
 ) -> UserSchema:
@@ -35,7 +34,7 @@ async def route_signup(
 
     # create user
     password_hash = create_hash(password)
-    user = create_user(db, name, email, password_hash, phone, gender, is_trainer, is_coach)
+    user = create_user(db, name, email, password_hash, phone, gender, is_coach)
 
     return UserSchema.from_model(user)
 

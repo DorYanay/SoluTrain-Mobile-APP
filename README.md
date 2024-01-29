@@ -119,7 +119,7 @@ Note: the **API** means the backend and the **app** means the mobile app.
 
 Database
 
-![Database](database-diagram.jpeg)
+![Database](database-diagram.png)
 
 Network diagram flow
 
@@ -167,7 +167,7 @@ flowchart TD
   Group <--> Group-Meeting
   Select-Area <--> Search-Groups
   Search-Groups <--> Group
-  Group <---> Trainer
+  Group <---> Coach-Page
 ```
 
 * Note: Any page can navigate to the Profile page.

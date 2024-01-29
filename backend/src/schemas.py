@@ -22,7 +22,6 @@ class UserSchema(BaseModel):
     phone: str
     gender: Gender
     description: str
-    is_trainer: bool
     is_coach: bool
 
     @staticmethod
@@ -34,7 +33,6 @@ class UserSchema(BaseModel):
             phone=user.phone,
             gender=user.gender,
             description=user.description,
-            is_trainer=user.is_trainer,
             is_coach=user.is_coach,
         )
 
@@ -59,8 +57,8 @@ class LoginResponseSchema(BaseModel):
 
 class GroupSchema(BaseModel):
     group_id: str
-    trainer_id: str
-    trainer_name: str
+    coach_id: str
+    coach_name: str
     name: str
     description: str
     area_id: str
@@ -68,16 +66,36 @@ class GroupSchema(BaseModel):
     street: str
 
     @staticmethod
-    def from_model(group: Group, trainer_name: str) -> GroupSchema:
+    def from_model(group: Group, coach_name: str) -> GroupSchema:
         return GroupSchema(
             group_id=str(group.group_id),
-            trainer_id=str(group.trainer_id),
-            trainer_name=trainer_name,
+            coach_id=str(group.coach_id),
+            coach_name=coach_name,
             name=group.name,
             description=group.description,
             area_id=str(group.area_id),
             city=group.city,
             street=group.street,
+        )
+
+
+class GroupInfoSchema(BaseModel):
+    group_id: str
+    coach_name: str
+    name: str
+    area_name: str
+    city: str
+    street: str
+
+    @staticmethod
+    def from_model(row: tuple[UUID, str, str, str, str, str]) -> GroupInfoSchema:
+        return GroupInfoSchema(
+            group_id=str(row[0]),
+            coach_name=row[1],
+            name=row[2],
+            area_name=row[3],
+            city=row[4],
+            street=row[5],
         )
 
 

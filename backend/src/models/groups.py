@@ -61,58 +61,54 @@ def get_areas(db: psycopg.Connection) -> list[Area]:
 
 class Group:
     group_id: UUID
-    trainer_id: UUID
+    coach_id: UUID
     name: str
     description: str
     area_id: UUID
     city: str
     street: str
-    group_type: int
 
     def __init__(
-        self, group_id: UUID, trainer_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str, group_type: int
+        self, group_id: UUID, coach_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str
     ):
         self.group_id = group_id
-        self.trainer_id = trainer_id
+        self.coach_id = coach_id
         self.name = name
         self.description = description
         self.area_id = area_id
         self.city = city
         self.street = street
-        self.group_type = group_type
 
 
 @db_named_query
 def create_group(
-    db: psycopg.Connection, trainer_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str, group_type: int
+    db: psycopg.Connection, coach_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str
 ) -> Group:
     group_id = uuid4()
 
     group = Group(
         group_id=group_id,
-        trainer_id=trainer_id,
+        coach_id=coach_id,
         name=name,
         description=description,
         area_id=area_id,
         city=city,
         street=street,
-        group_type=group_type,
     )
 
     with db.cursor() as cursor:
         cursor.execute(
-            """INSERT INTO public.groups (id, trainer_id, name, description, area_id, city, street, group_type)
+            """INSERT INTO public.groups (id, coach_id, name, description, area_id, city, street)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
             """,
             (
                 str(group.group_id),
-                str(group.trainer_id),
+                str(group.coach_id),
                 str(group.name),
                 str(group.description),
                 str(group.area_id),
                 str(group.city),
                 str(group.street),
-                int(group.group_type),
             ),
         )
 
@@ -121,12 +117,13 @@ def create_group(
 
 @db_named_query
 def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[tuple[Group, str]]:
+    """Return list of groups with coach name. By area_id"""
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT g.id, g.trainer_id, g.name, g.description, g.area_id, g.city, g.street, g.group_type, t.name
+            SELECT g.id, g.coach_id, g.name, g.description, g.area_id, g.city, g.street, coach.name
             FROM groups AS g
-            JOIN users AS t ON groups.trainer_id = users.id
+            JOIN users AS coach ON g.coach_id = coach.id
             WHERE area_id = %s;
             """,
             [str(area_id)],
@@ -140,18 +137,84 @@ def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[tuple[G
         for row in rows:
             group = Group(
                 group_id=row[0],
-                trainer_id=row[1],
+                coach_id=row[1],
                 name=str(row[2]),
                 description=str(row[3]),
                 area_id=row[4],
                 city=str(row[5]),
                 street=str(row[6]),
-                group_type=int(row[7]),
             )
 
-            trainer_name = str(row[8])
+            coach_name = str(row[7])
 
-            groups.append((group, trainer_name))
+            groups.append((group, coach_name))
+
+        return groups
+
+
+@db_named_query
+def get_tariner_groups(db: psycopg.Connection, trainer_id: UUID) -> list[tuple[UUID, str, str, str, str, str]]:
+    """
+    Return list of info on groups of trainer.
+    Each row contain group_id, coach_name, group_name, area_name, city, street
+    """
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT g.id, coach.name, g.name, a.name, g.city, g.street
+            FROM groups_member AS gm
+            JOIN groups AS g ON gm.group_id = g.id
+            JOIN users AS coach ON g.coach_id = coach.id
+            JOIN areas AS a ON g.area_id = a.id
+            WHERE gm.user_id = %s;
+            """,
+            [str(trainer_id)],
+        )
+        db.commit()
+
+        rows = cursor.fetchall()
+
+        data_rows: list[tuple[UUID, str, str, str, str, str]] = []
+
+        for row in rows:
+            data = (UUID(row[0]), str(row[1]), str(row[2]), str(row[3]), str(row[4]), str(row[5]))
+
+            data_rows.append(data)
+
+        return data_rows
+
+
+@db_named_query
+def get_coach_groups(db: psycopg.Connection, coach_id: UUID) -> list[Group]:
+    """Return list of groups of coach"""
+
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT g.id, g.coach_id, g.name, g.description, g.area_id, g.city, g.street
+            FROM groups AS g
+            WHERE coach_id = %s;
+            """,
+            [str(coach_id)],
+        )
+        db.commit()
+
+        rows = cursor.fetchall()
+
+        groups: list[tuple[Group, str]] = []
+
+        for row in rows:
+            group = Group(
+                group_id=row[0],
+                coach_id=row[1],
+                name=str(row[2]),
+                description=str(row[3]),
+                area_id=row[4],
+                city=str(row[5]),
+                street=str(row[6]),
+            )
+
+            groups.append(group)
 
         return groups
 
