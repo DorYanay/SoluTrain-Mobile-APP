@@ -68,9 +68,7 @@ class Group:
     city: str
     street: str
 
-    def __init__(
-        self, group_id: UUID, coach_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str
-    ):
+    def __init__(self, group_id: UUID, coach_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str):
         self.group_id = group_id
         self.coach_id = coach_id
         self.name = name
@@ -81,9 +79,7 @@ class Group:
 
 
 @db_named_query
-def create_group(
-    db: psycopg.Connection, coach_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str
-) -> Group:
+def create_group(db: psycopg.Connection, coach_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str) -> Group:
     group_id = uuid4()
 
     group = Group(
@@ -201,7 +197,7 @@ def get_coach_groups(db: psycopg.Connection, coach_id: UUID) -> list[Group]:
 
         rows = cursor.fetchall()
 
-        groups: list[tuple[Group, str]] = []
+        groups: list[Group] = []
 
         for row in rows:
             group = Group(

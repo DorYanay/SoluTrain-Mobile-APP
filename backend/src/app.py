@@ -8,9 +8,9 @@ from src.config import init_config
 from src.logger import get_logger, init_loggers
 from src.models import close_db, init_db
 from src.routers.auth import router as auth_router
-from src.routers.profile import router as profile_router
-from src.routers.find_groups import router as find_groups_router
 from src.routers.example import router as example_router
+from src.routers.find_groups import router as find_groups_router
+from src.routers.profile import router as profile_router
 
 
 @asynccontextmanager

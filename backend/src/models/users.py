@@ -43,9 +43,7 @@ class User:
 
 
 @db_named_query
-def create_user(
-    db: psycopg.Connection, name: str, email: str, password_hash: str, phone: str, gender: Gender, is_coach: bool
-) -> User:
+def create_user(db: psycopg.Connection, name: str, email: str, password_hash: str, phone: str, gender: Gender, is_coach: bool) -> User:
     user_id = uuid4()
     user = User(
         user_id=user_id,
