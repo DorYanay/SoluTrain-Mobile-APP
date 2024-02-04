@@ -112,6 +112,40 @@ def create_group(db: psycopg.Connection, coach_id: UUID, name: str, description:
 
 
 @db_named_query
+def get_group_by_id(db: psycopg.Connection, group_id: UUID) -> tuple[Group, str] | None:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT g.id, g.coach_id, g.name, g.description, g.area_id, g.city, g.street, coach.name
+            FROM groups AS g
+            JOIN users AS coach ON g.coach_id = coach.id
+            WHERE g.id = %s;
+            """,
+            [str(group_id)],
+        )
+        db.commit()
+
+        row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        group = Group(
+            group_id=row[0],
+            coach_id=row[1],
+            name=str(row[2]),
+            description=str(row[3]),
+            area_id=row[4],
+            city=str(row[5]),
+            street=str(row[6]),
+        )
+
+        coach_name = str(row[7])
+
+        return group, coach_name
+
+
+@db_named_query
 def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[tuple[Group, str]]:
     """Return list of groups with coach name. By area_id"""
     with db.cursor() as cursor:
@@ -248,16 +282,16 @@ def remove_member_from_group(db: psycopg.Connection, group_id: int, user_id: UUI
 class Meet:
     meet_id: UUID
     group_id: UUID
-    max_numbers: int
+    max_members: int
     meet_date: date
     meet_time: time
     duration: int
     location: str
 
-    def __init__(self, meet_id: UUID, group_id: UUID, max_numbers: int, meet_date: date, meet_time: time, duration: int, location: str):
+    def __init__(self, meet_id: UUID, group_id: UUID, max_members: int, meet_date: date, meet_time: time, duration: int, location: str):
         self.meet_id = meet_id
         self.group_id = group_id
-        self.max_numbers = max_numbers
+        self.max_members = max_members
         self.meet_date = meet_date
         self.meet_time = meet_time
         self.duration = duration
@@ -266,14 +300,14 @@ class Meet:
 
 @db_named_query
 def create_meet(
-    db: psycopg.Connection, group_id: UUID, max_numbers: int, meet_date: date, meet_time: time, duration: int, location: str
+    db: psycopg.Connection, group_id: UUID, max_members: int, meet_date: date, meet_time: time, duration: int, location: str
 ) -> Meet:
     meet_id = uuid4()
 
     meet = Meet(
         meet_id=meet_id,
         group_id=group_id,
-        max_numbers=max_numbers,
+        max_members=max_members,
         meet_date=meet_date,
         meet_time=meet_time,
         duration=duration,
@@ -290,7 +324,7 @@ def create_meet(
             (
                 str(meet.meet_id),
                 str(meet.group_id),
-                int(meet.max_numbers),
+                int(meet.max_members),
                 meet_datetime,
                 int(meet.duration),
                 str(meet.location),
@@ -328,3 +362,42 @@ def remove_member_from_meet(db: psycopg.Connection, meet_id: int, user_id: UUID)
             ),
         )
         db.commit()
+
+
+@db_named_query
+def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) -> list[tuple[Meet, int, bool]]:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT m.id, m.date, m.duration, m.location, m.max_members, COUNT(mm.user_id), mm2.user_id
+            FROM meetings AS m
+            LEFT JOIN meeting_members AS mm ON m.id = mm.meeting_id
+            LEFT JOIN meeting_members AS mm2 ON m.id = mm2.meeting_id
+            GROUP BY m.id
+            WHERE (m.group_id = %s AND (mm2.user_id = %s OR mm2.user_id IS NULL));
+            """,
+            (str(user_id), str(group_id)),
+        )
+        db.commit()
+
+        rows = cursor.fetchall()
+
+        meets: list[tuple[Meet, int, bool]] = []
+
+        for row in rows:
+            meet = Meet(
+                meet_id=row[0],
+                group_id=group_id,
+                max_members=row[4],
+                meet_date=row[1],
+                meet_time=row[2],
+                duration=row[3],
+                location=row[4],
+            )
+
+            registered = row[6] is not None
+            full = row[5] >= row[4]
+
+            meets.append((meet, full, registered))
+
+        return meets

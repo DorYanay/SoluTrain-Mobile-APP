@@ -129,7 +129,9 @@ def get_user_by_email(db: psycopg.Connection, email: str) -> User | None:
 
 
 @db_named_query
-def update_user(db: psycopg.Connection, user_id: UUID, updated_name: str, updated_email: str, updated_phone: str, updated_description: str) -> None:
+def update_user(
+    db: psycopg.Connection, user_id: UUID, updated_name: str, updated_email: str, updated_phone: str, updated_description: str
+) -> None:
     with db.cursor() as cursor:
         cursor.execute(
             "UPDATE users SET name = %s, email = %s, phone = %s, description = %s WHERE id = %s",

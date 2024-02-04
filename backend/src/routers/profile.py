@@ -7,9 +7,9 @@ from starlette import status
 
 from src.models import db_dependency
 from src.models.groups import get_coach_groups, get_tariner_groups
-from src.models.users import User, get_user_by_email, update_user, get_user_by_id, update_user_password
+from src.models.users import User, get_user_by_email, get_user_by_id, update_user, update_user_password
 from src.schemas import GroupInfoSchema, GroupSchema, UserSchema
-from src.security import get_current_user, update_auth_logged_user_data, create_hash
+from src.security import create_hash, get_current_user, update_auth_logged_user_data
 from src.validators import validate_email
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
@@ -39,8 +39,15 @@ def route_get(db: psycopg.Connection = Depends(db_dependency), current_user: Use
 
 
 @router.post("/update-details")
-def route_update_details(auth_token: UUID, new_name: str | None, new_email: str | None, new_phone: str | None, new_description: str | None,
-                         db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> UserSchema:
+def route_update_details(
+    auth_token: UUID,
+    new_name: str | None,
+    new_email: str | None,
+    new_phone: str | None,
+    new_description: str | None,
+    db: psycopg.Connection = Depends(db_dependency),
+    current_user: User = Depends(get_current_user),
+) -> UserSchema:
     updated_name = current_user.name
     updated_email = current_user.email
     updated_phone = current_user.phone
@@ -67,22 +74,29 @@ def route_update_details(auth_token: UUID, new_name: str | None, new_email: str 
 
     update_user(db, current_user.user_id, updated_name, updated_email, updated_phone, updated_description)
 
-    current_user = get_user_by_id(db, current_user.user_id)
+    user = get_user_by_id(db, current_user.user_id)
 
-    update_auth_logged_user_data(auth_token, current_user)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
 
-    return UserSchema.from_model(current_user)
+    update_auth_logged_user_data(auth_token, user)
+
+    return UserSchema.from_model(user)
 
 
 @router.post("/update-password")
-def route_update_password(auth_token: UUID, new_password: str, db: psycopg.Connection = Depends(db_dependency),
-                          current_user: User = Depends(get_current_user)) -> UserSchema:
+def route_update_password(
+    new_password: str, auth_token: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> UserSchema:
     password_hash = create_hash(new_password)
 
     update_user_password(db, current_user.user_id, password_hash)
 
-    current_user = get_user_by_id(db, current_user.user_id)
+    user = get_user_by_id(db, current_user.user_id)
 
-    update_auth_logged_user_data(auth_token, current_user)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
 
-    return UserSchema.from_model(current_user)
+    update_auth_logged_user_data(auth_token, user)
+
+    return UserSchema.from_model(user)

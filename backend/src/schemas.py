@@ -102,7 +102,7 @@ class GroupInfoSchema(BaseModel):
 class MeetSchema(BaseModel):
     meet_id: str
     group_id: str
-    max_numbers: int
+    max_members: int
     meet_date: str
     meet_time: str
     duration: int
@@ -115,10 +115,25 @@ class MeetSchema(BaseModel):
         return MeetSchema(
             meet_id=str(meet.meet_id),
             group_id=str(meet.group_id),
-            max_numbers=meet.max_numbers,
+            max_members=meet.max_members,
             meet_date=str(meet.meet_date),
             meet_time=str(meet.meet_time),
             duration=meet.duration,
             location=meet.location,
             members=members,
         )
+
+
+class MeetInfoSchema(BaseModel):
+    meet_id: str
+    meet_date: str
+    meet_time: str
+    duration: int
+    location: str
+    full: bool
+    registered: bool
+
+
+class GroupViewInfoSchema(BaseModel):
+    group: GroupSchema
+    meets: list[MeetInfoSchema]
