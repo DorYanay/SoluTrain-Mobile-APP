@@ -119,7 +119,7 @@ Note: the **API** means the backend and the **app** means the mobile app.
 
 Database
 
-![Database](database-diagram.jpeg)
+![Database](database-diagram.png)
 
 Network diagram flow
 
@@ -151,6 +151,26 @@ flowchart RL
     Logic --> State --> UI
   end
 ```
+
+Pages diagram
+
+```mermaid
+flowchart TD
+  Login --> SignUp & Select-Area
+  SignUp --> Login
+  Select-Area --> Profile
+  Profile --> Group & Select-Area
+  Profile --> Login
+  Profile --> Create-Group --> Group
+  Group <---> Update-Group-Calander
+  Group <--> Create-Meeting --> Group-Meeting
+  Group <--> Group-Meeting
+  Select-Area <--> Search-Groups
+  Search-Groups <--> Group
+  Group <---> Coach-Page
+```
+
+* Note: Any page can navigate to the Profile page.
 
 ## Get Started
 

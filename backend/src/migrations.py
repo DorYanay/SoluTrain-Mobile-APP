@@ -17,7 +17,6 @@ def create_database(cursor: psycopg.Cursor) -> None:
             phone VARCHAR(255) NOT NULL,
             gender VARCHAR(10) NOT NULL,
             description VARCHAR(255) NOT NULL,
-            is_trainer BOOLEAN NOT NULL,
             is_coach BOOLEAN NOT NULL
         );
 
@@ -52,15 +51,14 @@ def create_database(cursor: psycopg.Cursor) -> None:
 
         CREATE TABLE public.groups (
             id UUID PRIMARY KEY,
-            trainer_id UUID NOT NULL
+            coach_id UUID NOT NULL
                 REFERENCES public.users (id),
             name VARCHAR(255) NOT NULL,
             description VARCHAR(255) NOT NULL,
             area_id UUID NOT NULL
                 REFERENCES public.areas (id),
             city VARCHAR(255) NOT NULL,
-            street VARCHAR(255) NOT NULL,
-            group_type INTEGER NOT NULL
+            street VARCHAR(255) NOT NULL
         );
 
         CREATE TABLE public.group_calendar (
