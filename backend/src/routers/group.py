@@ -2,23 +2,15 @@ from uuid import UUID
 
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from starlette import status
 
 from src.models import db_dependency
 from src.models.groups import get_group_by_id, get_group_meets_info
 from src.models.users import User
-from src.schemas import GroupInfoSchema, GroupSchema, GroupViewInfoSchema, MeetInfoSchema, UserSchema
+from src.schemas import GroupSchema, GroupViewInfoSchema, MeetInfoSchema
 from src.security import get_current_user
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
-
-
-class ProfileSchema(BaseModel):
-    user: UserSchema
-    is_coach: bool
-    in_groups: list[GroupInfoSchema]
-    coach_groups: list[GroupSchema]
 
 
 @router.post("/get")
