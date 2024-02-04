@@ -159,15 +159,17 @@ flowchart TD
   Login --> SignUp & Select-Area
   SignUp --> Login
   Select-Area --> Profile
-  Profile --> Group & Select-Area
+  Profile --> Select-Area
   Profile --> Login
+  Profile --> My-Groups & My-Meetings
+  My-Groups --> Group
+  My-Meetings --> Meeting
   Profile --> Create-Group --> Group
-  Group <---> Update-Group-Calander
-  Group <--> Create-Meeting --> Group-Meeting
-  Group <--> Group-Meeting
+  Group <--> Create-Meeting --> Meeting
+  Group <--> Meeting
   Select-Area <--> Search-Groups
   Search-Groups <--> Group
-  Group <---> Coach-Page
+  Group <--> Coach-Page
 ```
 
 * Note: Any page can navigate to the Profile page.
