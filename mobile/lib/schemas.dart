@@ -15,10 +15,9 @@ class User implements Schema {
   final String phone;
   final String gender;
   final String description;
-  final bool isTrainer;
   final bool isCoach;
 
-  User(this.userId, this.name, this.email, this.phone, this.gender, this.description, this.isTrainer, this.isCoach);
+  User(this.userId, this.name, this.email, this.phone, this.gender, this.description, this.isCoach);
 
   factory User.fromJson(dynamic data) {
     return User(
@@ -28,7 +27,6 @@ class User implements Schema {
       data['phone'] as String,
       data['gender'] as String,
       data['description'] as String,
-      data['is_trainer'] as bool,
       data['is_coach'] as bool,
     );
   }
@@ -42,7 +40,6 @@ class User implements Schema {
       'phone': phone,
       'gender': gender,
       'description': description,
-      'is_trainer': isTrainer,
       'is_coach': isCoach,
     };
   }

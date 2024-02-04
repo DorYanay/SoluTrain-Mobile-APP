@@ -4,12 +4,13 @@ from uuid import UUID
 
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
 
 from src.models import db_dependency
-from src.models.users import Gender, User, create_user, get_user_by_email, validate_email
-from src.routers.users import UserSchema
+from src.models.groups import get_areas
+from src.models.users import Gender, User, create_user, get_user_by_email
+from src.schemas import AreaSchema, LoginResponseSchema, UserSchema
 from src.security import create_hash, get_current_user, login_user, logout_user, verify_hash
+from src.validators import validate_email
 
 router = APIRouter()
 
@@ -21,7 +22,6 @@ async def route_signup(
     password: str,
     phone: str,
     gender: Gender,
-    is_trainer: bool,
     is_coach: bool,
     db: psycopg.Connection = Depends(db_dependency),
 ) -> UserSchema:
@@ -34,14 +34,9 @@ async def route_signup(
 
     # create user
     password_hash = create_hash(password)
-    user = create_user(db, name, email, password_hash, phone, gender, is_trainer, is_coach)
+    user = create_user(db, name, email, password_hash, phone, gender, is_coach)
 
     return UserSchema.from_model(user)
-
-
-class LoginResponseSchema(BaseModel):
-    auth_token: UUID
-    user: UserSchema
 
 
 @router.post("/login")
@@ -58,7 +53,11 @@ def route_login(email: str, password: str, db: psycopg.Connection = Depends(db_d
     # login
     auth_token = login_user(user)
 
-    return LoginResponseSchema(auth_token=auth_token, user=UserSchema.from_model(user))
+    areas_models = get_areas(db)
+
+    areas = [AreaSchema.from_model(area) for area in areas_models]
+
+    return LoginResponseSchema(auth_token=auth_token, user=UserSchema.from_model(user), areas=areas)
 
 
 @router.post("/logout")

@@ -56,3 +56,7 @@ def get_current_user(auth_token: UUID) -> User:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
 
     return user
+
+
+def update_auth_logged_user_data(auth_token: UUID, user: User) -> None:
+    auth_logged_users[auth_token] = user
