@@ -1,12 +1,16 @@
+from uuid import UUID
+
 import psycopg
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from starlette import status
 
 from src.models import db_dependency
 from src.models.groups import get_coach_groups, get_tariner_groups
-from src.models.users import User
+from src.models.users import User, get_user_by_email, update_user, get_user_by_id, update_user_password
 from src.schemas import GroupInfoSchema, GroupSchema, UserSchema
-from src.security import get_current_user
+from src.security import get_current_user, update_auth_logged_user_data, create_hash
+from src.validators import validate_email
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
@@ -32,3 +36,53 @@ def route_get(db: psycopg.Connection = Depends(db_dependency), current_user: Use
         in_groups=[GroupInfoSchema.from_model(row) for row in in_groups],
         coach_groups=[GroupSchema.from_model(group, current_user.name) for group in coach_groups],
     )
+
+
+@router.post("/update-details")
+def route_update_details(auth_token: UUID, new_name: str | None, new_email: str | None, new_phone: str | None, new_description: str | None,
+                         db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> UserSchema:
+    updated_name = current_user.name
+    updated_email = current_user.email
+    updated_phone = current_user.phone
+    updated_description = current_user.description
+
+    # validation
+    if new_email is not None:
+        if not validate_email(new_email):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email")
+
+        if get_user_by_email(db, new_email) is not None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists with this email")
+
+        updated_email = new_email
+
+    if new_name is not None:
+        updated_name = new_name
+
+    if new_phone is not None:
+        updated_phone = new_phone
+
+    if new_description is not None:
+        updated_description = new_description
+
+    update_user(db, current_user.user_id, updated_name, updated_email, updated_phone, updated_description)
+
+    current_user = get_user_by_id(db, current_user.user_id)
+
+    update_auth_logged_user_data(auth_token, current_user)
+
+    return UserSchema.from_model(current_user)
+
+
+@router.post("/update-password")
+def route_update_password(auth_token: UUID, new_password: str, db: psycopg.Connection = Depends(db_dependency),
+                          current_user: User = Depends(get_current_user)) -> UserSchema:
+    password_hash = create_hash(new_password)
+
+    update_user_password(db, current_user.user_id, password_hash)
+
+    current_user = get_user_by_id(db, current_user.user_id)
+
+    update_auth_logged_user_data(auth_token, current_user)
+
+    return UserSchema.from_model(current_user)
