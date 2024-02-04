@@ -365,6 +365,46 @@ def remove_member_from_meet(db: psycopg.Connection, meet_id: int, user_id: UUID)
 
 
 @db_named_query
+def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUID) -> tuple[UUID | None, bool, bool, bool]:
+    """
+    Return 4 values.
+    First is coach_id if exits meet, None otherwise.
+    Second is True if trainer is registered to group, False otherwise.
+    Third is True if trainer is registered to meet, False otherwise.
+    Fourth is True if meet is full, False otherwise.
+    """
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT g.coach_id, gm.user_id, mm.user_id, COUNT(mm2.user_id) >= m.max_members
+            FROM meetings AS m
+            JOIN groups AS g ON m.group_id = g.id
+            LEFT JOIN groups_member AS gm ON g.id = gm.group_id
+            LEFT JOIN meeting_members AS mm ON m.id = mm.meeting_id
+            LEFT JOIN meeting_members AS mm2 ON m.id = mm2.meeting_id
+            GROUP BY m.id
+            WHERE (m.id = %s
+                    AND (gm.user_id = %s OR gm.user_id IS NULL)
+                    AND (mm.user_id = %s OR mm.user_id IS NULL)
+            """,
+            (str(meet_id), str(trainer_id), str(trainer_id)),
+        )
+        db.commit()
+
+        row = cursor.fetchone()
+
+        if row is None:
+            return None, False, False, False
+
+        coach_id = UUID(row[0])
+        registered_to_group = row[1] is not None
+        registered_to_meet = row[2] is not None
+        meet_is_full = row[3]
+
+        return coach_id, registered_to_group, registered_to_meet, meet_is_full
+
+
+@db_named_query
 def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) -> list[tuple[Meet, int, bool]]:
     with db.cursor() as cursor:
         cursor.execute(

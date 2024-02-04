@@ -74,7 +74,8 @@ def create_database(cursor: psycopg.Cursor) -> None:
             group_id UUID NOT NULL
                 REFERENCES public.groups (id),
             user_id UUID NOT NULL
-                REFERENCES public.users (id)
+                REFERENCES public.users (id),
+            PRIMARY KEY (group_id, user_id)
         );
 
         CREATE TABLE public.meetings (
@@ -91,7 +92,8 @@ def create_database(cursor: psycopg.Cursor) -> None:
             meeting_id UUID NOT NULL
                 REFERENCES public.meetings (id),
             user_id UUID NOT NULL
-                REFERENCES public.users (id)
+                REFERENCES public.users (id),
+            PRIMARY KEY (meeting_id, user_id)
         );
         """
     )
