@@ -4,6 +4,7 @@ from uuid import UUID, uuid4
 import psycopg
 
 from src.models import db_named_query
+from src.models.users import Gender, User
 
 
 class Area:
@@ -57,6 +58,17 @@ def get_areas(db: psycopg.Connection) -> list[Area]:
             areas.append(area)
 
         return areas
+
+
+@db_named_query
+def area_exists(db: psycopg.Connection, area_id: UUID) -> bool:
+    with db.cursor() as cursor:
+        cursor.execute("SELECT id FROM areas WHERE id = %s;", [str(area_id)])
+        db.commit()
+
+        row = cursor.fetchone()
+
+        return row is not None
 
 
 class Group:
@@ -314,7 +326,7 @@ def create_meet(
         location=location,
     )
 
-    meet_datetime = datetime.combine(meet_date, meet_time)
+    meet_full_time = datetime.combine(meet_date, meet_time)
 
     with db.cursor() as cursor:
         cursor.execute(
@@ -325,13 +337,36 @@ def create_meet(
                 str(meet.meet_id),
                 str(meet.group_id),
                 int(meet.max_members),
-                meet_datetime,
+                meet_full_time,
                 int(meet.duration),
                 str(meet.location),
             ),
         )
 
     return meet
+
+
+@db_named_query
+def update_meet(
+    db: psycopg.Connection, meet_id: UUID, max_members: int, meet_date: date, meet_time: time, duration: int, location: str
+) -> None:
+    meet_full_time = datetime.combine(meet_date, meet_time)
+
+    with db.cursor() as cursor:
+        cursor.execute(
+            """UPDATE public.meetings
+            SET max_members = %s, date = %s, duration = %s, location = %s
+            WHERE id = %s;
+            """,
+            (
+                int(max_members),
+                meet_full_time,
+                int(duration),
+                location,
+                str(meet_id),
+            ),
+        )
+        db.commit()
 
 
 @db_named_query
@@ -362,6 +397,76 @@ def remove_member_from_meet(db: psycopg.Connection, meet_id: int, user_id: UUID)
             ),
         )
         db.commit()
+
+
+@db_named_query
+def get_meet(db: psycopg.Connection, meet_id: UUID, coach_id: UUID) -> Meet | None:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT m.id, m.group_id, m.max_members, m.date, m.duration, m.location
+            FROM meetings AS m
+            JOIN groups AS g ON m.group_id = g.id
+            WHERE (m.id = %s AND g.coach_id = %s);
+            """,
+            (str(meet_id), str(coach_id)),
+        )
+        db.commit()
+
+        row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        # TODO: Fix this
+        full_time = datetime.fromtimestamp(row[3])
+
+        meet = Meet(
+            meet_id=row[0],
+            group_id=row[1],
+            max_members=row[2],
+            meet_date=full_time.date(),
+            meet_time=full_time.time(),
+            duration=row[4],
+            location=row[5],
+        )
+
+        return meet
+
+
+@db_named_query
+def get_meet_members(db: psycopg.Connection, meet_id: UUID) -> list[User]:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT u.id, u.name, u.email, u.password_hash, u.phone, u.gender, u.description, u.is_coach
+            FROM users AS u
+            JOIN meeting_members AS mm ON u.id = mm.user_id
+            WHERE mm.meeting_id = %s;
+            """,
+            [str(meet_id)],
+        )
+        db.commit()
+
+        rows = cursor.fetchall()
+
+        members: list[User] = []
+
+        for row in rows:
+            member = User(
+                user_id=row[0],
+                name=str(row[1]),
+                email=str(row[2]),
+                password_hash=str(row[3]),
+                phone=str(row[4]),
+                gender=Gender(str(row[5])),
+                description=str(row[6]),
+                is_coach=bool(row[7]),
+            )
+
+            members.append(member)
+
+        return members
 
 
 @db_named_query
@@ -406,7 +511,7 @@ def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUI
 
 
 @db_named_query
-def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) -> list[tuple[Meet, int, bool]]:
+def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) -> list[tuple[Meet, bool, bool]]:
     with db.cursor() as cursor:
         cursor.execute(
             """
@@ -423,7 +528,7 @@ def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) 
 
         rows = cursor.fetchall()
 
-        meets: list[tuple[Meet, int, bool]] = []
+        meets: list[tuple[Meet, bool, bool]] = []
 
         for row in rows:
             meet = Meet(
@@ -438,6 +543,45 @@ def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) 
 
             registered = row[6] is not None
             full = row[5] >= row[4]
+
+            meets.append((meet, full, registered))
+
+        return meets
+
+
+@db_named_query
+def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet, bool, bool]]:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT m.id, m.group_id, m.date, m.duration, m.location, m.max_members, COUNT(mm.user_id), mm2.user_id
+            FROM meetings AS m
+            LEFT JOIN meeting_members AS mm ON m.id = mm.meeting_id
+            LEFT JOIN meeting_members AS mm2 ON m.id = mm2.meeting_id
+            GROUP BY m.id
+            WHERE (mm2.user_id = %s);
+            """,
+            [str(user_id)],
+        )
+        db.commit()
+
+        rows = cursor.fetchall()
+
+        meets: list[tuple[Meet, bool, bool]] = []
+
+        for row in rows:
+            meet = Meet(
+                meet_id=row[0],
+                group_id=row[1],
+                max_members=row[5],
+                meet_date=row[2],
+                meet_time=row[3],
+                duration=row[4],
+                location=row[5],
+            )
+
+            registered = row[7] is not None
+            full = row[6] >= row[5]
 
             meets.append((meet, full, registered))
 

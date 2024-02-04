@@ -2,7 +2,6 @@ from uuid import UUID
 
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from starlette import status
 
 from src.models import db_dependency
@@ -15,17 +14,10 @@ from src.models.groups import (
     remove_member_from_group,
 )
 from src.models.users import User
-from src.schemas import GroupInfoSchema, GroupSchema, GroupViewInfoSchema, MeetInfoSchema, UserSchema
+from src.schemas import GroupSchema, GroupViewInfoSchema, MeetInfoSchema
 from src.security import get_current_user
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
-
-
-class ProfileSchema(BaseModel):
-    user: UserSchema
-    is_coach: bool
-    in_groups: list[GroupInfoSchema]
-    coach_groups: list[GroupSchema]
 
 
 @router.post("/get")
@@ -46,17 +38,7 @@ def route_get(
     for meet_data in meets_data:
         meet, members_count, registered = meet_data
 
-        meets.append(
-            MeetInfoSchema(
-                meet_id=str(meet.meet_id),
-                meet_date=str(meet.meet_date),
-                meet_time=str(meet.meet_time),
-                duration=meet.duration,
-                location=meet.location,
-                full=members_count >= meet.max_members,
-                registered=registered,
-            )
-        )
+        meets.append(MeetInfoSchema.from_model(meet, members_count, registered))
 
     return GroupViewInfoSchema(group=GroupSchema.from_model(group, coach_name), meets=meets)
 

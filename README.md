@@ -161,12 +161,12 @@ flowchart TD
   Select-Area --> Profile
   Profile --> Select-Area
   Profile --> Login
-  Profile --> My-Groups & My-Meetings
+  Profile --> My-Groups & My-Meets
   My-Groups --> Group
-  My-Meetings --> Meeting
+  My-Meets --> Meet
   Profile --> Create-Group --> Group
-  Group <--> Create-Meeting --> Meeting
-  Group <--> Meeting
+  Group <--> Create-Meet --> Meet
+  Group <--> Meet
   Select-Area <--> Search-Groups
   Search-Groups <--> Group
   Group <--> Coach-Page
