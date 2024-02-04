@@ -9,7 +9,7 @@ from src.logger import get_logger, init_loggers
 from src.models import close_db, init_db
 from src.routers.auth import router as auth_router
 from src.routers.example import router as example_router
-from src.routers.find_groups import router as find_groups_router
+from src.routers.search_groups import router as search_groups_router
 from src.routers.profile import router as profile_router
 
 
@@ -40,7 +40,7 @@ app = FastAPI(
 # Include routers
 app.include_router(auth_router, prefix="/auth")
 app.include_router(profile_router, prefix="/profile")
-app.include_router(find_groups_router, prefix="/find-groups")
+app.include_router(search_groups_router, prefix="/search-groups")
 app.include_router(example_router, prefix="/example")
 
 
