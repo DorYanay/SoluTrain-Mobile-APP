@@ -6,8 +6,14 @@ from pydantic import BaseModel
 from starlette import status
 
 from src.models import db_dependency
-from src.models.groups import add_member_to_group, get_group_by_id, get_group_meets_info, remove_member_from_group, check_trainer_in_meet, \
-    add_member_to_meet
+from src.models.groups import (
+    add_member_to_group,
+    add_member_to_meet,
+    check_trainer_in_meet,
+    get_group_by_id,
+    get_group_meets_info,
+    remove_member_from_group,
+)
 from src.models.users import User
 from src.schemas import GroupInfoSchema, GroupSchema, GroupViewInfoSchema, MeetInfoSchema, UserSchema
 from src.security import get_current_user
@@ -56,7 +62,9 @@ def route_get(
 
 
 @router.post("/register-to-group")
-def route_register_to_group(group_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> None:
+def route_register_to_group(
+    group_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
     group_data = get_group_by_id(db, group_id)
 
     if group_data is None:
@@ -73,7 +81,9 @@ def route_register_to_group(group_id: UUID, db: psycopg.Connection = Depends(db_
 
 
 @router.post("/unregister-to-group")
-def route_unregister_to_group(group_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> None:
+def route_unregister_to_group(
+    group_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
     group_data = get_group_by_id(db, group_id)
 
     if group_data is None:
@@ -90,7 +100,9 @@ def route_unregister_to_group(group_id: UUID, db: psycopg.Connection = Depends(d
 
 
 @router.post("/register-to-meet")
-def route_register_to_meet(meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> None:
+def route_register_to_meet(
+    meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
     coach_id, registered_to_group, registered_to_meet, meet_is_full = check_trainer_in_meet(db, meet_id, current_user.user_id)
 
     if coach_id is None:
@@ -114,7 +126,9 @@ def route_register_to_meet(meet_id: UUID, db: psycopg.Connection = Depends(db_de
 
 
 @router.post("/unregister-to-meet")
-def route_unregister_to_meet(meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> None:
+def route_unregister_to_meet(
+    meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
     coach_id, registered_to_group, registered_to_meet, _ = check_trainer_in_meet(db, meet_id, current_user.user_id)
 
     if coach_id is None:

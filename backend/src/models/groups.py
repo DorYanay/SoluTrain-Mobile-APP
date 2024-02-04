@@ -318,7 +318,7 @@ def create_meet(
 
     with db.cursor() as cursor:
         cursor.execute(
-            """INSERT INTO public.meetings (id, group_id, max_numbers, date, duration, location)
+            """INSERT INTO public.meetings (id, group_id, max_members, date, duration, location)
             VALUES (%s, %s, %s, %s, %s, %s);
             """,
             (
@@ -386,6 +386,7 @@ def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUI
             WHERE (m.id = %s
                     AND (gm.user_id = %s OR gm.user_id IS NULL)
                     AND (mm.user_id = %s OR mm.user_id IS NULL)
+                    );
             """,
             (str(meet_id), str(trainer_id), str(trainer_id)),
         )
