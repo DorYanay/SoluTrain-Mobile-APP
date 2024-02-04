@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-import '/api.dart';
-import '/schemas.dart';
+import 'package:mobile/api.dart';
+import 'package:mobile/schemas.dart';
 
 
 class HomePage extends StatefulWidget {
