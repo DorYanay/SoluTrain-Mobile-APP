@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/minimallogin/components/my_button.dart';
-import 'package:mobile/minimallogin/components/my_textfield.dart';
+import 'package:mobile/widgets/app_button.dart';
+import 'package:mobile/widgets/app_textfield.dart';
+
+enum Gender { male, female }
 
 class SighUpPage extends StatefulWidget {
   final void Function() showLogin;
@@ -12,11 +14,12 @@ class SighUpPage extends StatefulWidget {
 }
 
 class _SighUpPageState extends State<SighUpPage> {
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
-
   final confirmPasswordController = TextEditingController();
+  final phoneController = TextEditingController();
+  Gender? gender;
 
   void signUpOnTap() {
 
@@ -56,7 +59,15 @@ class _SighUpPageState extends State<SighUpPage> {
 
                 const SizedBox(height: 25),
 
-                MyTextField(
+                AppTextField(
+                  controller: nameController,
+                  hintText: 'Name',
+                  obscureText: false,
+                ),
+
+                const SizedBox(height: 10),
+
+                AppTextField(
                   controller: emailController,
                   hintText: 'Email',
                   obscureText: false,
@@ -64,7 +75,7 @@ class _SighUpPageState extends State<SighUpPage> {
 
                 const SizedBox(height: 10),
 
-                MyTextField(
+                AppTextField(
                   controller: passwordController,
                   hintText: 'Password',
                   obscureText: true,
@@ -72,15 +83,60 @@ class _SighUpPageState extends State<SighUpPage> {
 
                 const SizedBox(height: 10),
 
-                MyTextField(
+                AppTextField(
                   controller: confirmPasswordController,
                   hintText: 'Confirm password',
                   obscureText: true,
                 ),
 
+                const SizedBox(height: 10),
+
+                AppTextField(
+                  controller: phoneController,
+                  hintText: 'Phone',
+                  obscureText: false,
+                ),
+
+                const SizedBox(height: 15),
+
+                Row(
+                  children: <Widget>[
+                    const SizedBox(width: 40),
+                    Expanded(
+                      child: ListTile(
+                        title: const Text('Male'),
+                        leading: Radio<Gender>(
+                          value: Gender.male,
+                          groupValue: gender,
+                          onChanged: (Gender? value) {
+                            setState(() {
+                              gender = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListTile(
+                        title: const Text('Female'),
+                        leading: Radio<Gender>(
+                          value: Gender.female,
+                          groupValue: gender,
+                          onChanged: (Gender? value) {
+                            setState(() {
+                              gender = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 40),
+                  ],
+                ),
+
                 const SizedBox(height: 25),
 
-                MyButton(
+                AppButton(
                   onTap: signUpOnTap,
                   text: "Sign Up",
                 ),

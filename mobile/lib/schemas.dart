@@ -1,14 +1,6 @@
 // This file contains the API Schemas
 
-class Schema {
-  Schema();
-
-  Map<String, dynamic> toJson() {
-    return Map.identity();
-  }
-}
-
-class User implements Schema {
+class User {
   final String userId;
   final String name;
   final String email;
@@ -29,18 +21,5 @@ class User implements Schema {
       data['description'] as String,
       data['is_coach'] as bool,
     );
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'user_id': userId,
-      'name': name,
-      'email': email,
-      'phone': phone,
-      'gender': gender,
-      'description': description,
-      'is_coach': isCoach,
-    };
   }
 }
