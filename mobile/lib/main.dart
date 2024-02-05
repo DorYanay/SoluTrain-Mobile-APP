@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/pages/main/main_page.dart';
+import 'package:mobile/app_model.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+        create: (context) => AppModel(),
+        child: const MyApp(),
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,7 +24,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const MainPage(),
+        home: const MainPage(),
     );
   }
 }

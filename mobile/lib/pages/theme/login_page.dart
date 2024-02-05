@@ -4,26 +4,6 @@ import 'package:mobile/widgets/my_login_button.dart';
 import 'package:mobile/widgets/my_square_tile.dart';
 import 'package:mobile/widgets/my_textfield.dart';
 
-/*
-
-L O G I N P A G E
-
-This is the LoginPage, the first page the user will see based off what was configured in the main.dart file.
-This is a minimal aesthetic design, but feel free to decorate it to fit your app.
-
-When considering loggin users into your app, you must consider AUTHENTICATION:
-
-- email sign in
-- google sign in
-- apple sign in
-- facebook sign in, etc
-
-There are many authentication services including firebase. This is highly dependent on your needs.
-
-Once the user is authenticated, they are directed to the homepage.
-
-*/
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
