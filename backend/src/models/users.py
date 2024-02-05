@@ -43,7 +43,7 @@ class User:
 
 
 @db_named_query
-def create_user(db: psycopg.Connection, name: str, email: str, password_hash: str, phone: str, gender: Gender, is_coach: bool) -> User:
+def create_user(db: psycopg.Connection, name: str, email: str, password_hash: str, phone: str, gender: Gender) -> User:
     user_id = uuid4()
     user = User(
         user_id=user_id,
@@ -53,13 +53,13 @@ def create_user(db: psycopg.Connection, name: str, email: str, password_hash: st
         phone=phone,
         gender=gender,
         description="",
-        is_coach=is_coach,
+        is_coach=False,
     )
 
     with db.cursor() as cursor:
         cursor.execute(
             """INSERT INTO public.users (id, name, email, password_hash, phone, gender, description, is_coach)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, True, %s);""",
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);""",
             (
                 str(user.user_id),
                 str(user.name),
