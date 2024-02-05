@@ -22,15 +22,29 @@ class _SighUpPageState extends State<SighUpPage> {
   final phoneController = TextEditingController();
   Gender? gender;
 
-  String errorMessage = "";
+  String userMessage = "";
+  Color userMessageColor = Colors.green;
+  bool moveToLogin = false;
 
   void setErrorMessage(String message) {
     setState(() {
-      errorMessage = message;
+      userMessage = message;
+      userMessageColor = Colors.red;
+    });
+  }
+
+  void setSuccessMessage(String message) {
+    setState(() {
+      userMessage = message;
+      userMessageColor = Colors.green;
     });
   }
 
   void signUpOnTap() {
+    if (moveToLogin) {
+      widget.showLogin();
+    }
+
     // validation
     if (nameController.text == '') {
       setErrorMessage('Name is required!');
@@ -42,6 +56,8 @@ class _SighUpPageState extends State<SighUpPage> {
       return;
     }
 
+    setErrorMessage("");
+
     // send the request
     API.post('/auth/signup', params: {
       'name': nameController.text,
@@ -49,20 +65,24 @@ class _SighUpPageState extends State<SighUpPage> {
       'password': passwordController.text,
       'phone': phoneController.text,
       'gender': gender == Gender.male ? "male" : "female",
-      'is_coach': "false",
     }).then((Response res) {
-      print("Got Response");
       if (res.hasError) {
-        setErrorMessage(res.errorMessage);
+        if (res.errorMessage != "") {
+          setErrorMessage(res.errorMessage);
+        } else {
+          setErrorMessage("The sign up failed");
+        }
         return;
       }
 
-      print(res);
-    }).onError((error, stackTrace) {
-      print('error');
-    });
+      setSuccessMessage("You sign up successfully");
 
-    print("API request sended");
+      setState(() {
+        moveToLogin = true;
+      });
+    }).onError((error, stackTrace) {
+      setErrorMessage("The sign up failed because the network");
+    });
   }
 
   void loginOnTap() {
@@ -177,9 +197,9 @@ class _SighUpPageState extends State<SighUpPage> {
                 const SizedBox(height: 10),
 
                 Text(
-                  errorMessage,
-                  style: const TextStyle(
-                    color: Colors.red,
+                  userMessage,
+                  style: TextStyle(
+                    color: userMessageColor,
                   ),
                 ),
 
@@ -187,31 +207,39 @@ class _SighUpPageState extends State<SighUpPage> {
 
                 AppButton(
                   onTap: signUpOnTap,
-                  text: "Sign Up",
+                  text: moveToLogin ? "To Login Page" : "Sign Up",
                 ),
 
                 const SizedBox(height: 30),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Already a member?',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                    const SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: loginOnTap,
-                      child: const Text(
-                        'Login now',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                Builder(
+                  builder: (context) {
+                    if (moveToLogin) {
+                      return const SizedBox(height: 10);
+                    }
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Already a member?',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary),
                         ),
-                      ),
-                    ),
-                  ],
-                )
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: loginOnTap,
+                          child: const Text(
+                            'Login now',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
           ),

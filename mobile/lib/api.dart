@@ -9,11 +9,12 @@ import 'schemas.dart' show Schema;
 class Response {
   final dynamic data;
   final int statusCode;
+  final String errorBody;
   final String errorMessage;
 
   get hasError => statusCode != 200;
 
-  Response(this.data, this.statusCode, this.errorMessage);
+  Response(this.data, this.statusCode, this.errorBody, this.errorMessage);
 }
 
 class API {
@@ -30,12 +31,26 @@ class API {
     );
 
     if (response.statusCode != 200) {
-      return Response(null, response.statusCode, response.body);
+      String errorMessage = '';
+
+      try {
+        dynamic errorObject =  jsonDecode(response.body);
+
+        dynamic detail = errorObject['detail'];
+
+        if (detail is String) {
+          errorMessage = detail;
+        }
+      } on FormatException {
+        errorMessage = '';
+      }
+
+      return Response(null, response.statusCode, response.body, errorMessage);
     }
 
     dynamic data = jsonDecode(response.body);
 
-    return Response(data, 200, '');
+    return Response(data, 200, '', '');
   }
 
   API._();
