@@ -43,6 +43,7 @@ class _SighUpPageState extends State<SighUpPage> {
   void signUpOnTap() {
     if (moveToLogin) {
       widget.showLogin();
+      return;
     }
 
     // validation
