@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/widgets/app_button.dart';
 import 'package:mobile/widgets/app_textfield.dart';
+import 'package:mobile/api.dart';
 
 enum Gender { male, female }
 
@@ -21,8 +22,47 @@ class _SighUpPageState extends State<SighUpPage> {
   final phoneController = TextEditingController();
   Gender? gender;
 
-  void signUpOnTap() {
+  String errorMessage = "";
 
+  void setErrorMessage(String message) {
+    setState(() {
+      errorMessage = message;
+    });
+  }
+
+  void signUpOnTap() {
+    // validation
+    if (nameController.text == '') {
+      setErrorMessage('Name is required!');
+      return;
+    }
+
+    if (gender == null) {
+      setErrorMessage('Gender is required!');
+      return;
+    }
+
+    // send the request
+    API.post('/auth/signup', params: {
+      'name': nameController.text,
+      'email': emailController.text,
+      'password': passwordController.text,
+      'phone': phoneController.text,
+      'gender': gender == Gender.male ? "male" : "female",
+      'is_coach': "false",
+    }).then((Response res) {
+      print("Got Response");
+      if (res.hasError) {
+        setErrorMessage(res.errorMessage);
+        return;
+      }
+
+      print(res);
+    }).onError((error, stackTrace) {
+      print('error');
+    });
+
+    print("API request sended");
   }
 
   void loginOnTap() {
@@ -39,7 +79,7 @@ class _SighUpPageState extends State<SighUpPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 10),
 
                 Image.asset(
                   'lib/images/unlock.png',
@@ -47,7 +87,7 @@ class _SighUpPageState extends State<SighUpPage> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
 
-                const SizedBox(height: 50),
+                const SizedBox(height: 10),
 
                 Text(
                   'Let\'s create an account for you',
@@ -57,7 +97,7 @@ class _SighUpPageState extends State<SighUpPage> {
                   ),
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 15),
 
                 AppTextField(
                   controller: nameController,
@@ -134,14 +174,23 @@ class _SighUpPageState extends State<SighUpPage> {
                   ],
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 10),
+
+                Text(
+                  errorMessage,
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+
+                const SizedBox(height: 15),
 
                 AppButton(
                   onTap: signUpOnTap,
                   text: "Sign Up",
                 ),
 
-                const SizedBox(height: 50),
+                const SizedBox(height: 30),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

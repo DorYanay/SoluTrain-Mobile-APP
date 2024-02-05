@@ -17,13 +17,7 @@ class Response {
 }
 
 class API {
-  static Future<Response> post(String endpoint, {Map<String, dynamic>? params, Schema? body}) async {
-    String bodyJson = '{}';
-
-    if (body != null) {
-      bodyJson = jsonEncode(body.toJson());
-    }
-
+  static Future<Response> post(String endpoint, {Map<String, dynamic>? params}) async {
     final response = await http.post(
       Uri(
           scheme: Config.apiIsHttps ? 'https' : 'http',
@@ -32,15 +26,14 @@ class API {
           path: endpoint,
           queryParameters: params
       ),
-      body: bodyJson,
       headers: {'Content-Type': 'application/json'},
     );
-
-    dynamic data = jsonDecode(response.body);
 
     if (response.statusCode != 200) {
       return Response(null, response.statusCode, response.body);
     }
+
+    dynamic data = jsonDecode(response.body);
 
     return Response(data, 200, '');
   }
