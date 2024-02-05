@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/pages/profile/trainer_profile_page.dart';
-import 'package:mobile/pages/profile/coach_profile_page.dart';
+//import 'package:mobile/profile/profile/coach_profile_page.dart';
 
 void main() {
   runApp(const SoluTrainApp());
