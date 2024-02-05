@@ -2,49 +2,29 @@ from uuid import UUID
 
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from starlette import status
 
 from src.models import db_dependency
-from src.models.groups import get_coach_groups, get_tariner_groups
 from src.models.users import User, get_user_by_email, get_user_by_id, update_user, update_user_password
-from src.schemas import GroupInfoSchema, GroupSchema, UserSchema
+from src.schemas import UserSchema
 from src.security import create_hash, get_current_user, update_auth_logged_user_data
 from src.validators import validate_email
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
-class ProfileSchema(BaseModel):
-    user: UserSchema
-    is_coach: bool
-    in_groups: list[GroupInfoSchema]
-    coach_groups: list[GroupSchema]
-
-
 @router.post("/get")
-def route_get(db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> ProfileSchema:
-    in_groups = get_tariner_groups(db, current_user.user_id)
-    coach_groups = []
-
-    if current_user.is_coach:
-        coach_groups = get_coach_groups(db, current_user.user_id)
-
-    return ProfileSchema(
-        user=UserSchema.from_model(current_user),
-        is_coach=current_user.is_coach,
-        in_groups=[GroupInfoSchema.from_model(row) for row in in_groups],
-        coach_groups=[GroupSchema.from_model(group, current_user.name) for group in coach_groups],
-    )
+def route_get(current_user: User = Depends(get_current_user)) -> UserSchema:
+    return UserSchema.from_model(current_user)
 
 
 @router.post("/update-details")
 def route_update_details(
     auth_token: UUID,
-    new_name: str | None,
-    new_email: str | None,
-    new_phone: str | None,
-    new_description: str | None,
+    new_name: str | None = None,
+    new_email: str | None = None,
+    new_phone: str | None = None,
+    new_description: str | None = None,
     db: psycopg.Connection = Depends(db_dependency),
     current_user: User = Depends(get_current_user),
 ) -> UserSchema:

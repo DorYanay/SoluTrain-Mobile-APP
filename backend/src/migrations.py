@@ -61,20 +61,12 @@ def create_database(cursor: psycopg.Cursor) -> None:
             street VARCHAR(255) NOT NULL
         );
 
-        CREATE TABLE public.group_calendar (
-            id UUID PRIMARY KEY,
-            group_id UUID NOT NULL
-                REFERENCES public.groups (id),
-            day_of_week INTEGER NOT NULL,
-            day_of_month INTEGER NOT NULL,
-            duration INTEGER NOT NULL
-        );
-
         CREATE TABLE public.group_members (
             group_id UUID NOT NULL
                 REFERENCES public.groups (id),
             user_id UUID NOT NULL
-                REFERENCES public.users (id)
+                REFERENCES public.users (id),
+            PRIMARY KEY (group_id, user_id)
         );
 
         CREATE TABLE public.meetings (
@@ -91,7 +83,8 @@ def create_database(cursor: psycopg.Cursor) -> None:
             meeting_id UUID NOT NULL
                 REFERENCES public.meetings (id),
             user_id UUID NOT NULL
-                REFERENCES public.users (id)
+                REFERENCES public.users (id),
+            PRIMARY KEY (meeting_id, user_id)
         );
         """
     )
