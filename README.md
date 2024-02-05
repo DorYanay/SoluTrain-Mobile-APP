@@ -104,6 +104,8 @@ Note: the **API** means the backend and the **app** means the mobile app.
   * .env - Environment variables file for local development only. Can be loaded by Android Studio
   * pubspec.lock - Pubspec lock file, for managing the dependencies (changed only by pub)
   * pubspec.yaml - Pubspec project file, for managing the dependencies
+* docs - documentation
+* res - resources
 * scripts - Scripts for development in the project
   * clean.sh - Cleaning the cache of the project
   * fix-lint.sh - Run the formatters and the Linters of the project, for CI.

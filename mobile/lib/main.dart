@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/pages/profile/trainer_profile_page.dart';
-//import 'package:mobile/profile/profile/coach_profile_page.dart';
+import 'package:mobile/pages/theme/main_page.dart';
 
 void main() {
-  runApp(const SoluTrainApp());
+  runApp(const MyApp());
 }
 
-class SoluTrainApp extends StatelessWidget {
-  const SoluTrainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SoluTrain',
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: TrainerProfilePage(),
+      debugShowCheckedModeBanner: false,
+      home: const MainPage(),
     );
   }
 }
