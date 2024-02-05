@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/components/my_bottom_nav_bar.dart';
-import 'package:mobile/components/my_drawer.dart';
+import 'package:mobile/widgets/my_bottom_nav_bar.dart';
+import 'package:mobile/widgets/my_drawer.dart';
 import 'package:mobile/pages/theme/home_page.dart';
 import 'package:mobile/pages/theme/profile_page.dart';
 import 'package:mobile/pages/theme/setting_page.dart';
