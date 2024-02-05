@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
-import 'config.dart' show Config;
-import 'schemas.dart' show Schema;
+import 'package:mobile/app_model.dart';
+import 'package:mobile/config.dart' show Config;
 
 // This file handle the communication with the API
 
@@ -18,7 +20,7 @@ class Response {
 }
 
 class API {
-  static Future<Response> post(String endpoint, {Map<String, dynamic>? params}) async {
+  static Future<Response> guestPost(String endpoint, {Map<String, dynamic>? params}) async {
     final response = await http.post(
       Uri(
           scheme: Config.apiIsHttps ? 'https' : 'http',
@@ -51,6 +53,15 @@ class API {
     dynamic data = jsonDecode(response.body);
 
     return Response(data, 200, '', '');
+  }
+
+  static Future<Response> post(BuildContext context, String endpoint, {Map<String, dynamic>? params}) async {
+
+    params ??= <String, dynamic>{};
+
+    params['auth_token'] = Provider.of<AppModel>(context, listen: false).authToken;
+
+    return API.guestPost(endpoint, params: params);
   }
 
   API._();

@@ -43,6 +43,7 @@ class _SighUpPageState extends State<SighUpPage> {
   void signUpOnTap() {
     if (moveToLogin) {
       widget.showLogin();
+      return;
     }
 
     // validation
@@ -59,7 +60,7 @@ class _SighUpPageState extends State<SighUpPage> {
     setErrorMessage("");
 
     // send the request
-    API.post('/auth/signup', params: {
+    API.guestPost('/auth/signup', params: {
       'name': nameController.text,
       'email': emailController.text,
       'password': passwordController.text,

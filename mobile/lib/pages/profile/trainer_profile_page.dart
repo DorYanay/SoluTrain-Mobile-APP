@@ -10,7 +10,7 @@ class TrainerProfilePage extends StatefulWidget {
 
 class _TrainerProfilePageState extends State<TrainerProfilePage> {
   String userId = "userId";
-  User user = new User("bla", "ori", "ori@gmail.com", "231232", "d", "melech ahoosharmoota", false);
+  UserSchema user = UserSchema("bla", "ori", "ori@gmail.com", "231232", "d", "melech ahoosharmoota", false);
 
   @override
   void initState() {

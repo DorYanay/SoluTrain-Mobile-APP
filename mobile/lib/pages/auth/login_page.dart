@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/app_model.dart';
+import 'package:mobile/schemas.dart';
 import 'package:mobile/widgets/app_button.dart';
 import 'package:mobile/widgets/app_textfield.dart';
+import 'package:mobile/api.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function() showSighUp;
@@ -15,8 +19,35 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void loginOnTap() {
+  String userMessage = '';
 
+  void setErrorMessage(String message) {
+    setState(() {
+      userMessage = message;
+    });
+  }
+
+  void loginOnTap() {
+    API.guestPost('/auth/login', params: {
+      'email': emailController.text,
+      'password': passwordController.text,
+    }).then((Response res) {
+      if (res.hasError) {
+        if (res.errorMessage != "") {
+          setErrorMessage(res.errorMessage);
+        } else {
+          setErrorMessage("The login failed");
+        }
+        return;
+      }
+
+      LoginResponseSchema data = LoginResponseSchema.fromJson(res.data);
+
+      Provider.of<AppModel>(context, listen: false).setLogin(data);
+
+    }).onError((error, stackTrace) {
+      setErrorMessage("The login failed because the network");
+    });
   }
 
   void signUpNowOnTap() {
@@ -65,6 +96,15 @@ class _LoginPageState extends State<LoginPage> {
                   controller: passwordController,
                   hintText: 'Password',
                   obscureText: true,
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  userMessage,
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
                 ),
 
                 const SizedBox(height: 10),
@@ -129,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
