@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/widgets/app_button.dart';
-import 'package:mobile/widgets/app_textfield.dart';
+import 'package:mobile/minimallogin/components/my_button.dart';
+import 'package:mobile/minimallogin/components/my_textfield.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SighUpPage extends StatefulWidget {
+  final void Function() showLogin;
+
+  const SighUpPage({super.key, required this.showLogin});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SighUpPage> createState() => _SighUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SighUpPageState extends State<SighUpPage> {
   final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
 
-  void clickOnLogin() {
+  final confirmPasswordController = TextEditingController();
+
+  void signUpOnTap() {
 
   }
 
-  void clickOnSignUp() {
-
+  void loginOnTap() {
+    widget.showLogin();
   }
 
   @override
@@ -42,16 +47,16 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 50),
 
                 Text(
-                  'Welcome back you\'ve been missed!',
+                  'Let\'s create an account for you',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Colors.grey[700],
                     fontSize: 16,
                   ),
                 ),
 
                 const SizedBox(height: 25),
 
-                AppTextField(
+                MyTextField(
                   controller: emailController,
                   hintText: 'Email',
                   obscureText: false,
@@ -59,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 10),
 
-                AppTextField(
+                MyTextField(
                   controller: passwordController,
                   hintText: 'Password',
                   obscureText: true,
@@ -67,62 +72,36 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 10),
 
-                // sign in button
-                AppButton(
-                  onTap: clickOnLogin,
-                  text: "Login",
+                MyTextField(
+                  controller: confirmPasswordController,
+                  hintText: 'Confirm password',
+                  obscureText: true,
                 ),
 
                 const SizedBox(height: 25),
 
-                // or continue with
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Theme.of(context).colorScheme.tertiary,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          'Or continue with',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Theme.of(context).colorScheme.tertiary,
-                        ),
-                      ),
-                    ],
-                  ),
+                MyButton(
+                  onTap: signUpOnTap,
+                  text: "Sign Up",
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 50),
 
-                const SizedBox(height: 25),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Not a member?',
+                      'Already a member?',
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
                     const SizedBox(width: 4),
                     GestureDetector(
-                      onTap: clickOnSignUp,
-                      child: Text(
-                        'Sign Up now',
+                      onTap: loginOnTap,
+                      child: const Text(
+                        'Login now',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
