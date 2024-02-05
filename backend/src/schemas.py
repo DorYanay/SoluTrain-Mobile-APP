@@ -11,6 +11,13 @@ from src.models.users import Gender, User
 class UserBaseSchema(BaseModel):
     user_id: str
     name: str
+    email: str
+    phone: str
+    gender: Gender
+
+    @staticmethod
+    def from_model(user: User) -> UserBaseSchema:
+        return UserBaseSchema(user_id=str(user.user_id), name=user.name, email=user.email, phone=user.phone, gender=user.gender)
 
 
 class UserSchema(BaseModel):
@@ -111,7 +118,7 @@ class MeetSchema(BaseModel):
     members: list[UserBaseSchema]
 
     @staticmethod
-    def from_model(meet: Meet, members: list[UserBaseSchema]) -> MeetSchema:
+    def from_model(meet: Meet, members: list[User]) -> MeetSchema:
         return MeetSchema(
             meet_id=str(meet.meet_id),
             group_id=str(meet.group_id),
@@ -120,7 +127,7 @@ class MeetSchema(BaseModel):
             meet_time=str(meet.meet_time),
             duration=meet.duration,
             location=meet.location,
-            members=members,
+            members=[UserBaseSchema.from_model(member) for member in members],
         )
 
 
@@ -133,7 +140,28 @@ class MeetInfoSchema(BaseModel):
     full: bool
     registered: bool
 
+    @staticmethod
+    def from_model(meet: Meet, full: bool, registered: bool) -> MeetInfoSchema:
+        return MeetInfoSchema(
+            meet_id=str(meet.meet_id),
+            meet_date=str(meet.meet_date),
+            meet_time=str(meet.meet_time),
+            duration=meet.duration,
+            location=meet.location,
+            full=full,
+            registered=registered,
+        )
+
 
 class GroupViewInfoSchema(BaseModel):
     group: GroupSchema
+    meets: list[MeetInfoSchema]
+
+
+class MyGroupsSchema(BaseModel):
+    in_groups: list[GroupInfoSchema]
+    coach_groups: list[GroupSchema]
+
+
+class MyMeetsSchema(BaseModel):
     meets: list[MeetInfoSchema]
