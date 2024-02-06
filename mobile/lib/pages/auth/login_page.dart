@@ -19,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  bool waitForRequest = false;
+
   String userMessage = '';
 
   void setErrorMessage(String message) {
@@ -28,6 +30,16 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void loginOnTap() {
+    if (waitForRequest) {
+      return;
+    }
+
+    setErrorMessage("");
+
+    setState(() {
+      waitForRequest = true;
+    });
+
     API.guestPost('/auth/login', params: {
       'email': emailController.text.toLowerCase(),
       'password': passwordController.text,
@@ -38,13 +50,23 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           setErrorMessage("The login failed");
         }
+
+        setState(() {
+          waitForRequest = false;
+        });
         return;
       }
 
       LoginResponseSchema data = LoginResponseSchema.fromJson(res.data);
 
       Provider.of<AppModel>(context, listen: false).setLogin(data);
+      setState(() {
+        waitForRequest = false;
+      });
     }).onError((error, stackTrace) {
+      setState(() {
+        waitForRequest = false;
+      });
       setErrorMessage("The login failed because the network");
     });
   }

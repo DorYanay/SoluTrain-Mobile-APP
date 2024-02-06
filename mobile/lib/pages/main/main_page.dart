@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/widgets/bottom_nav_bar.dart';
+import 'package:mobile/widgets/app_bottom_nav_bar.dart';
 import 'package:mobile/widgets/app_drawer.dart';
 import 'package:mobile/pages/example/example_page.dart';
 import 'package:mobile/pages/auth/auth_page.dart';
@@ -60,7 +60,7 @@ class _MainPageState extends State<MainPage> {
           ),
           drawer: const AppDrawer(),
           body: _pages[_selectedIndex],
-          bottomNavigationBar: BottomNavBar(
+          bottomNavigationBar: AppBottomNavBar(
             onTabChange: (index) => navigateBottomBar(index),
           ),
         );
