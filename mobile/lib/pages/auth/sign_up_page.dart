@@ -39,7 +39,53 @@ class _SighUpPageState extends State<SighUpPage> {
       userMessageColor = Colors.green;
     });
   }
+  //check if a string has only numbers
+  bool isValidPhoneNumber(String phoneNumber) {
+    // Check if the phone number contains only digits or starts with "+"
+    if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) && !phoneNumber.startsWith('+')) {
+      return false;
+    }
 
+    // Check if the phone number has the correct length
+    if (phoneNumber.length < 10 || phoneNumber.length > 14) {
+      return false;
+    }
+
+    // If all checks pass, the phone number is valid
+    return true;
+  }
+//PHONE VALIDATION
+  bool _containsOnlyDigits(String str) {
+    for (int i = 0; i < str.length; i++) {
+      if (!isDigit(str[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool isDigit(String s) {
+    return double.tryParse(s) != null;
+  }
+  //EMAIL VALIDATION
+  bool isValidEmail(String email) {
+    if (email.isEmpty) {
+      return false; // Email cannot be null or empty
+    }
+
+    // Check if "@" symbol exists and is not the first or last character
+    if (!email.contains('@') || email.startsWith('@') || email.endsWith('@')) {
+      return false;
+    }
+
+    // Check if "." symbol exists and is not the first or last character after "@"
+    int dotIndex = email.indexOf('.', email.indexOf('@'));
+    if (dotIndex == -1 || dotIndex == email.indexOf('@') + 1 || dotIndex == email.length - 1) {
+      return false;
+    }
+
+    return true;
+  }
   void signUpOnTap() {
     if (moveToLogin) {
       widget.showLogin();
@@ -47,11 +93,43 @@ class _SighUpPageState extends State<SighUpPage> {
     }
 
     // validation
+// Check if passwords are not empty and if they match
+    if (passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
+      setErrorMessage('One or both passwords are empty');
+      return;
+    }
+
+    if (!(passwordController.text == confirmPasswordController.text)) {
+      // Either one or both passwords are empty, or they don't match
+      // You should handle this case accordingly
+      setErrorMessage('Passwords do not match');
+      return;
+    }
+    if (phoneController.text.isEmpty){
+      setErrorMessage('Phone field is empty');
+      return;
+    }
+    if (nameController.text.isEmpty){
+      setErrorMessage('Name field is empty');
+      return;
+    }
+    if (emailController.text.isEmpty){
+      setErrorMessage('Email field is empty');
+      return;
+    }
     if (nameController.text == '') {
       setErrorMessage('Name is required!');
       return;
     }
-
+    if(!isValidPhoneNumber(phoneController.text)){
+      setErrorMessage('Use only positive numbers in phone field.');
+      return;
+    }
+    if(!isValidEmail(emailController.text)){
+      setErrorMessage('Invalid Email address.');
+      return;
+    }
     if (gender == null) {
       setErrorMessage('Gender is required!');
       return;
@@ -62,7 +140,7 @@ class _SighUpPageState extends State<SighUpPage> {
     // send the request
     API.guestPost('/auth/signup', params: {
       'name': nameController.text,
-      'email': emailController.text,
+      'email': emailController.text.toLowerCase(),
       'password': passwordController.text,
       'phone': phoneController.text,
       'gender': gender == Gender.male ? "male" : "female",

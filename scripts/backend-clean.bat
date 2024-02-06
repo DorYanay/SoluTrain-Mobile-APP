@@ -9,3 +9,5 @@ del /s /q /f *.pyc
 del /s /q /f *.pyo
 del /s /q /f *~
 for /d %%x in (__pycache__) do @rd /s /q "%%x"
+
+pause
