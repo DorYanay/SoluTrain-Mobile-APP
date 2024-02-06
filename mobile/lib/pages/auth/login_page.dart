@@ -66,9 +66,9 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 50),
 
                 Image.asset(
-                  'lib/images/unlock.png',
-                  height: 100,
-                  color: Theme.of(context).colorScheme.primary,
+                  'lib/images/solutrain2.png',
+                  height: 250,
+                  // color: Theme.of(context).colorScheme.primary,
                 ),
 
                 const SizedBox(height: 50),
