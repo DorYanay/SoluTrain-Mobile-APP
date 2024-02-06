@@ -44,7 +44,6 @@ class _LoginPageState extends State<LoginPage> {
       LoginResponseSchema data = LoginResponseSchema.fromJson(res.data);
 
       Provider.of<AppModel>(context, listen: false).setLogin(data);
-
     }).onError((error, stackTrace) {
       setErrorMessage("The login failed because the network");
     });

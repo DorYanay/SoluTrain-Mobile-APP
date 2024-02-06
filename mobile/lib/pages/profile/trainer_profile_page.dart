@@ -10,7 +10,8 @@ class TrainerProfilePage extends StatefulWidget {
 
 class _TrainerProfilePageState extends State<TrainerProfilePage> {
   String userId = "userId";
-  UserSchema user = UserSchema("bla", "ori", "ori@gmail.com", "231232", "d", "melech ahoosharmoota", false);
+  UserSchema user = UserSchema("bla", "ori", "ori@gmail.com", "231232", "d",
+      "melech ahoosharmoota", false);
 
   @override
   void initState() {
@@ -57,17 +58,18 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 fontSize: 20.0,
               ),
             ),
-            SizedBox(height: 10.0,),
-            Text(
-                user.name,
+            SizedBox(
+              height: 10.0,
+            ),
+            Text(user.name,
                 style: TextStyle(
                     color: Colors.amberAccent[200],
                     letterSpacing: 2.0,
                     fontSize: 28.0,
-                    fontWeight: FontWeight.bold
-                )
+                    fontWeight: FontWeight.bold)),
+            SizedBox(
+              height: 20.0,
             ),
-            SizedBox(height: 20.0,),
             Text(
               'Status',
               style: TextStyle(
@@ -76,17 +78,18 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 fontSize: 20.0,
               ),
             ),
-            SizedBox(height: 10.0,),
-            Text(
-                "yes",
+            SizedBox(
+              height: 10.0,
+            ),
+            Text("yes",
                 style: TextStyle(
                     color: Colors.amberAccent[200],
                     letterSpacing: 2.0,
                     fontSize: 28.0,
-                    fontWeight: FontWeight.bold
-                )
+                    fontWeight: FontWeight.bold)),
+            SizedBox(
+              height: 20.0,
             ),
-            SizedBox(height: 20.0,),
             Text(
               'Personal information',
               style: TextStyle(
@@ -95,48 +98,40 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 fontSize: 20.0,
               ),
             ),
-            SizedBox(height: 10.0,),
-            Text(
-                "16",
+            SizedBox(
+              height: 10.0,
+            ),
+            Text("16",
                 style: TextStyle(
                     color: Colors.amberAccent[200],
                     letterSpacing: 2.0,
                     fontSize: 18.0,
-                    fontWeight: FontWeight.bold
-                )
-            ),
-            Text(
-                'Activity level:',
+                    fontWeight: FontWeight.bold)),
+            Text('Activity level:',
                 style: TextStyle(
                     color: Colors.amberAccent[200],
                     letterSpacing: 2.0,
                     fontSize: 18.0,
-                    fontWeight: FontWeight.bold
-                )
-            ),
+                    fontWeight: FontWeight.bold)),
             Row(
               children: [
-                Text(
-                    'Gender:',
+                Text('Gender:',
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
                         fontSize: 18.0,
-                        fontWeight: FontWeight.bold
-                    )
-                ),
-                Text(
-                    user.gender,
+                        fontWeight: FontWeight.bold)),
+                Text(user.gender,
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
                         fontSize: 18.0,
-                        fontWeight: FontWeight.bold
-                    )
-                ),
+                        fontWeight: FontWeight.bold)),
               ],
             ),
-            SizedBox(height: 20.0,),
+            SizedBox(
+              height: 20.0,
+            ),
             Text(
               'Contact',
               style: TextStyle(
@@ -145,7 +140,9 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 fontSize: 20.0,
               ),
             ),
-            SizedBox(height: 10.0,),
+            SizedBox(
+              height: 10.0,
+            ),
             Row(
               children: <Widget>[
                 Icon(
@@ -153,7 +150,9 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   color: Colors.grey[400],
                   size: 35.0,
                 ),
-                SizedBox(width: 10.0,),
+                SizedBox(
+                  width: 10.0,
+                ),
                 Text(
                   user.email,
                   style: TextStyle(
@@ -164,18 +163,21 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 ),
               ],
             ),
-            SizedBox(height: 10.0,),
+            SizedBox(
+              height: 10.0,
+            ),
             Row(
               children: <Widget>[
                 Icon(
                   Icons.phone,
                   color: Colors.grey[400],
                   size: 35.0,
-
                 ),
-                SizedBox(width: 10.0,),
+                SizedBox(
+                  width: 10.0,
+                ),
                 Text(
-                 user.phone,
+                  user.phone,
                   style: TextStyle(
                     color: Colors.grey[400],
                     fontSize: 18.0,
@@ -190,4 +192,3 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
     ); //scaffold
   }
 }
-

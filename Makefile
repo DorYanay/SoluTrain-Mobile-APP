@@ -6,9 +6,11 @@ clean:
 
 fix:
 	cd backend && make fix
+	cd mobile && make fix
 
 lint:
 	cd backend && make lint
+	cd mobile && make lint
 
 # Run the formatters and linters
 fix-lint: fix lint

@@ -33,7 +33,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Consumer<AppModel>(
       builder: (BuildContext context, AppModel appModel, Widget? widget) {
         if (!appModel.loggedIn) {
@@ -46,14 +45,13 @@ class _MainPageState extends State<MainPage> {
             elevation: 0,
             backgroundColor: Colors.transparent,
             leading: Builder(
-              builder: (context) =>
-                  IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      color: Colors.grey.shade800,
-                    ),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  ),
+              builder: (context) => IconButton(
+                icon: Icon(
+                  Icons.menu,
+                  color: Colors.grey.shade800,
+                ),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
             ),
             title: Text(
               'SoluTrain',
