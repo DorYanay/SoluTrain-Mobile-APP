@@ -1,14 +1,14 @@
 from uuid import UUID
 
 import psycopg
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException
 from starlette import status
 
 from src.models import db_dependency
-from src.models.users import User, get_user_by_email, get_user_by_id, update_user, update_user_password
+from src.models.users import User, get_user_by_email, get_user_by_id, update_user, update_user_password, user_upload_certificate
 from src.schemas import UserSchema
 from src.security import create_hash, get_current_user, update_auth_logged_user_data
-from src.validators import validate_email
+from src.validators import validate_certificate_name, validate_email
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
@@ -16,6 +16,22 @@ router = APIRouter(dependencies=[Depends(get_current_user)])
 @router.post("/get")
 def route_get(current_user: User = Depends(get_current_user)) -> UserSchema:
     return UserSchema.from_model(current_user)
+
+
+@router.post("/upload-first-certificate")
+def route_upload_first_certificate(
+    file_name: str, file: bytes = File(), db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
+    if current_user.is_coach:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Your already have a first certificate")
+
+    if file_name == "":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File name cannot be empty")
+
+    if not validate_certificate_name(file_name):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only .pdf, .jpg, .jpeg, .png files are allowed")
+
+    user_upload_certificate(db, current_user.user_id, file_name, file)
 
 
 @router.post("/update-details")
