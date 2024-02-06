@@ -20,15 +20,15 @@ class Response {
 }
 
 class API {
-  static Future<Response> guestPost(String endpoint, {Map<String, dynamic>? params}) async {
+  static Future<Response> guestPost(String endpoint,
+      {Map<String, dynamic>? params}) async {
     final response = await http.post(
       Uri(
           scheme: Config.apiIsHttps ? 'https' : 'http',
           host: Config.apiHost,
           port: Config.apiPort,
           path: endpoint,
-          queryParameters: params
-      ),
+          queryParameters: params),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -36,7 +36,7 @@ class API {
       String errorMessage = '';
 
       try {
-        dynamic errorObject =  jsonDecode(response.body);
+        dynamic errorObject = jsonDecode(response.body);
 
         dynamic detail = errorObject['detail'];
 
@@ -55,11 +55,12 @@ class API {
     return Response(data, 200, '', '');
   }
 
-  static Future<Response> post(BuildContext context, String endpoint, {Map<String, dynamic>? params}) async {
-
+  static Future<Response> post(BuildContext context, String endpoint,
+      {Map<String, dynamic>? params}) async {
     params ??= <String, dynamic>{};
 
-    params['auth_token'] = Provider.of<AppModel>(context, listen: false).authToken;
+    params['auth_token'] =
+        Provider.of<AppModel>(context, listen: false).authToken;
 
     return API.guestPost(endpoint, params: params);
   }

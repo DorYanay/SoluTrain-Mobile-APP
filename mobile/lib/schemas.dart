@@ -23,7 +23,8 @@ class UserSchema {
   final String description;
   final bool isCoach;
 
-  UserSchema(this.userId, this.name, this.email, this.phone, this.gender, this.description, this.isCoach);
+  UserSchema(this.userId, this.name, this.email, this.phone, this.gender,
+      this.description, this.isCoach);
 
   factory UserSchema.fromJson(dynamic data) {
     return UserSchema(
@@ -38,7 +39,6 @@ class UserSchema {
   }
 }
 
-
 class LoginResponseSchema {
   final String authToken;
   final UserSchema user;
@@ -50,7 +50,9 @@ class LoginResponseSchema {
     return LoginResponseSchema(
       data['auth_token'] as String,
       UserSchema.fromJson(data['user']),
-      (data['areas'] as List<dynamic>).map((area) => AreaSchema.fromJson(area)).toList(),
+      (data['areas'] as List<dynamic>)
+          .map((area) => AreaSchema.fromJson(area))
+          .toList(),
     );
   }
 }

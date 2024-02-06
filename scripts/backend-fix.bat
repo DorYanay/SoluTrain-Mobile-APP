@@ -1,6 +1,6 @@
 @ECHO OFF
 
-REM This script runs all the formats
+REM This script runs all the formats of backend
 
 cd ../backend
 python -m isort src

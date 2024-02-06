@@ -1,6 +1,6 @@
 @ECHO OFF
 
-REM This script is used to clean up the project cache
+REM This script is used to clean up the backend project cache
 
 cd ../backend
 del /s /q .pytest_cache
