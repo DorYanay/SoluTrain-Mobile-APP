@@ -25,6 +25,8 @@ class _SighUpPageState extends State<SighUpPage> {
   final yearController = TextEditingController();
   Gender? gender;
 
+  bool waitForRequest = false;
+
   String userMessage = "";
   Color userMessageColor = Colors.green;
   bool moveToLogin = false;
@@ -42,10 +44,12 @@ class _SighUpPageState extends State<SighUpPage> {
       userMessageColor = Colors.green;
     });
   }
+
   //check if a string has only numbers
   bool isValidPhoneNumber(String phoneNumber) {
     // Check if the phone number contains only digits or starts with "+"
-    if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) && !phoneNumber.startsWith('+')) {
+    if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
+        !phoneNumber.startsWith('+')) {
       return false;
     }
 
@@ -57,6 +61,7 @@ class _SighUpPageState extends State<SighUpPage> {
     // If all checks pass, the phone number is valid
     return true;
   }
+
 //PHONE VALIDATION
   bool _containsOnlyDigits(String str) {
     for (int i = 0; i < str.length; i++) {
@@ -70,6 +75,7 @@ class _SighUpPageState extends State<SighUpPage> {
   bool isDigit(String s) {
     return double.tryParse(s) != null;
   }
+
   //EMAIL VALIDATION
   bool isValidEmail(String email) {
     if (email.isEmpty) {
@@ -83,12 +89,15 @@ class _SighUpPageState extends State<SighUpPage> {
 
     // Check if "." symbol exists and is not the first or last character after "@"
     int dotIndex = email.indexOf('.', email.indexOf('@'));
-    if (dotIndex == -1 || dotIndex == email.indexOf('@') + 1 || dotIndex == email.length - 1) {
+    if (dotIndex == -1 ||
+        dotIndex == email.indexOf('@') + 1 ||
+        dotIndex == email.length - 1) {
       return false;
     }
 
     return true;
   }
+
   //Date of birth Validation
   bool isValidDateOfBirth(String day, String month, String year) {
     // Check if any of the input strings are empty
@@ -102,12 +111,18 @@ class _SighUpPageState extends State<SighUpPage> {
     int yearInt = int.tryParse(year) ?? 0;
 
     // Check if day, month, and year are within valid ranges
-    if (dayInt < 1 || dayInt > 31 || monthInt < 1 || monthInt > 12 || yearInt < 1900 || yearInt > DateTime.now().year) {
+    if (dayInt < 1 ||
+        dayInt > 31 ||
+        monthInt < 1 ||
+        monthInt > 12 ||
+        yearInt < 1900 ||
+        yearInt > DateTime.now().year) {
       return false;
     }
 
     // Check if the day is valid for the given month and year
-    if (dayInt > 30 && (monthInt == 4 || monthInt == 6 || monthInt == 9 || monthInt == 11)) {
+    if (dayInt > 30 &&
+        (monthInt == 4 || monthInt == 6 || monthInt == 9 || monthInt == 11)) {
       return false;
     } else if (dayInt > 29 && monthInt == 2) {
       // Check for February in a leap year
@@ -121,14 +136,19 @@ class _SighUpPageState extends State<SighUpPage> {
     // Date of birth is valid
     return true;
   }
+
   void signUpOnTap() {
     if (moveToLogin) {
       widget.showLogin();
       return;
     }
 
+    if (waitForRequest) {
+      return;
+    }
+
     // validation
-// Check if passwords are not empty and if they match
+    // Check if passwords are not empty and if they match
     if (passwordController.text.isEmpty ||
         confirmPasswordController.text.isEmpty) {
       setErrorMessage('One or both passwords are empty');
@@ -141,15 +161,15 @@ class _SighUpPageState extends State<SighUpPage> {
       setErrorMessage('Passwords do not match');
       return;
     }
-    if (phoneController.text.isEmpty){
+    if (phoneController.text.isEmpty) {
       setErrorMessage('Phone field is empty');
       return;
     }
-    if (nameController.text.isEmpty){
+    if (nameController.text.isEmpty) {
       setErrorMessage('Name field is empty');
       return;
     }
-    if (emailController.text.isEmpty){
+    if (emailController.text.isEmpty) {
       setErrorMessage('Email field is empty');
       return;
     }
@@ -157,11 +177,11 @@ class _SighUpPageState extends State<SighUpPage> {
       setErrorMessage('Name is required!');
       return;
     }
-    if(!isValidPhoneNumber(phoneController.text)){
+    if (!isValidPhoneNumber(phoneController.text)) {
       setErrorMessage('Use only positive numbers in phone field.');
       return;
     }
-    if(!isValidEmail(emailController.text)){
+    if (!isValidEmail(emailController.text)) {
       setErrorMessage('Invalid Email address.');
       return;
     }
@@ -169,13 +189,21 @@ class _SighUpPageState extends State<SighUpPage> {
       setErrorMessage('Gender is required!');
       return;
     }
-    if(!isValidDateOfBirth(dayController.text, monthController.text, yearController.text)){
+    if (!isValidDateOfBirth(
+        dayController.text, monthController.text, yearController.text)) {
       setErrorMessage('Invalid Date of Birth');
       return;
     }
 
+    DateTime dateOfBirth = DateTime(int.parse(yearController.text),
+        int.parse(monthController.text), int.parse(dayController.text));
+
     setErrorMessage("");
-    DateTime dateOfBirth = DateTime(int.parse(yearController.text), int.parse(monthController.text), int.parse(dayController.text));
+
+    setState(() {
+      waitForRequest = true;
+    });
+
     // send the request
     API.guestPost('/auth/signup', params: {
       'name': nameController.text,
@@ -191,16 +219,24 @@ class _SighUpPageState extends State<SighUpPage> {
         } else {
           setErrorMessage("The sign up failed");
         }
+        setState(() {
+          waitForRequest = false;
+        });
+
         return;
       }
 
       setSuccessMessage("You sign up successfully");
 
       setState(() {
+        waitForRequest = false;
         moveToLogin = true;
       });
     }).onError((error, stackTrace) {
       setErrorMessage("The sign up failed because the network");
+      setState(() {
+        waitForRequest = false;
+      });
     });
   }
 
@@ -247,33 +283,33 @@ class _SighUpPageState extends State<SighUpPage> {
                     color: Colors.black, // Set the color to light purple
                   ),
                 ),
-              Row(
-                children: [
-                  Expanded(
-                    child: AppTextField(
-                      controller: dayController,
-                      hintText: 'Day',
-                      obscureText: false,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppTextField(
+                        controller: dayController,
+                        hintText: 'Day',
+                        obscureText: false,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 0),
-                  Expanded(
-                    child: AppTextField(
-                      controller: monthController,
-                      hintText: 'Month',
-                      obscureText: false,
+                    const SizedBox(width: 0),
+                    Expanded(
+                      child: AppTextField(
+                        controller: monthController,
+                        hintText: 'Month',
+                        obscureText: false,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 0),
-                  Expanded(
-                    child: AppTextField(
-                      controller: yearController,
-                      hintText: 'Year',
-                      obscureText: false,
+                    const SizedBox(width: 0),
+                    Expanded(
+                      child: AppTextField(
+                        controller: yearController,
+                        hintText: 'Year',
+                        obscureText: false,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
                 const SizedBox(height: 10),
                 AppTextField(
                   controller: emailController,
