@@ -94,9 +94,11 @@ Note: the **API** means the backend and the **app** means the mobile app.
   * android - The Android App, for customiztion for Android
   * ios - The iOS App, for customiztion for iOS
   * lib - The source code
+    * images - Static images for the app
     * pages - Pages of the app
-    * widgets - Cusotom reusable widgets for the app
+    * widgets - Custom reusable widgets for the app
     * api.dart - Handling the communication with the API
+    * app_model.dart - The model (global state) of the app
     * config.dart - The configuration of the app
     * main.dart - The entry point for the app
     * schemas.dart - The schemas of the API
@@ -106,11 +108,15 @@ Note: the **API** means the backend and the **app** means the mobile app.
   * pubspec.yaml - Pubspec project file, for managing the dependencies
 * docs - documentation
 * res - resources
-* scripts - Scripts for development in the project
-  * clean.sh - Cleaning the cache of the project
-  * fix-lint.sh - Run the formatters and the Linters of the project, for CI.
-  * fix.sh - Run the formatters of the project for cleaning the code, for CI.
-  * lint.sh - Run the Linters of the project for checking the code, for CI.
+* scripts - Scripts for development in the project\
+  * backend-clean.bat - For cleaning the cache of the backend
+  * backend-fix.bat - For running the Formaters of the backend
+  * backend-fix-lint.bat - For running the Formaters and Linters of the backend
+  * backend-lint.bat - For running the Linters of the backend
+  * backend-rebuild-db.bat - For rebuild the local database
+  * mobile-fix.bat - For running the Formaters of the mobile
+  * mobile-fix-lint.bat - For running the Formaters and Linters of the mobile
+  * mobile-lint.bat - For running the Linters of the mobile
 * environment.yml - Conda environment file
 * database-diagram.jpeg - Database diagram
 * docker-compose.yml - Docker compose file for local development
@@ -178,6 +184,11 @@ flowchart TD
 
 ## Get Started
 
+For running the mobile app open the project in Android Studio and run the app. \
+It will connect to the API in the cloud on render.com
+
+### Backend Local Development
+
 For starting the database run in a terminal the following commands:
 
 ```bash
@@ -199,7 +210,17 @@ python -m src
 
 And open in a browser the localhost:8000/docs
 
+You can also run the backend in a docker container by running the following commands:
+
+```bash
+docker-compose up --build backend
+```
+
+And open in a browser the 0.0.0.0:8000/docs
+
 ## CI
+
+### Linux / MacOS
 
 For running the Formaters and Linters run in a terminal the following commands:
 
@@ -222,6 +243,10 @@ sleep 1
 cd backend
 python -m src migrate
 ```
+
+### Windows
+
+For running the Formaters and Linters for mobile run the BAT file scripts/mobile-fix-lint.bat
 
 ## License
 
