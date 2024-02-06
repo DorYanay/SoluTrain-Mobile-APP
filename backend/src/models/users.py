@@ -145,3 +145,104 @@ def update_user_password(db: psycopg.Connection, user_id: UUID, password_hash: s
     with db.cursor() as cursor:
         cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s", [password_hash, str(user_id)])
         db.commit()
+
+
+class FileModel:
+    file_id: UUID
+    user_id: UUID
+    name: str
+    body: bytes
+
+    def __init__(self, file_id: UUID, user_id: UUID, name: str, body: bytes):
+        self.file_id = file_id
+        self.user_id = user_id
+        self.name = name
+        self.body = body
+
+
+@db_named_query
+def user_upload_certificate(db: psycopg.Connection, user_id: UUID, name: str, body: bytes) -> None:
+    file_id = uuid4()
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            INSERT INTO public.certificates (id, user_id, name, body) VALUES (%s, %s, %s, %s);
+            UPDATE users SET is_coach = true WHERE id = %s;
+            """,
+            [str(file_id), str(user_id), name, psycopg.Binary(body), str(user_id)],
+        )
+        db.commit()
+
+
+@db_named_query
+def get_user_certificate(db: psycopg.Connection, user_id: UUID, file_id: UUID) -> FileModel | None:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+        SELECT id, user_id, name, body FROM public.certificates
+        WHERE (id = %s AND user_id = %s)
+        """,
+            [str(file_id), str(user_id)],
+        )
+        db.commit()
+
+        row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return FileModel(file_id=row[0], user_id=row[1], name=str(row[2]), body=row[3])
+
+
+@db_named_query
+def get_user_certificates(db: psycopg.Connection, user_id: UUID) -> list[FileModel]:
+    with db.cursor() as cursor:
+        cursor.execute("SELECT id, user_id, name FROM public.certificates WHERE user_id = %s", [str(user_id)])
+        db.commit()
+
+        rows = cursor.fetchall()
+
+        return [FileModel(file_id=row[0], user_id=row[1], name=str(row[2]), body=b"") for row in rows]
+
+
+@db_named_query
+def delete_user_certificate(db: psycopg.Connection, user_id: UUID, file_id: UUID) -> None:
+    with db.cursor() as cursor:
+        cursor.execute("DELETE FROM public.certificates WHERE (id = %s AND user_id = %s)", [str(file_id), str(user_id)])
+        db.commit()
+
+
+@db_named_query
+def user_upload_profile_image(db: psycopg.Connection, user_id: UUID, name: str, body: bytes) -> None:
+    file_id = uuid4()
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            INSERT INTO public.profiles (id, user_id, name, body) VALUES (%s, %s, %s, %s)
+            ON CONFLICT (user_id)
+            DO UPDATE SET name = %s, body = %s;
+            """,
+            [str(file_id), str(user_id), name, psycopg.Binary(body), name, psycopg.Binary(body)],
+        )
+        db.commit()
+
+
+@db_named_query
+def get_user_profile_image(db: psycopg.Connection, user_id: UUID) -> FileModel | None:
+    with db.cursor() as cursor:
+        cursor.execute("SELECT id, user_id, name FROM public.profiles WHERE user_id = %s", [str(user_id)])
+        db.commit()
+
+        row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return FileModel(file_id=row[0], user_id=row[1], name=str(row[2]), body=row[3])
+
+
+@db_named_query
+def delete_user_profile_image(db: psycopg.Connection, user_id: UUID) -> None:
+    with db.cursor() as cursor:
+        cursor.execute("DELETE FROM public.profiles WHERE user_id = %s", [str(user_id)])
+        db.commit()
