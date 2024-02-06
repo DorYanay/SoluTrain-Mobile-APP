@@ -10,6 +10,7 @@ from src.models import close_db, init_db
 from src.routers.auth import router as auth_router
 from src.routers.create_group import router as create_group_router
 from src.routers.create_meet import router as create_meet_router
+from src.routers.debug import router as debug_router
 from src.routers.group import router as group_router
 from src.routers.meet import router as meet_router
 from src.routers.my_groups import router as my_groups_router
@@ -54,6 +55,7 @@ app.include_router(my_meets_router, prefix="/my-meets")
 app.include_router(profile_router, prefix="/profile")
 app.include_router(search_groups_router, prefix="/search-groups")
 app.include_router(view_coach_router, prefix="/view-coach")
+app.include_router(debug_router, prefix="/debug")
 
 
 @app.get("/", include_in_schema=False)
