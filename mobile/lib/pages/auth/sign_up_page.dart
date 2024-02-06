@@ -20,6 +20,9 @@ class _SighUpPageState extends State<SighUpPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final phoneController = TextEditingController();
+  final dayController = TextEditingController();
+  final monthController = TextEditingController();
+  final yearController = TextEditingController();
   Gender? gender;
 
   String userMessage = "";
@@ -86,6 +89,38 @@ class _SighUpPageState extends State<SighUpPage> {
 
     return true;
   }
+  //Date of birth Validation
+  bool isValidDateOfBirth(String day, String month, String year) {
+    // Check if any of the input strings are empty
+    if (day.isEmpty || month.isEmpty || year.isEmpty) {
+      return false;
+    }
+
+    // Parse day, month, and year as integers
+    int dayInt = int.tryParse(day) ?? 0;
+    int monthInt = int.tryParse(month) ?? 0;
+    int yearInt = int.tryParse(year) ?? 0;
+
+    // Check if day, month, and year are within valid ranges
+    if (dayInt < 1 || dayInt > 31 || monthInt < 1 || monthInt > 12 || yearInt < 1900 || yearInt > DateTime.now().year) {
+      return false;
+    }
+
+    // Check if the day is valid for the given month and year
+    if (dayInt > 30 && (monthInt == 4 || monthInt == 6 || monthInt == 9 || monthInt == 11)) {
+      return false;
+    } else if (dayInt > 29 && monthInt == 2) {
+      // Check for February in a leap year
+      if (yearInt % 4 == 0 && (yearInt % 100 != 0 || yearInt % 400 == 0)) {
+        return false; // Leap year, February can have 29 days
+      } else {
+        return false; // Not a leap year, February can have at most 28 days
+      }
+    }
+
+    // Date of birth is valid
+    return true;
+  }
   void signUpOnTap() {
     if (moveToLogin) {
       widget.showLogin();
@@ -134,15 +169,20 @@ class _SighUpPageState extends State<SighUpPage> {
       setErrorMessage('Gender is required!');
       return;
     }
+    if(!isValidDateOfBirth(dayController.text, monthController.text, yearController.text)){
+      setErrorMessage('Invalid Date of Birth');
+      return;
+    }
 
     setErrorMessage("");
-
+    DateTime dateOfBirth = DateTime(int.parse(yearController.text), int.parse(monthController.text), int.parse(dayController.text));
     // send the request
     API.guestPost('/auth/signup', params: {
       'name': nameController.text,
       'email': emailController.text.toLowerCase(),
       'password': passwordController.text,
       'phone': phoneController.text,
+      'dateOfbirth': dateOfBirth.toString(), //Pass as Parameter
       'gender': gender == Gender.male ? "male" : "female",
     }).then((Response res) {
       if (res.hasError) {
@@ -178,13 +218,13 @@ class _SighUpPageState extends State<SighUpPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 10),
+                const SizedBox(height: 0),
                 Image.asset(
                   'lib/images/unlock.png',
                   height: 100,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Text(
                   'Let\'s create an account for you',
                   style: TextStyle(
@@ -198,6 +238,42 @@ class _SighUpPageState extends State<SighUpPage> {
                   hintText: 'Name',
                   obscureText: false,
                 ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Date Of Birth',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // Set the color to light purple
+                  ),
+                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: AppTextField(
+                      controller: dayController,
+                      hintText: 'Day',
+                      obscureText: false,
+                    ),
+                  ),
+                  SizedBox(width: 0),
+                  Expanded(
+                    child: AppTextField(
+                      controller: monthController,
+                      hintText: 'Month',
+                      obscureText: false,
+                    ),
+                  ),
+                  SizedBox(width: 0),
+                  Expanded(
+                    child: AppTextField(
+                      controller: yearController,
+                      hintText: 'Year',
+                      obscureText: false,
+                    ),
+                  ),
+                ],
+              ),
                 const SizedBox(height: 10),
                 AppTextField(
                   controller: emailController,
@@ -216,13 +292,13 @@ class _SighUpPageState extends State<SighUpPage> {
                   hintText: 'Confirm password',
                   obscureText: true,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 AppTextField(
                   controller: phoneController,
                   hintText: 'Phone',
                   obscureText: false,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 5),
                 Row(
                   children: <Widget>[
                     const SizedBox(width: 40),
@@ -257,14 +333,14 @@ class _SighUpPageState extends State<SighUpPage> {
                     const SizedBox(width: 40),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 0),
                 Text(
                   userMessage,
                   style: TextStyle(
                     color: userMessageColor,
                   ),
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 0),
                 AppButton(
                   onTap: signUpOnTap,
                   text: moveToLogin ? "To Login Page" : "Sign Up",
