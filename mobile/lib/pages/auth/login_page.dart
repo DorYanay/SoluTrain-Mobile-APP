@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void loginOnTap() {
     API.guestPost('/auth/login', params: {
-      'email': emailController.text,
+      'email': emailController.text.toLowerCase(),
       'password': passwordController.text,
     }).then((Response res) {
       if (res.hasError) {

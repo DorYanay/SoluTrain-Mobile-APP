@@ -6,3 +6,5 @@ cd ../backend
 python -m flake8 src
 python -m black --check --diff src
 python -m mypy src
+
+pause
