@@ -108,8 +108,8 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           }, icon: const Icon(Icons.edit))
                         ]),
                         const SizedBox(height: 2.0),
-                        const ReadMoreText(
-                          'Hi im shalev levi and im training a lot of koosiut ahosharmoota noder neder itay yaben sharmoota misken ahoosharmoota guy is the boss of the worlds',
+                        ReadMoreText(
+                          user.description,
                           trimLines: 1,
                           preDataTextStyle: TextStyle(color: Colors.white),
                           postDataTextStyle: TextStyle(color: Colors.white),
