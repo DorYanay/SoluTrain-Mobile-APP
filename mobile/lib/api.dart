@@ -22,6 +22,8 @@ class Response {
 class API {
   static Future<Response> guestPost(String endpoint,
       {Map<String, dynamic>? params}) async {
+    print("API POST send Request: $endpoint");
+
     final response = await http.post(
       Uri(
           scheme: Config.apiIsHttps ? 'https' : 'http',
@@ -31,6 +33,8 @@ class API {
           queryParameters: params),
       headers: {'Content-Type': 'application/json'},
     );
+
+    print("API POST get Response: $endpoint - ${response.statusCode}");
 
     if (response.statusCode != 200) {
       String errorMessage = '';

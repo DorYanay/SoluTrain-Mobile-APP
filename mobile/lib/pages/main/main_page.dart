@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/widgets/bottom_nav_bar.dart';
+import 'package:mobile/pages/profile/coach_profile_page.dart';
+import 'package:mobile/widgets/app_bottom_nav_bar.dart';
 import 'package:mobile/widgets/app_drawer.dart';
 import 'package:mobile/pages/example/example_page.dart';
 import 'package:mobile/pages/auth/auth_page.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/app_model.dart';
+import '../profile/view_coach_profile.dart';
+import '../profile/trainer_profile_page.dart';
+
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -25,9 +29,9 @@ class _MainPageState extends State<MainPage> {
 
   // pages to display
   final List<Widget> _pages = [
-    const ExamplePage(),
-    const ExamplePage(),
-    const ExamplePage(),
+    const WeiwCoachProfile(),
+    const TrainerProfilePage(),
+    const CoachProfilePage(),
     const ExamplePage(),
   ];
 
@@ -60,7 +64,7 @@ class _MainPageState extends State<MainPage> {
           ),
           drawer: const AppDrawer(),
           body: _pages[_selectedIndex],
-          bottomNavigationBar: BottomNavBar(
+          bottomNavigationBar: AppBottomNavBar(
             onTabChange: (index) => navigateBottomBar(index),
           ),
         );

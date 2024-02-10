@@ -60,6 +60,8 @@ class AppDrawer extends StatelessWidget {
           Text('user.phone: ${Provider.of<AppModel>(context).user!.phone}'),
           const SizedBox(height: 10),
           Text('user.gender: ${Provider.of<AppModel>(context).user!.gender}'),
+          const SizedBox(height: 10),
+          Text('user.isCoach: ${Provider.of<AppModel>(context).user!.isCoach}'),
           const SizedBox(height: 15),
           Text('areas.length: ${Provider.of<AppModel>(context).areas.length}'),
         ],
