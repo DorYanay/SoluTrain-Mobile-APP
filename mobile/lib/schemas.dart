@@ -6,8 +6,9 @@ class UserBaseSchema {
   final String email;
   final String phone;
   final String gender;
+  final DateTime dateOfBirth;
 
-  UserBaseSchema(this.userId, this.name, this.email, this.phone, this.gender);
+  UserBaseSchema(this.userId, this.name, this.email, this.phone, this.gender, this.dateOfBirth);
 
   factory UserBaseSchema.fromJson(dynamic data) {
     return UserBaseSchema(
@@ -16,6 +17,7 @@ class UserBaseSchema {
       data['email'] as String,
       data['phone'] as String,
       data['gender'] as String,
+      new DateFormat("yyyy-MM-dd hh:mm:ss").parse(date['date_of_birth'] as String),
     );
   }
 }
@@ -26,11 +28,12 @@ class UserSchema {
   final String email;
   final String phone;
   final String gender;
+  final DateTime dateOfBirth;
   final String description;
   final bool isCoach;
 
   UserSchema(this.userId, this.name, this.email, this.phone, this.gender,
-      this.description, this.isCoach);
+      this.dateOfBirth, this.description, this.isCoach);
 
   factory UserSchema.fromJson(dynamic data) {
     return UserSchema(
@@ -39,6 +42,7 @@ class UserSchema {
       data['email'] as String,
       data['phone'] as String,
       data['gender'] as String,
+      new DateFormat("yyyy-MM-dd hh:mm:ss").parse(date['date_of_birth'] as String),
       data['description'] as String,
       data['is_coach'] as bool,
     );
@@ -84,11 +88,9 @@ class GroupSchema {
   final String name;
   final String description;
   final String areaId;
-  final String city;
-  final String street;
 
   GroupSchema(this.groupId, this.coachId, this.coachName, this.name,
-      this.description, this.areaId, this.city, this.street);
+      this.description, this.areaId);
 
   factory GroupSchema.fromJson(dynamic data) {
     return GroupSchema(
@@ -98,8 +100,6 @@ class GroupSchema {
       data['name'] as String,
       data['description'] as String,
       data['area_id'] as String,
-      data['city'] as String,
-      data['street'] as String,
     );
   }
 }
@@ -109,11 +109,8 @@ class GroupInfoSchema {
   final String coachName;
   final String name;
   final String areaName;
-  final String city;
-  final String street;
 
-  GroupInfoSchema(this.groupId, this.coachName, this.name, this.areaName,
-      this.city, this.street);
+  GroupInfoSchema(this.groupId, this.coachName, this.name, this.areaName);
 
   factory GroupInfoSchema.fromJson(dynamic data) {
     return GroupInfoSchema(
@@ -121,8 +118,6 @@ class GroupInfoSchema {
       data['coach_name'] as String,
       data['name'] as String,
       data['area_name'] as String,
-      data['city'] as String,
-      data['street'] as String,
     );
   }
 }
@@ -132,7 +127,6 @@ class MeetSchema {
   final String groupId;
   final String maxMembers;
   final String meetDate;
-  final String meetTime;
   final int duration;
   final String location;
   final List<UserBaseSchema> members;
@@ -146,7 +140,7 @@ class MeetSchema {
       data['group_id'] as String,
       data['max_members'] as String,
       data['meet_date'] as String,
-      data['meet_time'] as String,
+      new DateFormat("yyyy-MM-dd hh:mm:ss").parse(date['meet_date'] as String),
       data['duration'] as int,
       data['location'] as String,
       (data['members'] as List<dynamic>)
@@ -159,7 +153,6 @@ class MeetSchema {
 class MeetInfoSchema {
   final String meetId;
   final String meetDate;
-  final String meetTime;
   final int duration;
   final String location;
   final bool full;
@@ -172,7 +165,6 @@ class MeetInfoSchema {
     return MeetInfoSchema(
       data['meet_id'] as String,
       data['meet_date'] as String,
-      data['meet_time'] as String,
       data['duration'] as int,
       data['location'] as String,
       data['full'] as bool,
