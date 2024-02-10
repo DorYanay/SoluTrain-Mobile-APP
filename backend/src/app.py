@@ -59,5 +59,11 @@ app.include_router(debug_router, prefix="/debug")
 
 
 @app.get("/", include_in_schema=False)
-async def root() -> RedirectResponse:
+def root() -> RedirectResponse:
     return RedirectResponse("/docs")
+
+
+@app.get("/health-check")
+@app.post("/health-check")
+def health_check() -> dict:
+    return {"status": "ok"}

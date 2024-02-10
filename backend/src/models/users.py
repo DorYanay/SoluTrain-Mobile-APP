@@ -18,6 +18,7 @@ class User:
     password_hash: str
     phone: str
     gender: Gender
+    date_of_birth: str
     description: str
     is_coach: bool
 
@@ -29,6 +30,7 @@ class User:
         password_hash: str,
         phone: str,
         gender: Gender,
+        date_of_birth: str,
         description: str,
         is_coach: bool,
     ):
@@ -38,12 +40,13 @@ class User:
         self.password_hash = password_hash
         self.phone = phone
         self.gender = gender
+        self.date_of_birth = date_of_birth
         self.description = description
         self.is_coach = is_coach
 
 
 @db_named_query
-def create_user(db: psycopg.Connection, name: str, email: str, password_hash: str, phone: str, gender: Gender) -> User:
+def create_user(db: psycopg.Connection, name: str, email: str, password_hash: str, phone: str, gender: Gender, date_of_birth: str) -> User:
     user_id = uuid4()
     user = User(
         user_id=user_id,
@@ -52,14 +55,15 @@ def create_user(db: psycopg.Connection, name: str, email: str, password_hash: st
         password_hash=password_hash,
         phone=phone,
         gender=gender,
+        date_of_birth=date_of_birth,
         description="",
         is_coach=False,
     )
 
     with db.cursor() as cursor:
         cursor.execute(
-            """INSERT INTO public.users (id, name, email, password_hash, phone, gender, description, is_coach)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);""",
+            """INSERT INTO public.users (id, name, email, password_hash, phone, gender, date_of_birth, description, is_coach)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);""",
             (
                 str(user.user_id),
                 str(user.name),
@@ -67,6 +71,7 @@ def create_user(db: psycopg.Connection, name: str, email: str, password_hash: st
                 str(user.password_hash),
                 str(user.phone),
                 str(user.gender),
+                str(user.date_of_birth),
                 str(user.description),
                 bool(user.is_coach),
             ),
@@ -80,7 +85,7 @@ def create_user(db: psycopg.Connection, name: str, email: str, password_hash: st
 def get_user_by_id(db: psycopg.Connection, user_id: UUID) -> User | None:
     with db.cursor() as cursor:
         cursor.execute(
-            "SELECT id, name, email, password_hash, phone, gender, description, is_coach FROM users WHERE id = %s",
+            "SELECT id, name, email, password_hash, phone, gender, date_of_birth, description, is_coach FROM public.users WHERE id = %s",
             [str(user_id)],
         )
         db.commit()
@@ -97,6 +102,7 @@ def get_user_by_id(db: psycopg.Connection, user_id: UUID) -> User | None:
             password_hash=str(row[3]),
             phone=str(row[4]),
             gender=Gender(str(row[5])),
+            date_of_birth=str(row[6]),
             description=str(row[6]),
             is_coach=bool(row[7]),
         )
@@ -106,7 +112,7 @@ def get_user_by_id(db: psycopg.Connection, user_id: UUID) -> User | None:
 def get_user_by_email(db: psycopg.Connection, email: str) -> User | None:
     with db.cursor() as cursor:
         cursor.execute(
-            "SELECT id, name, email, password_hash, phone, gender, description, is_coach FROM users WHERE email = %s",
+            "SELECT id, name, email, password_hash, phone, gender, date_of_birth, description, is_coach FROM public.users WHERE email = %s",
             [str(email)],
         )
         db.commit()
@@ -123,8 +129,9 @@ def get_user_by_email(db: psycopg.Connection, email: str) -> User | None:
             password_hash=str(row[3]),
             phone=str(row[4]),
             gender=Gender(str(row[5])),
-            description=str(row[6]),
-            is_coach=bool(row[7]),
+            date_of_birth=str(row[6]),
+            description=str(row[7]),
+            is_coach=bool(row[8]),
         )
 
 
@@ -134,7 +141,7 @@ def update_user(
 ) -> None:
     with db.cursor() as cursor:
         cursor.execute(
-            "UPDATE users SET name = %s, email = %s, phone = %s, description = %s WHERE id = %s",
+            "UPDATE public.users SET name = %s, email = %s, phone = %s, description = %s WHERE id = %s",
             [updated_name, updated_email, updated_phone, updated_description, str(user_id)],
         )
         db.commit()
@@ -143,7 +150,7 @@ def update_user(
 @db_named_query
 def update_user_password(db: psycopg.Connection, user_id: UUID, password_hash: str) -> None:
     with db.cursor() as cursor:
-        cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s", [password_hash, str(user_id)])
+        cursor.execute("UPDATE public.users SET password_hash = %s WHERE id = %s", [password_hash, str(user_id)])
         db.commit()
 
 
@@ -167,7 +174,7 @@ def user_upload_certificate(db: psycopg.Connection, user_id: UUID, name: str, bo
         cursor.execute(
             """
             INSERT INTO public.certificates (id, user_id, name, body) VALUES (%s, %s, %s, %s);
-            UPDATE users SET is_coach = true WHERE id = %s;
+            UPDATE public.users SET is_coach = true WHERE id = %s;
             """,
             [str(file_id), str(user_id), name, psycopg.Binary(body), str(user_id)],
         )

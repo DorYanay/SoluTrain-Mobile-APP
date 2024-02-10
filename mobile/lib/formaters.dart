@@ -1,14 +1,22 @@
-int calculateAge(String dateOfBirth) {
-  List<String> dobParts = dateOfBirth.split('/');
+String dateTimeToAPIString(DateTime dateTime) {
+  // Format: "1970-01-10 00:00:00"
 
-  int year = int.parse(dobParts[0]);
-  int month = int.parse(dobParts[1]);
-  int day = int.parse(dobParts[2]);
+  String str = dateTime.year.toString().padLeft(4, '0');
+  str += "-${dateTime.month.toString().padLeft(2, '0')}";
+  str += "-${dateTime.day.toString().padLeft(2, '0')}";
+  str += " ${dateTime.hour.toString().padLeft(2, '0')}";
+  str += ":${dateTime.minute.toString().padLeft(2, '0')}";
+  str += ":${dateTime.second.toString().padLeft(2, '0')}";
 
+  return str;
+}
+
+int calculateAge(DateTime dateOfBirth) {
   DateTime now = DateTime.now();
 
-  int age = now.year - year;
-  if (month < now.month || month == now.month && day < now.day) {
+  int age = now.year - dateOfBirth.year;
+  if (dateOfBirth.month < now.month ||
+      dateOfBirth.month == now.month && dateOfBirth.day < now.day) {
     age = age--;
   }
 

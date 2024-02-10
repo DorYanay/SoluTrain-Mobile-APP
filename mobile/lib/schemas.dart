@@ -8,7 +8,8 @@ class UserBaseSchema {
   final String gender;
   final DateTime dateOfBirth;
 
-  UserBaseSchema(this.userId, this.name, this.email, this.phone, this.gender, this.dateOfBirth);
+  UserBaseSchema(this.userId, this.name, this.email, this.phone, this.gender,
+      this.dateOfBirth);
 
   factory UserBaseSchema.fromJson(dynamic data) {
     return UserBaseSchema(
@@ -17,7 +18,7 @@ class UserBaseSchema {
       data['email'] as String,
       data['phone'] as String,
       data['gender'] as String,
-      new DateFormat("yyyy-MM-dd hh:mm:ss").parse(date['date_of_birth'] as String),
+      DateTime.parse(data['date_of_birth'] as String),
     );
   }
 }
@@ -42,7 +43,7 @@ class UserSchema {
       data['email'] as String,
       data['phone'] as String,
       data['gender'] as String,
-      new DateFormat("yyyy-MM-dd hh:mm:ss").parse(date['date_of_birth'] as String),
+      DateTime.parse(data['date_of_birth'] as String),
       data['description'] as String,
       data['is_coach'] as bool,
     );
@@ -126,21 +127,20 @@ class MeetSchema {
   final String meetId;
   final String groupId;
   final String maxMembers;
-  final String meetDate;
+  final DateTime meetDate;
   final int duration;
   final String location;
   final List<UserBaseSchema> members;
 
   MeetSchema(this.meetId, this.groupId, this.maxMembers, this.meetDate,
-      this.meetTime, this.duration, this.location, this.members);
+      this.duration, this.location, this.members);
 
   factory MeetSchema.fromJson(dynamic data) {
     return MeetSchema(
       data['meet_id'] as String,
       data['group_id'] as String,
       data['max_members'] as String,
-      data['meet_date'] as String,
-      new DateFormat("yyyy-MM-dd hh:mm:ss").parse(date['meet_date'] as String),
+      DateTime.parse(data['meet_date'] as String),
       data['duration'] as int,
       data['location'] as String,
       (data['members'] as List<dynamic>)
@@ -152,19 +152,19 @@ class MeetSchema {
 
 class MeetInfoSchema {
   final String meetId;
-  final String meetDate;
+  final DateTime meetDate;
   final int duration;
   final String location;
   final bool full;
   final bool registered;
 
-  MeetInfoSchema(this.meetId, this.meetDate, this.meetTime, this.duration,
-      this.location, this.full, this.registered);
+  MeetInfoSchema(this.meetId, this.meetDate, this.duration, this.location,
+      this.full, this.registered);
 
   factory MeetInfoSchema.fromJson(dynamic data) {
     return MeetInfoSchema(
       data['meet_id'] as String,
-      data['meet_date'] as String,
+      DateTime.parse(data['meet_date'] as String),
       data['duration'] as int,
       data['location'] as String,
       data['full'] as bool,

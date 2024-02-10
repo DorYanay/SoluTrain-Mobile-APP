@@ -14,10 +14,18 @@ class UserBaseSchema(BaseModel):
     email: str
     phone: str
     gender: Gender
+    date_of_birth: str
 
     @staticmethod
     def from_model(user: User) -> UserBaseSchema:
-        return UserBaseSchema(user_id=str(user.user_id), name=user.name, email=user.email, phone=user.phone, gender=user.gender)
+        return UserBaseSchema(
+            user_id=str(user.user_id),
+            name=user.name,
+            email=user.email,
+            phone=user.phone,
+            gender=user.gender,
+            date_of_birth=user.date_of_birth,
+        )
 
 
 class UserSchema(BaseModel):
@@ -28,6 +36,7 @@ class UserSchema(BaseModel):
     email: str
     phone: str
     gender: Gender
+    date_of_birth: str
     description: str
     is_coach: bool
 
@@ -39,6 +48,7 @@ class UserSchema(BaseModel):
             email=user.email,
             phone=user.phone,
             gender=user.gender,
+            date_of_birth=user.date_of_birth,
             description=user.description,
             is_coach=user.is_coach,
         )
@@ -69,8 +79,6 @@ class GroupSchema(BaseModel):
     name: str
     description: str
     area_id: str
-    city: str
-    street: str
 
     @staticmethod
     def from_model(group: Group, coach_name: str) -> GroupSchema:
@@ -81,8 +89,6 @@ class GroupSchema(BaseModel):
             name=group.name,
             description=group.description,
             area_id=str(group.area_id),
-            city=group.city,
-            street=group.street,
         )
 
 
@@ -91,18 +97,14 @@ class GroupInfoSchema(BaseModel):
     coach_name: str
     name: str
     area_name: str
-    city: str
-    street: str
 
     @staticmethod
-    def from_model(row: tuple[UUID, str, str, str, str, str]) -> GroupInfoSchema:
+    def from_model(row: tuple[UUID, str, str, str]) -> GroupInfoSchema:
         return GroupInfoSchema(
             group_id=str(row[0]),
             coach_name=row[1],
             name=row[2],
             area_name=row[3],
-            city=row[4],
-            street=row[5],
         )
 
 
@@ -111,9 +113,9 @@ class MeetSchema(BaseModel):
     group_id: str
     max_members: int
     meet_date: str
-    meet_time: str
     duration: int
-    location: str
+    city: str
+    street: str
 
     members: list[UserBaseSchema]
 
@@ -124,9 +126,9 @@ class MeetSchema(BaseModel):
             group_id=str(meet.group_id),
             max_members=meet.max_members,
             meet_date=str(meet.meet_date),
-            meet_time=str(meet.meet_time),
             duration=meet.duration,
-            location=meet.location,
+            city=meet.city,
+            street=meet.street,
             members=[UserBaseSchema.from_model(member) for member in members],
         )
 
@@ -134,9 +136,9 @@ class MeetSchema(BaseModel):
 class MeetInfoSchema(BaseModel):
     meet_id: str
     meet_date: str
-    meet_time: str
     duration: int
-    location: str
+    city: str
+    street: str
     full: bool
     registered: bool
 
@@ -145,9 +147,9 @@ class MeetInfoSchema(BaseModel):
         return MeetInfoSchema(
             meet_id=str(meet.meet_id),
             meet_date=str(meet.meet_date),
-            meet_time=str(meet.meet_time),
             duration=meet.duration,
-            location=meet.location,
+            city=meet.city,
+            street=meet.street,
             full=full,
             registered=registered,
         )

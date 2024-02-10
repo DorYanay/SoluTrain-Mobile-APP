@@ -47,61 +47,65 @@ class _WeiwCoachProfile extends State<WeiwCoachProfile> {
                 color: Colors.grey[800],
               ),
               // Each Row contains the code in the first column and an ElevatedButton in the second column
-                  // First column: Code
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Name',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          letterSpacing: 2.0,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      Text(
-                        user.name,
-                        style: TextStyle(
-                            color: Colors.amberAccent[200],
-                            letterSpacing: 2.0,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
+              // First column: Code
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Name',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      letterSpacing: 2.0,
+                      fontSize: 16.0,
+                    ),
                   ),
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          const Text(
-                            'Description',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              letterSpacing: 2.0,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                          if(user.isCoach) IconButton(onPressed: () {
-                            _showEditDescriptionDialog(context, user);
-                          }, icon: const Icon(Icons.edit))
-                        ]),
-                        const SizedBox(height: 2.0),
-                        const ReadMoreText(
-                          'Hi im shalev levi and im training a lot of koosiut ahosharmoota noder neder itay yaben sharmoota misken ahoosharmoota guy is the boss of the worlds',
-                          trimLines: 1,
-                          preDataTextStyle: TextStyle(color: Colors.white),
-                          postDataTextStyle: TextStyle(color: Colors.white),
-                          delimiterStyle: TextStyle(color: Colors.white),
-                          lessStyle: TextStyle(color: Colors.white),
-                          moreStyle: TextStyle(color: Colors.white),
-                          colorClickableText: Colors.amber,
-                          trimMode: TrimMode.Line,
-                          trimCollapsedText: "Read more...",
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                          trimExpandedText: "Less...",
-                        ),
-                      ]),
-                  // Second column: ElevatedButton
+                  Text(
+                    user.name,
+                    style: TextStyle(
+                        color: Colors.amberAccent[200],
+                        letterSpacing: 2.0,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  const Text(
+                    'Description',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      letterSpacing: 2.0,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  if (user.isCoach)
+                    IconButton(
+                        onPressed: () {
+                          _showEditDescriptionDialog(context, user);
+                        },
+                        icon: const Icon(Icons.edit))
+                ]),
+                const SizedBox(height: 2.0),
+                const ReadMoreText(
+                  'Hi im shalev levi and im training a lot of koosiut ahosharmoota noder neder itay yaben sharmoota misken ahoosharmoota guy is the boss of the worlds',
+                  trimLines: 1,
+                  preDataTextStyle: TextStyle(color: Colors.white),
+                  postDataTextStyle: TextStyle(color: Colors.white),
+                  delimiterStyle: TextStyle(color: Colors.white),
+                  lessStyle: TextStyle(color: Colors.white),
+                  moreStyle: TextStyle(color: Colors.white),
+                  colorClickableText: Colors.amber,
+                  trimMode: TrimMode.Line,
+                  trimCollapsedText: "Read more...",
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                  trimExpandedText: "Less...",
+                ),
+              ]),
+              // Second column: ElevatedButton
               Divider(
                 height: 10.0,
                 color: Colors.grey[800],
@@ -110,89 +114,104 @@ class _WeiwCoachProfile extends State<WeiwCoachProfile> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                  const Text(
-                    'Personal Details',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2.0,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 2.0,
-                  ),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Age:',
+                      const Text(
+                        'Personal Details',
                         style: TextStyle(
-                          color: Colors.amberAccent[200],
+                          color: Colors.grey,
                           letterSpacing: 2.0,
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
                         ),
                       ),
-                      Text(
-                        '14',
-                        style: TextStyle(
-                            color: Colors.amberAccent[200],
-                            letterSpacing: 2.0,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.bold),
+                      const SizedBox(
+                        height: 2.0,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Age:',
+                            style: TextStyle(
+                              color: Colors.amberAccent[200],
+                              letterSpacing: 2.0,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '14',
+                            style: TextStyle(
+                                color: Colors.amberAccent[200],
+                                letterSpacing: 2.0,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Gender:',
+                            style: TextStyle(
+                              color: Colors.amberAccent[200],
+                              letterSpacing: 2.0,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            user.gender,
+                            style: TextStyle(
+                                color: Colors.amberAccent[200],
+                                letterSpacing: 2.0,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-
-                  Row(
+                  Column(
                     children: [
-                      Text(
-                        'Gender:',
-                        style: TextStyle(
-                          color: Colors.amberAccent[200],
-                          letterSpacing: 2.0,
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.bold,
+                      Row(
+                        children: [
+                          const Text(
+                            "View Certificates",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              letterSpacing: 2.0,
+                              fontSize: 12.0,
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                _showCertificateDialog(
+                                    context, certificates[0], user);
+                              },
+                              icon: const Icon(Icons.remove_red_eye))
+                        ],
+                      ),
+                      if (user.isCoach)
+                        Row(
+                          children: [
+                            const Text(
+                              "Groups",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                letterSpacing: 2.0,
+                                fontSize: 12.0,
+                              ),
+                            ),
+                            IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.remove_red_eye))
+                          ],
                         ),
-                      ),
-                      Text(
-                        user.gender,
-                        style: TextStyle(
-                            color: Colors.amberAccent[200],
-                            letterSpacing: 2.0,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.bold),
-                      ),
                     ],
-                  ),
-                ],),
-                Column(children: [
-                  Row(children: [
-                    const Text("View Certificates", style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2.0,
-                      fontSize: 12.0,
-                    ),),
-                    IconButton(onPressed: () {
-                      _showCertificateDialog(context, certificates[0], user);
-
-                    },  icon: const Icon(Icons.remove_red_eye))
-                  ],),
-                  if(user.isCoach) Row(children: [
-                    const Text("Groups", style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2.0,
-                      fontSize: 12.0,
-                    ),),
-                    IconButton(onPressed: () {
-
-                    },  icon: const Icon(Icons.remove_red_eye))
-                  ],),
-
-                ],)
-              ],),
+                  )
+                ],
+              ),
 
               Divider(
                 height: 10.0,
@@ -279,6 +298,7 @@ class _WeiwCoachProfile extends State<WeiwCoachProfile> {
     ); //scaffold
   }
 }
+
 void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
   showDialog(
     context: context,
@@ -316,7 +336,8 @@ void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
   );
 }
 
-void _showCertificateDialog(BuildContext context, String certificate, UserSchema user) {
+void _showCertificateDialog(
+    BuildContext context, String certificate, UserSchema user) {
   showDialog(
     context: context,
     builder: (BuildContext context) {

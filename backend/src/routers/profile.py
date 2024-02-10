@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import psycopg
 from fastapi import APIRouter, Depends, File, HTTPException
 from starlette import status
@@ -7,7 +5,7 @@ from starlette import status
 from src.models import db_dependency
 from src.models.users import User, get_user_by_email, get_user_by_id, update_user, update_user_password, user_upload_certificate
 from src.schemas import UserSchema
-from src.security import create_hash, get_current_user, update_auth_logged_user_data
+from src.security import create_hash, get_current_user
 from src.validators import validate_certificate_name, validate_email
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
@@ -36,7 +34,6 @@ def route_upload_first_certificate(
 
 @router.post("/update-details")
 def route_update_details(
-    auth_token: UUID,
     new_name: str | None = None,
     new_email: str | None = None,
     new_phone: str | None = None,
@@ -75,14 +72,12 @@ def route_update_details(
     if user is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
 
-    update_auth_logged_user_data(auth_token, user)
-
     return UserSchema.from_model(user)
 
 
 @router.post("/update-password")
 def route_update_password(
-    new_password: str, auth_token: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+    new_password: str, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> UserSchema:
     password_hash = create_hash(new_password)
 
@@ -92,7 +87,5 @@ def route_update_password(
 
     if user is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
-
-    update_auth_logged_user_data(auth_token, user)
 
     return UserSchema.from_model(user)
