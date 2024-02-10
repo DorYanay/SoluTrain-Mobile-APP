@@ -16,6 +16,7 @@ def create_database(cursor: psycopg.Cursor) -> None:
             password_hash VARCHAR(255) NOT NULL,
             phone VARCHAR(255) NOT NULL,
             gender VARCHAR(10) NOT NULL,
+            date_of_birth VARCHAR(255) NOT NULL,
             description VARCHAR(255) NOT NULL,
             is_coach BOOLEAN NOT NULL
         );
@@ -56,9 +57,7 @@ def create_database(cursor: psycopg.Cursor) -> None:
             name VARCHAR(255) NOT NULL,
             description VARCHAR(255) NOT NULL,
             area_id UUID NOT NULL
-                REFERENCES public.areas (id),
-            city VARCHAR(255) NOT NULL,
-            street VARCHAR(255) NOT NULL
+                REFERENCES public.areas (id)
         );
 
         CREATE TABLE public.group_members (
@@ -74,9 +73,10 @@ def create_database(cursor: psycopg.Cursor) -> None:
             group_id UUID NOT NULL
                 REFERENCES public.groups (id),
             max_members INTEGER NOT NULL,
-            date TIMESTAMP NOT NULL,
+            date VARCHAR(255) NOT NULL,
             duration INTEGER NOT NULL,
-            location VARCHAR(255) NOT NULL
+            city VARCHAR(255) NOT NULL,
+            street VARCHAR(255) NOT NULL
         );
 
         CREATE TABLE public.meeting_members (

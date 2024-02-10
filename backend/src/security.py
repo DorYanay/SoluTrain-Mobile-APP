@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 from fastapi import HTTPException, status
 
-from src.models.users import User
+from src.models.users import User, get_user_by_id
 
 
 # hash handling
@@ -23,7 +23,7 @@ def verify_hash(text: str, hashed_text: str) -> bool:
 
 
 # authentication
-auth_logged_users: dict[UUID, User] = {}
+auth_logged_users: dict[UUID, UUID] = {}
 
 
 def login_user(user: User) -> UUID:
@@ -32,17 +32,17 @@ def login_user(user: User) -> UUID:
     while token in auth_logged_users:
         token = uuid4()
 
-    auth_logged_users[token] = user
+    auth_logged_users[token] = user.user_id
 
     return token
 
 
 def logout_user(auth_token: UUID, user: User) -> None:
-    saved_user = auth_logged_users.get(auth_token)
-    if saved_user is None:
+    saved_user_id = auth_logged_users.get(auth_token)
+    if saved_user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
 
-    if not saved_user.user_id == user.user_id:
+    if not saved_user_id == user.user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
 
     auth_logged_users.pop(auth_token)
@@ -51,12 +51,14 @@ def logout_user(auth_token: UUID, user: User) -> None:
 def get_current_user(auth_token: UUID) -> User:
     """FastAPI dependency to get the current logged user (from the auth token)"""
 
-    user = auth_logged_users.get(auth_token)
+    user_id = auth_logged_users.get(auth_token)
+    if user_id is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
+
+    user = get_user_by_id(user_id)
+
     if user is None:
+        auth_logged_users.pop(auth_token)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
 
     return user
-
-
-def update_auth_logged_user_data(auth_token: UUID, user: User) -> None:
-    auth_logged_users[auth_token] = user

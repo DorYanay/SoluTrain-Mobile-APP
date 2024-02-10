@@ -1,4 +1,3 @@
-from datetime import date, time
 from uuid import UUID
 
 import psycopg
@@ -32,15 +31,15 @@ def route_get(meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), cu
 def route_update_details(
     meet_id: UUID,
     new_max_members: int | None = None,
-    new_date: date | None = None,
-    new_time: time | None = None,
+    new_date: str | None = None,
     new_duration: int | None = None,
-    new_location: str | None = None,
+    new_city: str | None = None,
+    new_street: str | None = None,
     db: psycopg.Connection = Depends(db_dependency),
     current_user: User = Depends(get_current_user),
 ) -> None:
     # validation
-    if new_max_members is None and new_date is None and new_time is None and new_duration is None and new_location is None:
+    if new_max_members is None and new_date is None is None and new_duration is None and new_city is None and new_street is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No data to update")
 
     if not current_user.is_coach:
@@ -54,9 +53,9 @@ def route_update_details(
     # update
     max_members = meet.max_members
     meet_date = meet.meet_date
-    meet_time = meet.meet_time
     duration = meet.duration
-    location = meet.location
+    city = meet.city
+    street = meet.street
 
     if new_max_members is not None:
         max_members = new_max_members
@@ -64,16 +63,16 @@ def route_update_details(
     if new_date is not None:
         meet_date = new_date
 
-    if new_time is not None:
-        meet_time = new_time
-
     if new_duration is not None:
         duration = new_duration
 
-    if new_location is not None:
-        location = new_location
+    if new_city is not None:
+        city = new_city
 
-    update_meet(db, meet_id, max_members, meet_date, meet_time, duration, location)
+    if new_street is not None:
+        street = new_street
+
+    update_meet(db, meet_id, max_members, meet_date, duration, city, street)
 
     return None
 

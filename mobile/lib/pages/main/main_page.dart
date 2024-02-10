@@ -11,7 +11,6 @@ import 'package:mobile/pages/my_groups/my_group_page.dart';
 import 'package:mobile/pages/profile/view_coach_profile.dart';
 import 'package:mobile/pages/profile/trainer_profile_page.dart';
 
-
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 

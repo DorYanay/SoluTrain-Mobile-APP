@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/api.dart';
 import 'package:mobile/pages/main/main_page.dart';
 import 'package:mobile/app_model.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  API.guestPost('/health-check');
+
   runApp(const MyApp());
 }
 

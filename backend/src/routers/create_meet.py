@@ -1,4 +1,3 @@
-from datetime import date, time
 from uuid import UUID
 
 import psycopg
@@ -18,10 +17,10 @@ router = APIRouter(dependencies=[Depends(get_current_user)])
 def route_create_meet(
     group_id: UUID,
     max_members: int,
-    meet_date: date,
-    meet_time: time,
+    meet_date: str,
     duration: int,
-    location: str,
+    city: str,
+    street: str,
     db: psycopg.Connection = Depends(db_dependency),
     user: User = Depends(get_current_user),
 ) -> MeetSchema:
@@ -38,6 +37,6 @@ def route_create_meet(
     if group.coach_id != user.user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only coach of the group can create meet")
 
-    meet = create_meet(db, group_id, max_members, meet_date, meet_time, duration, location)
+    meet = create_meet(db, group_id, max_members, meet_date, duration, city, street)
 
     return MeetSchema.from_model(meet, [])

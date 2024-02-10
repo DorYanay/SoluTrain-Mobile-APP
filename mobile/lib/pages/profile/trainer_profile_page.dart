@@ -64,9 +64,8 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                               fontSize: 16.0,
                             ),
                           ),
-                          IconButton(onPressed: () {
-
-                          }, icon: const Icon(Icons.edit))
+                          IconButton(
+                              onPressed: () {}, icon: const Icon(Icons.edit))
                         ],
                       ),
                       Text(
@@ -84,7 +83,8 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                     children: [
                       ElevatedButton(
                           onPressed: () async {
-                            FilePickerResult? result = await FilePicker.platform.pickFiles();
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles();
                             if (result != null) {
                               String filePath = result.files.single.path!;
                               print(filePath);
@@ -115,9 +115,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       fontSize: 16.0,
                     ),
                   ),
-                  IconButton(onPressed: () {
-
-                  }, icon: const Icon(Icons.edit))
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
                 ],
               ),
               const SizedBox(
@@ -200,9 +198,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       fontSize: 16.0,
                     ),
                   ),
-                  IconButton(onPressed: () {
-
-                  }, icon: const Icon(Icons.edit))
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
                 ],
               ),
               const SizedBox(

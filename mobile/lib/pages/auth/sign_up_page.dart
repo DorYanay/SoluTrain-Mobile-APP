@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/formaters.dart';
 import 'package:mobile/widgets/app_button.dart';
 import 'package:mobile/widgets/app_textfield.dart';
 import 'package:mobile/api.dart';
@@ -210,7 +211,7 @@ class _SighUpPageState extends State<SighUpPage> {
       'email': emailController.text.toLowerCase(),
       'password': passwordController.text,
       'phone': phoneController.text,
-      'dateOfbirth': dateOfBirth.toString(), //Pass as Parameter
+      'date_of_birth': dateTimeToAPIString(dateOfBirth),
       'gender': gender == Gender.male ? "male" : "female",
     }).then((Response res) {
       if (res.hasError) {

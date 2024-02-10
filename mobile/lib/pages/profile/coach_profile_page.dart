@@ -11,7 +11,12 @@ class CoachProfilePage extends StatefulWidget {
   @override
   State<CoachProfilePage> createState() => _CoachProfilePage();
 }
-List<String> certificates = ["Certificate 1", "Certificate 2", "Certificate 3"]; // Example list of certificates
+
+List<String> certificates = [
+  "Certificate 1",
+  "Certificate 2",
+  "Certificate 3"
+]; // Example list of certificates
 
 class _CoachProfilePage extends State<CoachProfilePage> {
   @override
@@ -54,34 +59,40 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                    Row(
-                      children: [
-                        const Text(
-                          'Name',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            letterSpacing: 2.0,
-                            fontSize: 16.0,
+                      Row(
+                        children: [
+                          const Text(
+                            'Name',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              letterSpacing: 2.0,
+                              fontSize: 16.0,
+                            ),
                           ),
-                        ),
-                        IconButton(onPressed: () {
-
-                        }, icon: const Icon(Icons.edit))
-                      ],
-                    ),
-                    Row(
-                      children: [
-                      const Text("View Certificates", style: TextStyle(
-                        color: Colors.grey,
-                        letterSpacing: 2.0,
-                        fontSize: 12.0,
-                      ),),
-                      IconButton(onPressed: () {
-                        _showCertificateDialog(context, certificates[0], user);
-
-                      },  icon: const Icon(Icons.remove_red_eye))
-                    ],),
-                  ],),
+                          IconButton(
+                              onPressed: () {}, icon: const Icon(Icons.edit))
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            "View Certificates",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              letterSpacing: 2.0,
+                              fontSize: 12.0,
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                _showCertificateDialog(
+                                    context, certificates[0], user);
+                              },
+                              icon: const Icon(Icons.remove_red_eye))
+                        ],
+                      ),
+                    ],
+                  ),
                   Text(
                     user.name,
                     style: TextStyle(
@@ -103,9 +114,11 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                               fontSize: 16.0,
                             ),
                           ),
-                          IconButton(onPressed: () {
-                            _showEditDescriptionDialog(context, user);
-                          }, icon: const Icon(Icons.edit))
+                          IconButton(
+                              onPressed: () {
+                                _showEditDescriptionDialog(context, user);
+                              },
+                              icon: const Icon(Icons.edit))
                         ]),
                         const SizedBox(height: 2.0),
                         ReadMoreText(
@@ -119,15 +132,16 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           colorClickableText: Colors.amber,
                           trimMode: TrimMode.Line,
                           trimCollapsedText: "Read more...",
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                           trimExpandedText: "Less...",
                         ),
                       ])
-
                 ],
               ),
               // Second column: ElevatedButton
-
 
               Divider(
                 height: 10.0,
@@ -139,86 +153,92 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 children: [
                   // First column: Code
                   Expanded(
-                  child:Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Personal Details',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              letterSpacing: 2.0,
-                              fontSize: 16.0,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              'Personal Details',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                letterSpacing: 2.0,
+                                fontSize: 16.0,
+                              ),
                             ),
-                          ),
-                          IconButton(onPressed: () {
-
-                          }, icon: const Icon(Icons.edit))
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 2.0,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Age:',
-                            style: TextStyle(
-                              color: Colors.amberAccent[200],
-                              letterSpacing: 2.0,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '14',
-                            style: TextStyle(
+                            IconButton(
+                                onPressed: () {}, icon: const Icon(Icons.edit))
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 2.0,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Age:',
+                              style: TextStyle(
                                 color: Colors.amberAccent[200],
                                 letterSpacing: 2.0,
                                 fontSize: 14.0,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Gender:',
-                            style: TextStyle(
-                              color: Colors.amberAccent[200],
-                              letterSpacing: 2.0,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            user.gender,
-                            style: TextStyle(
+                            Text(
+                              '14',
+                              style: TextStyle(
+                                  color: Colors.amberAccent[200],
+                                  letterSpacing: 2.0,
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Gender:',
+                              style: TextStyle(
                                 color: Colors.amberAccent[200],
                                 letterSpacing: 2.0,
                                 fontSize: 14.0,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              user.gender,
+                              style: TextStyle(
+                                  color: Colors.amberAccent[200],
+                                  letterSpacing: 2.0,
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   // Second column: ElevatedButton
-                  Column(children: [
-                    if(user.isCoach) Row(children: [
-                      const Text("Groups", style: TextStyle(
-                        color: Colors.grey,
-                        letterSpacing: 2.0,
-                        fontSize: 12.0,
-                      ),),
-                      IconButton(onPressed: () {
-
-                      },  icon: const Icon(Icons.remove_red_eye))
-                    ],),
-
-                  ],)
-
+                  Column(
+                    children: [
+                      if (user.isCoach)
+                        Row(
+                          children: [
+                            const Text(
+                              "Groups",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                letterSpacing: 2.0,
+                                fontSize: 12.0,
+                              ),
+                            ),
+                            IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.remove_red_eye))
+                          ],
+                        ),
+                    ],
+                  )
                 ],
               ),
               Divider(
@@ -235,9 +255,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                       fontSize: 16.0,
                     ),
                   ),
-                  IconButton(onPressed: () {
-
-                  }, icon: const Icon(Icons.edit))
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
                 ],
               ),
               const SizedBox(
@@ -313,6 +331,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
     ); //scaffold
   }
 }
+
 void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
   showDialog(
     context: context,
@@ -350,9 +369,8 @@ void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
   );
 }
 
-
-
-void _showCertificateDialog(BuildContext context, String certificate, UserSchema user) {
+void _showCertificateDialog(
+    BuildContext context, String certificate, UserSchema user) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -372,7 +390,8 @@ void _showCertificateDialog(BuildContext context, String certificate, UserSchema
                     },
                     icon: const Icon(Icons.download),
                   ),
-                  if (user.isCoach) // Conditionally show delete button based on user.isCoach
+                  if (user
+                      .isCoach) // Conditionally show delete button based on user.isCoach
                     IconButton(
                       onPressed: () {
                         // Add functionality to delete certificate

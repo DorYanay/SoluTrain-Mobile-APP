@@ -1,4 +1,3 @@
-from datetime import date, datetime, time
 from uuid import UUID, uuid4
 
 import psycopg
@@ -42,7 +41,7 @@ def create_area(db: psycopg.Connection, name: str) -> Area:
 @db_named_query
 def get_areas(db: psycopg.Connection) -> list[Area]:
     with db.cursor() as cursor:
-        cursor.execute("SELECT id, name FROM areas;")
+        cursor.execute("SELECT id, name FROM public.areas;")
         db.commit()
 
         rows = cursor.fetchall()
@@ -63,7 +62,7 @@ def get_areas(db: psycopg.Connection) -> list[Area]:
 @db_named_query
 def area_exists(db: psycopg.Connection, area_id: UUID) -> bool:
     with db.cursor() as cursor:
-        cursor.execute("SELECT id FROM areas WHERE id = %s;", [str(area_id)])
+        cursor.execute("SELECT id FROM public.areas WHERE id = %s;", [str(area_id)])
         db.commit()
 
         row = cursor.fetchone()
@@ -77,21 +76,17 @@ class Group:
     name: str
     description: str
     area_id: UUID
-    city: str
-    street: str
 
-    def __init__(self, group_id: UUID, coach_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str):
+    def __init__(self, group_id: UUID, coach_id: UUID, name: str, description: str, area_id: UUID):
         self.group_id = group_id
         self.coach_id = coach_id
         self.name = name
         self.description = description
         self.area_id = area_id
-        self.city = city
-        self.street = street
 
 
 @db_named_query
-def create_group(db: psycopg.Connection, coach_id: UUID, name: str, description: str, area_id: UUID, city: str, street: str) -> Group:
+def create_group(db: psycopg.Connection, coach_id: UUID, name: str, description: str, area_id: UUID) -> Group:
     group_id = uuid4()
 
     group = Group(
@@ -100,14 +95,12 @@ def create_group(db: psycopg.Connection, coach_id: UUID, name: str, description:
         name=name,
         description=description,
         area_id=area_id,
-        city=city,
-        street=street,
     )
 
     with db.cursor() as cursor:
         cursor.execute(
-            """INSERT INTO public.groups (id, coach_id, name, description, area_id, city, street)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            """INSERT INTO public.groups (id, coach_id, name, description, area_id)
+            VALUES (%s, %s, %s, %s, %s);
             """,
             (
                 str(group.group_id),
@@ -115,8 +108,6 @@ def create_group(db: psycopg.Connection, coach_id: UUID, name: str, description:
                 str(group.name),
                 str(group.description),
                 str(group.area_id),
-                str(group.city),
-                str(group.street),
             ),
         )
 
@@ -128,9 +119,9 @@ def get_group_by_id(db: psycopg.Connection, group_id: UUID) -> tuple[Group, str]
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT g.id, g.coach_id, g.name, g.description, g.area_id, g.city, g.street, coach.name
-            FROM groups AS g
-            JOIN users AS coach ON g.coach_id = coach.id
+            SELECT g.id, g.coach_id, g.name, g.description, g.area_id, coach.name
+            FROM public.groups AS g
+            JOIN public.users AS coach ON g.coach_id = coach.id
             WHERE g.id = %s;
             """,
             [str(group_id)],
@@ -148,11 +139,9 @@ def get_group_by_id(db: psycopg.Connection, group_id: UUID) -> tuple[Group, str]
             name=str(row[2]),
             description=str(row[3]),
             area_id=row[4],
-            city=str(row[5]),
-            street=str(row[6]),
         )
 
-        coach_name = str(row[7])
+        coach_name = str(row[5])
 
         return group, coach_name
 
@@ -163,9 +152,9 @@ def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[tuple[G
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT g.id, g.coach_id, g.name, g.description, g.area_id, g.city, g.street, coach.name
-            FROM groups AS g
-            JOIN users AS coach ON g.coach_id = coach.id
+            SELECT g.id, g.coach_id, g.name, g.description, g.area_id, coach.name
+            FROM public.groups AS g
+            JOIN public.users AS coach ON g.coach_id = coach.id
             WHERE area_id = %s;
             """,
             [str(area_id)],
@@ -183,11 +172,9 @@ def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[tuple[G
                 name=str(row[2]),
                 description=str(row[3]),
                 area_id=row[4],
-                city=str(row[5]),
-                street=str(row[6]),
             )
 
-            coach_name = str(row[7])
+            coach_name = str(row[5])
 
             groups.append((group, coach_name))
 
@@ -195,19 +182,19 @@ def get_groups_by_area_id(db: psycopg.Connection, area_id: UUID) -> list[tuple[G
 
 
 @db_named_query
-def get_tariner_groups(db: psycopg.Connection, trainer_id: UUID) -> list[tuple[UUID, str, str, str, str, str]]:
+def get_tariner_groups(db: psycopg.Connection, trainer_id: UUID) -> list[tuple[UUID, str, str, str]]:
     """
     Return list of info on groups of trainer.
-    Each row contain group_id, coach_name, group_name, area_name, city, street
+    Each row contain group_id, coach_name, group_name, area_name
     """
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT g.id, coach.name, g.name, a.name, g.city, g.street
-            FROM groups_member AS gm
-            JOIN groups AS g ON gm.group_id = g.id
-            JOIN users AS coach ON g.coach_id = coach.id
-            JOIN areas AS a ON g.area_id = a.id
+            SELECT g.id, coach.name, g.name, a.name
+            FROM public.groups_member AS gm
+            JOIN public.groups AS g ON gm.group_id = g.id
+            JOIN public.users AS coach ON g.coach_id = coach.id
+            JOIN public.areas AS a ON g.area_id = a.id
             WHERE gm.user_id = %s;
             """,
             [str(trainer_id)],
@@ -216,10 +203,10 @@ def get_tariner_groups(db: psycopg.Connection, trainer_id: UUID) -> list[tuple[U
 
         rows = cursor.fetchall()
 
-        data_rows: list[tuple[UUID, str, str, str, str, str]] = []
+        data_rows: list[tuple[UUID, str, str, str]] = []
 
         for row in rows:
-            data = (UUID(row[0]), str(row[1]), str(row[2]), str(row[3]), str(row[4]), str(row[5]))
+            data = (UUID(row[0]), str(row[1]), str(row[2]), str(row[3]))
 
             data_rows.append(data)
 
@@ -233,8 +220,8 @@ def get_coach_groups(db: psycopg.Connection, coach_id: UUID) -> list[Group]:
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT g.id, g.coach_id, g.name, g.description, g.area_id, g.city, g.street
-            FROM groups AS g
+            SELECT g.id, g.coach_id, g.name, g.description, g.area_id
+            FROM public.groups AS g
             WHERE coach_id = %s;
             """,
             [str(coach_id)],
@@ -252,8 +239,6 @@ def get_coach_groups(db: psycopg.Connection, coach_id: UUID) -> list[Group]:
                 name=str(row[2]),
                 description=str(row[3]),
                 area_id=row[4],
-                city=str(row[5]),
-                street=str(row[6]),
             )
 
             groups.append(group)
@@ -295,25 +280,23 @@ class Meet:
     meet_id: UUID
     group_id: UUID
     max_members: int
-    meet_date: date
-    meet_time: time
+    meet_date: str
     duration: int
-    location: str
+    city: str
+    street: str
 
-    def __init__(self, meet_id: UUID, group_id: UUID, max_members: int, meet_date: date, meet_time: time, duration: int, location: str):
+    def __init__(self, meet_id: UUID, group_id: UUID, max_members: int, meet_date: str, duration: int, city: str, street: str):
         self.meet_id = meet_id
         self.group_id = group_id
         self.max_members = max_members
         self.meet_date = meet_date
-        self.meet_time = meet_time
         self.duration = duration
-        self.location = location
+        self.city = city
+        self.street = street
 
 
 @db_named_query
-def create_meet(
-    db: psycopg.Connection, group_id: UUID, max_members: int, meet_date: date, meet_time: time, duration: int, location: str
-) -> Meet:
+def create_meet(db: psycopg.Connection, group_id: UUID, max_members: int, meet_date: str, duration: int, city: str, street: str) -> Meet:
     meet_id = uuid4()
 
     meet = Meet(
@@ -321,25 +304,24 @@ def create_meet(
         group_id=group_id,
         max_members=max_members,
         meet_date=meet_date,
-        meet_time=meet_time,
         duration=duration,
-        location=location,
+        city=city,
+        street=street,
     )
-
-    meet_full_time = datetime.combine(meet_date, meet_time)
 
     with db.cursor() as cursor:
         cursor.execute(
-            """INSERT INTO public.meetings (id, group_id, max_members, date, duration, location)
+            """INSERT INTO public.meetings (id, group_id, max_members, date, duration, city, street)
             VALUES (%s, %s, %s, %s, %s, %s);
             """,
             (
                 str(meet.meet_id),
                 str(meet.group_id),
                 int(meet.max_members),
-                meet_full_time,
+                str(meet.meet_date),
                 int(meet.duration),
-                str(meet.location),
+                str(meet.city),
+                str(meet.street),
             ),
         )
 
@@ -347,22 +329,19 @@ def create_meet(
 
 
 @db_named_query
-def update_meet(
-    db: psycopg.Connection, meet_id: UUID, max_members: int, meet_date: date, meet_time: time, duration: int, location: str
-) -> None:
-    meet_full_time = datetime.combine(meet_date, meet_time)
-
+def update_meet(db: psycopg.Connection, meet_id: UUID, max_members: int, meet_date: str, duration: int, city: str, street: str) -> None:
     with db.cursor() as cursor:
         cursor.execute(
             """UPDATE public.meetings
-            SET max_members = %s, date = %s, duration = %s, location = %s
+            SET max_members = %s, date = %s, duration = %s, city = %s, street = %s
             WHERE id = %s;
             """,
             (
                 int(max_members),
-                meet_full_time,
+                str(meet_date),
                 int(duration),
-                location,
+                str(city),
+                str(street),
                 str(meet_id),
             ),
         )
@@ -404,9 +383,9 @@ def get_meet(db: psycopg.Connection, meet_id: UUID, coach_id: UUID) -> Meet | No
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT m.id, m.group_id, m.max_members, m.date, m.duration, m.location
-            FROM meetings AS m
-            JOIN groups AS g ON m.group_id = g.id
+            SELECT m.id, m.group_id, m.max_members, m.date, m.duration, m.city, m.street
+            FROM public.meetings AS m
+            JOIN public.groups AS g ON m.group_id = g.id
             WHERE (m.id = %s AND g.coach_id = %s);
             """,
             (str(meet_id), str(coach_id)),
@@ -418,17 +397,14 @@ def get_meet(db: psycopg.Connection, meet_id: UUID, coach_id: UUID) -> Meet | No
         if row is None:
             return None
 
-        # TODO: Fix this
-        full_time = datetime.fromtimestamp(row[3])
-
         meet = Meet(
             meet_id=row[0],
             group_id=row[1],
             max_members=row[2],
-            meet_date=full_time.date(),
-            meet_time=full_time.time(),
+            meet_date=row[3],
             duration=row[4],
-            location=row[5],
+            city=row[5],
+            street=row[6],
         )
 
         return meet
@@ -439,9 +415,9 @@ def get_meet_members(db: psycopg.Connection, meet_id: UUID) -> list[User]:
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT u.id, u.name, u.email, u.password_hash, u.phone, u.gender, u.description, u.is_coach
-            FROM users AS u
-            JOIN meeting_members AS mm ON u.id = mm.user_id
+            SELECT u.id, u.name, u.email, u.password_hash, u.phone, u.gender, u.date_of_birth, u.description, u.is_coach
+            FROM public.users AS u
+            JOIN public.meeting_members AS mm ON u.id = mm.user_id
             WHERE mm.meeting_id = %s;
             """,
             [str(meet_id)],
@@ -460,8 +436,9 @@ def get_meet_members(db: psycopg.Connection, meet_id: UUID) -> list[User]:
                 password_hash=str(row[3]),
                 phone=str(row[4]),
                 gender=Gender(str(row[5])),
-                description=str(row[6]),
-                is_coach=bool(row[7]),
+                date_of_birth=str(row[6]),
+                description=str(row[7]),
+                is_coach=bool(row[8]),
             )
 
             members.append(member)
@@ -482,11 +459,11 @@ def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUI
         cursor.execute(
             """
             SELECT g.coach_id, gm.user_id, mm.user_id, COUNT(mm2.user_id) >= m.max_members
-            FROM meetings AS m
-            JOIN groups AS g ON m.group_id = g.id
-            LEFT JOIN groups_member AS gm ON g.id = gm.group_id
-            LEFT JOIN meeting_members AS mm ON m.id = mm.meeting_id
-            LEFT JOIN meeting_members AS mm2 ON m.id = mm2.meeting_id
+            FROM public.meetings AS m
+            JOIN public.groups AS g ON m.group_id = g.id
+            LEFT JOIN public.groups_member AS gm ON g.id = gm.group_id
+            LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
+            LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
             GROUP BY m.id
             WHERE (m.id = %s
                     AND (gm.user_id = %s OR gm.user_id IS NULL)
@@ -515,10 +492,10 @@ def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) 
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT m.id, m.date, m.duration, m.location, m.max_members, COUNT(mm.user_id), mm2.user_id
-            FROM meetings AS m
-            LEFT JOIN meeting_members AS mm ON m.id = mm.meeting_id
-            LEFT JOIN meeting_members AS mm2 ON m.id = mm2.meeting_id
+            SELECT m.id, m.date, m.duration, m.city, m.street, m.max_members, COUNT(mm.user_id), mm2.user_id
+            FROM public.meetings AS m
+            LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
+            LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
             GROUP BY m.id
             WHERE (m.group_id = %s AND (mm2.user_id = %s OR mm2.user_id IS NULL));
             """,
@@ -534,15 +511,15 @@ def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) 
             meet = Meet(
                 meet_id=row[0],
                 group_id=group_id,
-                max_members=row[4],
+                max_members=row[5],
                 meet_date=row[1],
-                meet_time=row[2],
-                duration=row[3],
-                location=row[4],
+                duration=row[2],
+                city=row[3],
+                street=row[4],
             )
 
-            registered = row[6] is not None
-            full = row[5] >= row[4]
+            registered = row[7] is not None
+            full = row[6] >= row[5]
 
             meets.append((meet, full, registered))
 
@@ -554,10 +531,10 @@ def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet,
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT m.id, m.group_id, m.date, m.duration, m.location, m.max_members, COUNT(mm.user_id), mm2.user_id
-            FROM meetings AS m
-            LEFT JOIN meeting_members AS mm ON m.id = mm.meeting_id
-            LEFT JOIN meeting_members AS mm2 ON m.id = mm2.meeting_id
+            SELECT m.id, m.group_id, m.date, m.duration, m.city, m.street, m.max_members, COUNT(mm.user_id), mm2.user_id
+            FROM public.meetings AS m
+            LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
+            LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
             GROUP BY m.id
             WHERE (mm2.user_id = %s);
             """,
@@ -573,15 +550,15 @@ def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet,
             meet = Meet(
                 meet_id=row[0],
                 group_id=row[1],
-                max_members=row[5],
+                max_members=row[6],
                 meet_date=row[2],
-                meet_time=row[3],
-                duration=row[4],
-                location=row[5],
+                duration=row[3],
+                city=row[4],
+                street=row[5],
             )
 
-            registered = row[7] is not None
-            full = row[6] >= row[5]
+            registered = row[8] is not None
+            full = row[7] >= row[6]
 
             meets.append((meet, full, registered))
 

@@ -18,8 +18,6 @@ def route_create_group(
     name: str,
     description: str,
     area_id: UUID,
-    city: str,
-    street: str,
     db: psycopg.Connection = Depends(db_dependency),
     user: User = Depends(get_current_user),
 ) -> GroupSchema:
@@ -29,6 +27,6 @@ def route_create_group(
     if not area_exists(db, area_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Area not found")
 
-    group = create_group(db, user.user_id, name, description, area_id, city, street)
+    group = create_group(db, user.user_id, name, description, area_id)
 
     return GroupSchema.from_model(group, user.name)
