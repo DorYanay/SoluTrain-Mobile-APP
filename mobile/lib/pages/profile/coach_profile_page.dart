@@ -61,9 +61,9 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                       fontSize: 14.0,
                     ),
                   ),
-                  IconButton(
-                      onPressed: () {}, icon: const Icon(Icons.edit))
-                ],),
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
+                ],
+              ),
               Divider(
                 height: 10.0,
                 color: Colors.grey[800],
