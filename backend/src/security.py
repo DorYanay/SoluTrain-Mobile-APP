@@ -1,8 +1,10 @@
 import hashlib
 from uuid import UUID, uuid4
 
-from fastapi import HTTPException, status
+import psycopg
+from fastapi import Depends, HTTPException, status
 
+from src.models import db_dependency
 from src.models.users import User, get_user_by_id
 
 
@@ -48,14 +50,14 @@ def logout_user(auth_token: UUID, user: User) -> None:
     auth_logged_users.pop(auth_token)
 
 
-def get_current_user(auth_token: UUID) -> User:
+def get_current_user(auth_token: UUID, db: psycopg.Connection = Depends(db_dependency)) -> User:
     """FastAPI dependency to get the current logged user (from the auth token)"""
 
     user_id = auth_logged_users.get(auth_token)
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
 
-    user = get_user_by_id(user_id)
+    user = get_user_by_id(db, user_id)
 
     if user is None:
         auth_logged_users.pop(auth_token)
