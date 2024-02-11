@@ -71,4 +71,9 @@ class AppModel extends ChangeNotifier {
     currentPage = CurrentSinglePage.group;
     notifyListeners();
   }
+
+  void moveToCreateGroupPage() {
+    currentPage = CurrentSinglePage.createGroup;
+    notifyListeners();
+  }
 }
