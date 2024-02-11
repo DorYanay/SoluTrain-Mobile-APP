@@ -23,6 +23,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
+    String description = user.description;
     int age = calculateAge(user.dateOfBirth);
     return Scaffold(
       backgroundColor: Colors.grey[900],
@@ -49,8 +50,22 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   radius: 80.0,
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'Edit',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      letterSpacing: 2.0,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () {}, icon: const Icon(Icons.edit))
+                ],),
               Divider(
-                height: 60.0,
+                height: 10.0,
                 color: Colors.grey[800],
               ),
               // Each Row contains the code in the first column and an ElevatedButton in the second column
@@ -103,7 +118,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 2.0),
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -122,9 +136,8 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                               },
                               icon: const Icon(Icons.edit))
                         ]),
-                        const SizedBox(height: 2.0),
                         ReadMoreText(
-                          user.description,
+                          '$description',
                           trimLines: 1,
                           preDataTextStyle: TextStyle(color: Colors.white),
                           postDataTextStyle: TextStyle(color: Colors.white),
@@ -171,9 +184,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             IconButton(
                                 onPressed: () {}, icon: const Icon(Icons.edit))
                           ],
-                        ),
-                        const SizedBox(
-                          height: 2.0,
                         ),
                         Row(
                           children: [
@@ -259,9 +269,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   ),
                   IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
                 ],
-              ),
-              const SizedBox(
-                height: 10.0,
               ),
               Row(
                 children: <Widget>[
