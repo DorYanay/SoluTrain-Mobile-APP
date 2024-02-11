@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class GroupPage extends StatefulWidget {
-  const GroupPage({super.key});
+  final String groupId;
+
+  const GroupPage(this.groupId, {super.key});
 
   @override
   State<GroupPage> createState() => _GroupPageState();

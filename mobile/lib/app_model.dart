@@ -12,7 +12,8 @@ enum CurrentSinglePage {
   createMeeting,
   meeting,
   searchGroups,
-  coachPage
+  coachPage,
+  myGroup,
 }
 
 class AppModel extends ChangeNotifier {
@@ -25,6 +26,7 @@ class AppModel extends ChangeNotifier {
   CurrentSinglePage currentPage = CurrentSinglePage.location;
 
   String currentPageGroupId = "";
+  String currentPageMyGroupId = "";
 
   AppModel({this.areas = const <AreaSchema>[]});
 
@@ -82,6 +84,12 @@ class AppModel extends ChangeNotifier {
   void moveToGroupPage(String groupId) {
     currentPage = CurrentSinglePage.group;
     currentPageGroupId = groupId;
+    notifyListeners();
+  }
+
+  void moveToMyGroupPage(String groupId) {
+    currentPage = CurrentSinglePage.myGroup;
+    currentPageMyGroupId = groupId;
     notifyListeners();
   }
 }

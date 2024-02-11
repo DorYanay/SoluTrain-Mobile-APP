@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/pages/groups/groups_page.dart';
-import 'package:mobile/pages/profile/coach_profile_page.dart';
-import 'package:mobile/pages/profile/trainer_profile_page.dart';
 import 'package:provider/provider.dart';
 
+import 'package:mobile/pages/groups/groups_page.dart';
+import 'package:mobile/pages/my_groups/my_groups_page.dart';
+import 'package:mobile/pages/profile/coach_profile_page.dart';
+import 'package:mobile/pages/profile/trainer_profile_page.dart';
 import 'package:mobile/app_model.dart';
 import 'package:mobile/pages/my_groups/my_group_page.dart';
 import 'package:mobile/pages/location/location_page.dart';
@@ -11,9 +12,7 @@ import 'package:mobile/pages/my_meetings/my_meetings_page.dart';
 import 'package:mobile/widgets/app_bottom_nav_bar.dart';
 import 'package:mobile/widgets/app_drawer.dart';
 import 'package:mobile/pages/auth/auth_page.dart';
-
 import 'package:mobile/pages/groups/create_group_page.dart';
-
 import 'package:mobile/pages/group/group_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -54,7 +53,7 @@ class _MainPageState extends State<MainPage> {
       case CurrentSinglePage.createGroup:
         return const CreateGroupPage();
       case CurrentSinglePage.group:
-        return const GroupPage();
+        return GroupPage(appModel.currentPageGroupId);
       case CurrentSinglePage.createMeeting:
         return const LocationPage();
       case CurrentSinglePage.meeting:
@@ -63,6 +62,8 @@ class _MainPageState extends State<MainPage> {
         return const LocationPage();
       case CurrentSinglePage.coachPage:
         return const LocationPage();
+      case CurrentSinglePage.myGroup:
+        return MyGroupPage(appModel.currentPageMyGroupId);
     }
   }
 
