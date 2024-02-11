@@ -31,7 +31,7 @@ def init_config() -> None:
     """Initialize configuration from environment variables"""
 
     if os.path.exists(".env"):
-        load_dotenv()
+        load_dotenv(override=False)
 
     config.pg_database = _get_envioment_variable("PG_DATABASE")
     config.pg_user = _get_envioment_variable("PG_USER")
