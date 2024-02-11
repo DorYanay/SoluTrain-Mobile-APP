@@ -4,7 +4,8 @@ import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
-import '../../app_model.dart';
+import 'package:mobile/app_model.dart';
+import 'package:mobile/pages/groups/groups_page.dart';
 
 class CoachProfilePage extends StatefulWidget {
   const CoachProfilePage({super.key});
@@ -20,6 +21,10 @@ List<String> certificates = [
 ]; // Example list of certificates
 
 class _CoachProfilePage extends State<CoachProfilePage> {
+  void viewGroupsOnPressed() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => GroupsPage()));
+  }
+
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
@@ -245,7 +250,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                               ),
                             ),
                             IconButton(
-                                onPressed: () {},
+                                onPressed: viewGroupsOnPressed,
                                 icon: const Icon(Icons.remove_red_eye))
                           ],
                         ),

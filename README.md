@@ -172,7 +172,9 @@ flowchart TD
   Location <--> Search-Groups <--> Group
   My-Groups ---> Group
   My-Meets -----> Meet
-  Profile --> Create-Group --> Group
+  Profile --> Groups
+  Groups --> Create-Group --> Group
+  Groups --> Group
   Group <--> Coach-Page
   Group <--> Create-Meet --> Meet
   Group <--> Meet
