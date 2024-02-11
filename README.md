@@ -164,20 +164,18 @@ Pages diagram
 
 ```mermaid
 flowchart TD
-  Login --> SignUp & Select-Area
+  Login --> SignUp
   SignUp --> Login
-  Select-Area --> Profile
-  Profile --> Select-Area
-  Profile --> Login
-  Profile --> My-Groups & My-Meets
-  My-Groups --> Group
-  My-Meets --> Meet
+  Login ---> Main
+  Main --> Location & My-Groups & My-Meets & Profile
+  Main --> Login
+  Location <--> Search-Groups <--> Group
+  My-Groups ---> Group
+  My-Meets -----> Meet
   Profile --> Create-Group --> Group
+  Group <--> Coach-Page
   Group <--> Create-Meet --> Meet
   Group <--> Meet
-  Select-Area <--> Search-Groups
-  Search-Groups <--> Group
-  Group <--> Coach-Page
 ```
 
 * Note: Any page can navigate to the Profile page.
