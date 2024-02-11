@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
-import '../../app_model.dart';
-import '../../formaters.dart';
+import 'package:mobile/app_model.dart';
+import 'package:mobile/formaters.dart';
 
 class TrainerProfilePage extends StatefulWidget {
   const TrainerProfilePage({super.key});
@@ -37,7 +37,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Center(
+              const Center(
                 child: CircleAvatar(
                   backgroundImage: AssetImage('lib/images/handsomeGuy.jpg'),
                   radius: 80.0,

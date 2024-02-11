@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/schemas.dart';
 
 class MyGroupsPage extends StatefulWidget {
   const MyGroupsPage({super.key});
@@ -14,7 +13,7 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
-        title: Text(
+        title: const Text(
           'my groups',
           style: TextStyle(
             color: Colors.grey,
@@ -31,14 +30,15 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              Container(
+              SizedBox(
                 width: 110,
                 height: 100,
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const SecondPage()),
                     );
                   },
                   backgroundColor: Colors.grey[200],
@@ -63,14 +63,15 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 110,
                 height: 100,
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const SecondPage()),
                     );
                   },
                   backgroundColor: Colors.grey[200],
@@ -95,14 +96,15 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 110,
                 height: 100,
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const SecondPage()),
                     );
                   },
                   backgroundColor: Colors.grey[200],
@@ -133,14 +135,15 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
+              SizedBox(
                 width: 110,
                 height: 100,
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const SecondPage()),
                     );
                   },
                   backgroundColor: Colors.grey[200],
@@ -165,14 +168,15 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 110,
                 height: 100,
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const SecondPage()),
                     );
                   },
                   backgroundColor: Colors.grey[200],
@@ -197,14 +201,15 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 110,
                 height: 100,
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const SecondPage()),
                     );
                   },
                   backgroundColor: Colors.grey[200],
@@ -238,12 +243,14 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
 }
 
 class SecondPage extends StatelessWidget {
+  const SecondPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
-        title: Text(
+        title: const Text(
           'My group',
           style: TextStyle(
             color: Colors.grey,
@@ -253,18 +260,16 @@ class SecondPage extends StatelessWidget {
         backgroundColor: Colors.grey[850],
         centerTitle: true,
       ),
-      body: Padding(
+      body: const Padding(
         padding: EdgeInsets.fromLTRB(30.0, 40.0, 20.0, 25.0),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Container(
-                child: Icon(
-                  Icons.groups_rounded,
-                  size: 200.0,
-                  color: Colors.black12,
-                ),
+              Icon(
+                Icons.groups_rounded,
+                size: 200.0,
+                color: Colors.black12,
               ),
               Text(
                 'Name of the team:',

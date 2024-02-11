@@ -18,7 +18,7 @@ class MyMeetingsPage extends StatefulWidget {
   const MyMeetingsPage({super.key});
 
   @override
-  _MyMeetingsPageState createState() => _MyMeetingsPageState();
+  State<MyMeetingsPage> createState() => _MyMeetingsPageState();
 }
 
 class _MyMeetingsPageState extends State<MyMeetingsPage> {
@@ -91,7 +91,7 @@ class _MyMeetingsPageState extends State<MyMeetingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meetings'),
+        title: const Text('Meetings'),
       ),
       body: ListView.builder(
         itemCount: meetings.length,
@@ -107,7 +107,7 @@ class _MyMeetingsPageState extends State<MyMeetingsPage> {
               child: ListTile(
                 title: Text(
                   '${meeting.date}, ${meeting.day}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +117,7 @@ class _MyMeetingsPageState extends State<MyMeetingsPage> {
                   ],
                 ),
                 trailing: IconButton(
-                  icon: Icon(Icons.arrow_forward),
+                  icon: const Icon(Icons.arrow_forward),
                   onPressed: () {
                     // Navigate to meeting page here
                     Navigator.push(
@@ -159,7 +159,7 @@ class MeetingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meeting Details'),
+        title: const Text('Meeting Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -170,29 +170,29 @@ class MeetingPage extends StatelessWidget {
             Text('Day: ${meeting.day}'),
             Text('Hour: ${meeting.hour}'),
             Text('Description: ${meeting.description}'),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 // Implement cancellation logic here
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text('Cancel Meeting'),
-                    content:
-                        Text('Are you sure you want to cancel this meeting?'),
+                    title: const Text('Cancel Meeting'),
+                    content: const Text(
+                        'Are you sure you want to cancel this meeting?'),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context); // Close the dialog
                         },
-                        child: Text('No'),
+                        child: const Text('No'),
                       ),
                       ElevatedButton(
                         onPressed: () {
                           // Implement cancellation logic here
                           Navigator.pop(context); // Close the dialog
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text('Meeting cancelled'),
                               duration: Duration(seconds: 2),
                             ),
@@ -200,13 +200,13 @@ class MeetingPage extends StatelessWidget {
                           // Call the callback function to notify the parent page
                           onMeetingCancelled();
                         },
-                        child: Text('Yes, Cancel'),
+                        child: const Text('Yes, Cancel'),
                       ),
                     ],
                   ),
                 );
               },
-              child: Text('Cancel Meeting'),
+              child: const Text('Cancel Meeting'),
             ),
           ],
         ),

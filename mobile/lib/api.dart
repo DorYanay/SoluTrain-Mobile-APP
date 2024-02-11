@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,9 @@ class Response {
 class API {
   static Future<Response> guestPost(String endpoint,
       {Map<String, dynamic>? params}) async {
-    print("API POST send Request: $endpoint");
+    if (kDebugMode) {
+      print("API POST send Request: $endpoint");
+    }
 
     final response = await http.post(
       Uri(
@@ -34,7 +37,9 @@ class API {
       headers: {'Content-Type': 'application/json'},
     );
 
-    print("API POST get Response: $endpoint - ${response.statusCode}");
+    if (kDebugMode) {
+      print("API POST get Response: $endpoint - ${response.statusCode}");
+    }
 
     if (response.statusCode != 200) {
       String errorMessage = '';

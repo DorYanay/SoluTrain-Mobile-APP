@@ -7,7 +7,7 @@ class LocationPage extends StatefulWidget {
   const LocationPage({Key? key}) : super(key: key);
 
   @override
-  _LocationPageState createState() => _LocationPageState();
+  State<LocationPage> createState() => _LocationPageState();
 }
 
 class _LocationPageState extends State<LocationPage> {
@@ -19,23 +19,25 @@ class _LocationPageState extends State<LocationPage> {
       body: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 90.0, vertical: 70.0),
-            margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-            child: Icon(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 90.0, vertical: 70.0),
+            margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+            child: const Icon(
               Icons.location_on_outlined,
               size: 200.0,
               color: Colors.black12,
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-            margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-            child: Text('Select your area', style: TextStyle(fontSize: 40.0)),
+            padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+            margin: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+            child: const Text('Select your area',
+                style: TextStyle(fontSize: 40.0)),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 50.0),
+            padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 50.0),
             // margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-            child: Text(
+            child: const Text(
               'Choose the area where you want to train',
               style: TextStyle(fontSize: 15.0, color: Colors.grey),
             ),
@@ -65,7 +67,7 @@ class _LocationPageState extends State<LocationPage> {
             onPressed: () {
               // Implement the functionality for the "Continue" button
             },
-            child: Text('Continue'),
+            child: const Text('Continue'),
           ),
         ],
       ),

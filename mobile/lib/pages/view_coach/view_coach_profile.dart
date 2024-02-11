@@ -3,9 +3,9 @@ import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
-import '../../app_model.dart';
-import '../../formaters.dart';
-import '../profile/coach_profile_page.dart';
+import 'package:mobile/app_model.dart';
+import 'package:mobile/formaters.dart';
+import 'package:mobile/pages/profile/coach_profile_page.dart';
 
 class WeiwCoachProfile extends StatefulWidget {
   const WeiwCoachProfile({super.key});
@@ -91,17 +91,17 @@ class _WeiwCoachProfile extends State<WeiwCoachProfile> {
                 ]),
                 const SizedBox(height: 2.0),
                 ReadMoreText(
-                  '$description',
+                  description,
                   trimLines: 1,
-                  preDataTextStyle: TextStyle(color: Colors.white),
-                  postDataTextStyle: TextStyle(color: Colors.white),
-                  delimiterStyle: TextStyle(color: Colors.white),
-                  lessStyle: TextStyle(color: Colors.white),
-                  moreStyle: TextStyle(color: Colors.white),
+                  preDataTextStyle: const TextStyle(color: Colors.white),
+                  postDataTextStyle: const TextStyle(color: Colors.white),
+                  delimiterStyle: const TextStyle(color: Colors.white),
+                  lessStyle: const TextStyle(color: Colors.white),
+                  moreStyle: const TextStyle(color: Colors.white),
                   colorClickableText: Colors.amber,
                   trimMode: TrimMode.Line,
                   trimCollapsedText: "Read more...",
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),

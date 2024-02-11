@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
 class MeetingPage extends StatefulWidget {
+  const MeetingPage({super.key});
+
   @override
-  _MeetingPageState createState() => _MeetingPageState();
+  State<MeetingPage> createState() => _MeetingPageState();
 }
 
 class _MeetingPageState extends State<MeetingPage> {
-  late TextEditingController _dateController;
-  late TextEditingController _regionController;
-  late TextEditingController _cityController;
-  late TextEditingController _streetController;
-  late TextEditingController _startHourController;
-  late TextEditingController _endHourController;
-  late TextEditingController _maxMembersController; // Changed field name
-  List<String> _participants = ['Participant 1', 'Participant 2'];
+  late TextEditingController dateController;
+  late TextEditingController regionController;
+  late TextEditingController cityController;
+  late TextEditingController streetController;
+  late TextEditingController startHourController;
+  late TextEditingController endHourController;
+  late TextEditingController maxMembersController; // Changed field name
+  List<String> participants = ['Participant 1', 'Participant 2'];
 
-  Map<String, bool> _editableMap = {
+  Map<String, bool> editableMap = {
     'Date': false,
     'Region': false,
     'City': false,
@@ -28,31 +30,31 @@ class _MeetingPageState extends State<MeetingPage> {
   @override
   void initState() {
     super.initState();
-    _dateController = TextEditingController(text: '2024-02-10');
-    _regionController = TextEditingController(text: 'Region');
-    _cityController = TextEditingController(text: 'City');
-    _streetController = TextEditingController(text: 'Street');
-    _startHourController = TextEditingController(text: '10:00 AM');
-    _endHourController = TextEditingController(text: '11:00 AM');
-    _maxMembersController =
+    dateController = TextEditingController(text: '2024-02-10');
+    regionController = TextEditingController(text: 'Region');
+    cityController = TextEditingController(text: 'City');
+    streetController = TextEditingController(text: 'Street');
+    startHourController = TextEditingController(text: '10:00 AM');
+    endHourController = TextEditingController(text: '11:00 AM');
+    maxMembersController =
         TextEditingController(text: '10'); // Initialize the controller
   }
 
   @override
   void dispose() {
-    _dateController.dispose();
-    _regionController.dispose();
-    _cityController.dispose();
-    _streetController.dispose();
-    _startHourController.dispose();
-    _endHourController.dispose();
-    _maxMembersController.dispose(); // Dispose the controller
+    dateController.dispose();
+    regionController.dispose();
+    cityController.dispose();
+    streetController.dispose();
+    startHourController.dispose();
+    endHourController.dispose();
+    maxMembersController.dispose(); // Dispose the controller
     super.dispose();
   }
 
   void _toggleEdit(String fieldName) {
     setState(() {
-      _editableMap[fieldName] = !_editableMap[fieldName]!;
+      editableMap[fieldName] = !editableMap[fieldName]!;
     });
   }
 
@@ -60,44 +62,44 @@ class _MeetingPageState extends State<MeetingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meeting Details'),
+        title: const Text('Meeting Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Group Name',
+            const Text('Group Name',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            ..._buildEditableFieldRow('Date', _dateController),
-            SizedBox(height: 20),
-            ..._buildEditableFieldRow('Region', _regionController),
-            SizedBox(height: 20),
-            ..._buildEditableFieldRow('City', _cityController),
-            SizedBox(height: 20),
-            ..._buildEditableFieldRow('Street', _streetController),
-            SizedBox(height: 20),
-            ..._buildEditableFieldRow('Start Hour', _startHourController),
-            SizedBox(height: 20),
-            ..._buildEditableFieldRow('End Hour', _endHourController),
-            SizedBox(height: 20),
+            const SizedBox(height: 10),
+            ..._buildEditableFieldRow('Date', dateController),
+            const SizedBox(height: 20),
+            ..._buildEditableFieldRow('Region', regionController),
+            const SizedBox(height: 20),
+            ..._buildEditableFieldRow('City', cityController),
+            const SizedBox(height: 20),
+            ..._buildEditableFieldRow('Street', streetController),
+            const SizedBox(height: 20),
+            ..._buildEditableFieldRow('Start Hour', startHourController),
+            const SizedBox(height: 20),
+            ..._buildEditableFieldRow('End Hour', endHourController),
+            const SizedBox(height: 20),
             ..._buildEditableFieldRow('Max Members Allowed',
-                _maxMembersController), // Changed field name
-            SizedBox(height: 20),
-            Text('Participants',
+                maxMembersController), // Changed field name
+            const SizedBox(height: 20),
+            const Text('Participants',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: _participants
+                  children: participants
                       .map((participant) => Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(participant),
                               IconButton(
-                                icon: Icon(Icons.delete),
+                                icon: const Icon(Icons.delete),
                                 onPressed:
                                     () {}, // Add functionality to remove participant
                               ),
@@ -122,7 +124,7 @@ class _MeetingPageState extends State<MeetingPage> {
             flex: 4,
             child: TextFormField(
               controller: controller,
-              readOnly: !_editableMap[fieldName]!,
+              readOnly: !editableMap[fieldName]!,
               decoration: InputDecoration(
                 labelText: fieldName,
                 border: OutlineInputBorder(
@@ -130,23 +132,17 @@ class _MeetingPageState extends State<MeetingPage> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
               width: 10), // Add some spacing between the text field and button
           Expanded(
             flex: 1,
             child: IconButton(
               onPressed: () => _toggleEdit(fieldName),
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
             ),
           ),
         ],
       ),
     ];
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: MeetingPage(),
-  ));
 }

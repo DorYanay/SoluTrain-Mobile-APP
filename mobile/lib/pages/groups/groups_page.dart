@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app_model.dart';
-import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
-import '../../api.dart';
+import 'package:mobile/schemas.dart';
+import 'package:mobile/api.dart';
 
 class GroupsPage extends StatefulWidget {
   const GroupsPage({super.key});
@@ -20,7 +20,8 @@ class _GroupsPageState extends State<GroupsPage> {
   }
 
   void viewGroupOnTap(GroupSchema group) {
-    Provider.of<AppModel>(context, listen: false).moveToGroupPage(group.groupId);
+    Provider.of<AppModel>(context, listen: false)
+        .moveToGroupPage(group.groupId);
   }
 
   // hooks

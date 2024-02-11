@@ -7,26 +7,26 @@ class CreateMeetingPage extends StatefulWidget {
   const CreateMeetingPage({super.key});
 
   @override
-  _CreateMeetingPageState createState() => _CreateMeetingPageState();
+  State<CreateMeetingPage> createState() => _CreateMeetingPageState();
 }
 
 class _CreateMeetingPageState extends State<CreateMeetingPage> {
-  late TextEditingController _MeetingNameController;
-  AreaSchema? _selectedRegion; // Default value
-  late TextEditingController _descriptionController;
+  late TextEditingController meetingNameController;
+  AreaSchema? selectedRegion; // Default value
+  late TextEditingController descriptionController;
 
   @override
   void initState() {
     super.initState();
-    _MeetingNameController = TextEditingController();
-    _descriptionController = TextEditingController();
-    // _selectedRegion = Provider.of<AppModel>(context, listen: false).areas.first; // Set initial value
+    meetingNameController = TextEditingController();
+    descriptionController = TextEditingController();
+    // selectedRegion = Provider.of<AppModel>(context, listen: false).areas.first; // Set initial value
   }
 
   @override
   void dispose() {
-    _MeetingNameController.dispose();
-    _descriptionController.dispose();
+    meetingNameController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 
@@ -42,7 +42,7 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextFormField(
-              controller: _MeetingNameController,
+              controller: meetingNameController,
               decoration: const InputDecoration(
                 labelText: 'Meeting Name',
                 border: OutlineInputBorder(),
@@ -50,10 +50,10 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<AreaSchema?>(
-              value: _selectedRegion,
+              value: selectedRegion,
               onChanged: (AreaSchema? newValue) {
                 setState(() {
-                  _selectedRegion = newValue;
+                  selectedRegion = newValue;
                 });
               },
               items: Provider.of<AppModel>(context)
@@ -71,7 +71,7 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: _descriptionController,
+              controller: descriptionController,
               decoration: const InputDecoration(
                 labelText: 'Description',
                 border: OutlineInputBorder(),
@@ -82,8 +82,8 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
             ElevatedButton(
               onPressed: () {
                 // Validate input and save the Meeting
-                if (_MeetingNameController.text.isEmpty ||
-                    _descriptionController.text.isEmpty) {
+                if (meetingNameController.text.isEmpty ||
+                    descriptionController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Please fill all fields'),
@@ -96,8 +96,8 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
                 // For example, you can send the Meeting data to the server
 
                 // Clear text fields after saving
-                _MeetingNameController.clear();
-                _descriptionController.clear();
+                meetingNameController.clear();
+                descriptionController.clear();
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

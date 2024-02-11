@@ -141,17 +141,19 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                               icon: const Icon(Icons.edit))
                         ]),
                         ReadMoreText(
-                          '$description',
+                          description,
                           trimLines: 1,
-                          preDataTextStyle: TextStyle(color: Colors.white),
-                          postDataTextStyle: TextStyle(color: Colors.white),
-                          delimiterStyle: TextStyle(color: Colors.white),
-                          lessStyle: TextStyle(color: Colors.white),
-                          moreStyle: TextStyle(color: Colors.white),
+                          preDataTextStyle:
+                              const TextStyle(color: Colors.white),
+                          postDataTextStyle:
+                              const TextStyle(color: Colors.white),
+                          delimiterStyle: const TextStyle(color: Colors.white),
+                          lessStyle: const TextStyle(color: Colors.white),
+                          moreStyle: const TextStyle(color: Colors.white),
                           colorClickableText: Colors.amber,
                           trimMode: TrimMode.Line,
                           trimCollapsedText: "Read more...",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
