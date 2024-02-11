@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/schemas.dart';
 
+import '../../api.dart';
+
 class GroupsPage extends StatefulWidget {
   const GroupsPage({super.key});
 
@@ -9,229 +11,59 @@ class GroupsPage extends StatefulWidget {
 }
 
 class _GroupsPageState extends State<GroupsPage> {
+  MyGroupsSchema? myGroups;
+
+  // hooks
+  @override
+  void initState() {
+    super.initState();
+
+    API.post(context, '/my-groups/get').then((Response res) {
+      if (res.hasError) {
+        // TODO: handle error
+        return;
+      }
+
+      setState(() {
+        myGroups = MyGroupsSchema.fromJson(res.data);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (myGroups == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Groups'),
+        ),
+        body: Text("Loading"),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 80,
-        title: Text(
-          'Groups',
-          style: TextStyle(
-            color: Colors.grey,
-            letterSpacing: 2.0,
-          ),
-        ),
-        backgroundColor: Colors.grey[850],
-        centerTitle: true,
+        title: Text('Groups'),
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Container(
-                width: 110,
-                height: 100,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
-                    );
-                  },
-                  backgroundColor: Colors.grey[200],
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Team name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        'Coach name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                  ),
+      body: ListView.builder(
+        itemCount: myGroups!.coachGroups.length,
+        itemBuilder: (context, index) {
+          final group = myGroups!.coachGroups[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.grey[200],
+              ),
+              child: ListTile(
+                title: Text(
+                  group.name,
                 ),
               ),
-              Container(
-                width: 110,
-                height: 100,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
-                    );
-                  },
-                  backgroundColor: Colors.grey[200],
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Team name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        'Coach name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 110,
-                height: 100,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
-                    );
-                  },
-                  backgroundColor: Colors.grey[200],
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Team name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        'Coach name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                width: 110,
-                height: 100,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
-                    );
-                  },
-                  backgroundColor: Colors.grey[200],
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Team name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        'Coach name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 110,
-                height: 100,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
-                    );
-                  },
-                  backgroundColor: Colors.grey[200],
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Team name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        'Coach name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 110,
-                height: 100,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SecondPage()),
-                    );
-                  },
-                  backgroundColor: Colors.grey[200],
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Team name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        'Coach name:',
-                        style: TextStyle(
-                          color: Colors.grey[850],
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
+            ),
+          );
+        },
       ),
     );
   }

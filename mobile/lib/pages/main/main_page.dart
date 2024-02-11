@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/pages/groups/groups_page.dart';
+import 'package:mobile/pages/profile/coach_profile_page.dart';
+import 'package:mobile/pages/profile/trainer_profile_page.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/app_model.dart';
@@ -9,8 +12,6 @@ import 'package:mobile/widgets/app_bottom_nav_bar.dart';
 import 'package:mobile/widgets/app_drawer.dart';
 import 'package:mobile/pages/auth/auth_page.dart';
 
-import '../profile/coach_profile_page.dart';
-
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -19,21 +20,47 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
-
   void navigateBottomBar(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 0) {
+      Provider.of<AppModel>(context, listen: false).moveToLocationPage();
+    } else if (index == 1) {
+      Provider.of<AppModel>(context, listen: false).moveToMyGroupsPage();
+    } else if (index == 2) {
+      Provider.of<AppModel>(context, listen: false).moveToMyMeetingsPage();
+    } else {
+      Provider.of<AppModel>(context, listen: false).moveToProfilePage();
+    }
   }
 
-  // pages to display
-  final List<Widget> _pages = [
-    const LocationPage(),
-    const MyGroupsPage(),
-    const MyMeetingsPage(),
-    const CoachProfilePage(),
-  ];
+  Widget getCurrentPage(AppModel appModel) {
+    switch (appModel.currentPage) {
+      case CurrentSinglePage.location:
+        return const LocationPage();
+      case CurrentSinglePage.myGroups:
+        return const MyGroupsPage();
+      case CurrentSinglePage.myMeetings:
+        return const MyMeetingsPage();
+      case CurrentSinglePage.profile:
+        if (appModel.user!.isCoach) {
+          return const CoachProfilePage();
+        }
+        return const TrainerProfilePage();
+      case CurrentSinglePage.groups:
+        return const GroupsPage();
+      case CurrentSinglePage.createGroup:
+        return const LocationPage();
+      case CurrentSinglePage.group:
+        return const GroupsPage();
+      case CurrentSinglePage.createMeeting:
+        return const LocationPage();
+      case CurrentSinglePage.meeting:
+        return const LocationPage();
+      case CurrentSinglePage.searchGroups:
+        return const LocationPage();
+      case CurrentSinglePage.coachPage:
+        return const LocationPage();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +90,7 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           drawer: const AppDrawer(),
-          body: _pages[_selectedIndex],
+          body: getCurrentPage(appModel),
           bottomNavigationBar: AppBottomNavBar(
             onTabChange: (index) => navigateBottomBar(index),
           ),

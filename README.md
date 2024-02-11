@@ -254,7 +254,7 @@ MIT
 
 ## Author
 
-* Dor
+* Dor Yanay - [GitHub](http://www.github.com/DorYanay)
 * Omer Priel
 * Ori Sharaby
 * Stav Avitan

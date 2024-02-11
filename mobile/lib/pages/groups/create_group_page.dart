@@ -12,7 +12,7 @@ class CreateGroupPage extends StatefulWidget {
 
 class _CreateGroupPageState extends State<CreateGroupPage> {
   late TextEditingController _GroupNameController;
-  AreaSchema? _selectedRegion;// Default value
+  AreaSchema? _selectedRegion; // Default value
   late TextEditingController _descriptionController;
 
   @override
@@ -20,7 +20,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     super.initState();
     _GroupNameController = TextEditingController();
     _descriptionController = TextEditingController();
-   // _selectedRegion = Provider.of<AppModel>(context, listen: false).areas.first; // Set initial value
+    // _selectedRegion = Provider.of<AppModel>(context, listen: false).areas.first; // Set initial value
   }
 
   @override
@@ -56,7 +56,8 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                   _selectedRegion = newValue;
                 });
               },
-              items: Provider.of<AppModel>(context).areas
+              items: Provider.of<AppModel>(context)
+                  .areas
                   .map<DropdownMenuItem<AreaSchema?>>((AreaSchema area) {
                 return DropdownMenuItem<AreaSchema?>(
                   value: area,

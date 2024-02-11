@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
 import 'package:mobile/app_model.dart';
-import 'package:mobile/pages/groups/groups_page.dart';
 
 class CoachProfilePage extends StatefulWidget {
   const CoachProfilePage({super.key});
@@ -22,7 +21,7 @@ List<String> certificates = [
 
 class _CoachProfilePage extends State<CoachProfilePage> {
   void viewGroupsOnPressed() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => GroupsPage()));
+    Provider.of<AppModel>(context, listen: false).moveToGroupsPage();
   }
 
   @override

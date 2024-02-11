@@ -1,11 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mobile/schemas.dart';
 
+enum CurrentSinglePage {
+  location,
+  myGroups,
+  myMeetings,
+  profile,
+  groups,
+  createGroup,
+  group,
+  createMeeting,
+  meeting,
+  searchGroups,
+  coachPage
+}
+
 class AppModel extends ChangeNotifier {
+  // global data
   String? authToken;
   UserSchema? user;
-
   List<AreaSchema> areas;
+
+  // pages navigation
+  CurrentSinglePage currentPage = CurrentSinglePage.location;
 
   AppModel({this.areas = const <AreaSchema>[]});
 
@@ -14,8 +31,9 @@ class AppModel extends ChangeNotifier {
   void setLogin(LoginResponseSchema data) {
     authToken = data.authToken;
     user = data.user;
-
     areas = data.areas;
+
+    moveToLocationPage();
 
     notifyListeners();
   }
@@ -24,6 +42,33 @@ class AppModel extends ChangeNotifier {
     authToken = null;
     user = null;
 
+    moveToLocationPage();
+
+    notifyListeners();
+  }
+
+  void moveToLocationPage() {
+    currentPage = CurrentSinglePage.location;
+    notifyListeners();
+  }
+
+  void moveToMyGroupsPage() {
+    currentPage = CurrentSinglePage.myGroups;
+    notifyListeners();
+  }
+
+  void moveToMyMeetingsPage() {
+    currentPage = CurrentSinglePage.myMeetings;
+    notifyListeners();
+  }
+
+  void moveToProfilePage() {
+    currentPage = CurrentSinglePage.profile;
+    notifyListeners();
+  }
+
+  void moveToGroupsPage() {
+    currentPage = CurrentSinglePage.group;
     notifyListeners();
   }
 }

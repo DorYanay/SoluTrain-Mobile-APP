@@ -15,8 +15,6 @@ class _LocationPageState extends State<LocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(Provider.of<AppModel>(context).areas);
-
     return Scaffold(
       body: Column(
         children: <Widget>[
