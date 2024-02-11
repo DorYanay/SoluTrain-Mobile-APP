@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/formaters.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -22,6 +23,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
+    int age = calculateAge(user.dateOfBirth);
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -185,7 +187,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                               ),
                             ),
                             Text(
-                              '14',
+                              '$age',
                               style: TextStyle(
                                   color: Colors.amberAccent[200],
                                   letterSpacing: 2.0,
