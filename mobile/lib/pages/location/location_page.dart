@@ -15,7 +15,6 @@ class _LocationPageState extends State<LocationPage> {
 
   @override
   Widget build(BuildContext context) {
-
     print(Provider.of<AppModel>(context).areas);
 
     return Scaffold(
@@ -43,22 +42,25 @@ class _LocationPageState extends State<LocationPage> {
               style: TextStyle(fontSize: 15.0, color: Colors.grey),
             ),
           ),
-          DropdownButtonHideUnderline( // Hide the default underline of the DropdownButton
+          DropdownButtonHideUnderline(
+            // Hide the default underline of the DropdownButton
             child: DropdownButton<AreaSchema>(
               value: selectedOption, // Set the selected option value
-              onChanged: (AreaSchema? newValue) { // Make the newValue nullable
+              onChanged: (AreaSchema? newValue) {
+                // Make the newValue nullable
                 setState(() {
-                  selectedOption = newValue; // Update the selected option value when user makes a selection
+                  selectedOption =
+                      newValue; // Update the selected option value when user makes a selection
                 });
               },
-              items: Provider.of<AppModel>(context).areas
+              items: Provider.of<AppModel>(context)
+                  .areas
                   .map<DropdownMenuItem<AreaSchema>>((AreaSchema area) {
                 return DropdownMenuItem<AreaSchema>(
                   value: area,
                   child: Text(area.name), // Display the option text
                 );
               }).toList(),
-
             ),
           ),
           ElevatedButton(
@@ -72,4 +74,3 @@ class _LocationPageState extends State<LocationPage> {
     );
   }
 }
-

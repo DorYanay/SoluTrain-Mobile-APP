@@ -23,18 +23,66 @@ class MyMeetingsPage extends StatefulWidget {
 
 class _MyMeetingsPageState extends State<MyMeetingsPage> {
   final List<Meeting> meetings = [
-    Meeting(date: '2024-02-10', day: 'Monday', hour: '10:00 AM', description: 'Team Meeting'),
-    Meeting(date: '2024-02-12', day: 'Wednesday', hour: '2:00 PM', description: 'Client Presentation'),
-    Meeting(date: '2024-02-14', day: 'Friday', hour: '9:00 AM', description: 'Project Review'),
-    Meeting(date: '2024-02-11', day: 'Tuesday', hour: '11:30 AM', description: 'Product Demo'),
-    Meeting(date: '2024-02-13', day: 'Thursday', hour: '3:00 PM', description: 'Brainstorming Session'),
-    Meeting(date: '2024-02-15', day: 'Saturday', hour: '10:00 AM', description: 'Training Workshop'),
-    Meeting(date: '2024-02-16', day: 'Sunday', hour: '1:00 PM', description: 'Weekly Review Meeting'),
-    Meeting(date: '2024-02-17', day: 'Monday', hour: '9:00 AM', description: 'Project Kickoff'),
-    Meeting(date: '2024-02-19', day: 'Wednesday', hour: '4:30 PM', description: 'Client Feedback Session'),
-    Meeting(date: '2024-02-20', day: 'Thursday', hour: '12:00 PM', description: 'Lunch Meeting'),
-    Meeting(date: '2024-02-21', day: 'Friday', hour: '3:30 PM', description: 'Team Building Activity'),
-    Meeting(date: '2024-02-22', day: 'Saturday', hour: '2:30 PM', description: 'Quarterly Planning Meeting'),
+    Meeting(
+        date: '2024-02-10',
+        day: 'Monday',
+        hour: '10:00 AM',
+        description: 'Team Meeting'),
+    Meeting(
+        date: '2024-02-12',
+        day: 'Wednesday',
+        hour: '2:00 PM',
+        description: 'Client Presentation'),
+    Meeting(
+        date: '2024-02-14',
+        day: 'Friday',
+        hour: '9:00 AM',
+        description: 'Project Review'),
+    Meeting(
+        date: '2024-02-11',
+        day: 'Tuesday',
+        hour: '11:30 AM',
+        description: 'Product Demo'),
+    Meeting(
+        date: '2024-02-13',
+        day: 'Thursday',
+        hour: '3:00 PM',
+        description: 'Brainstorming Session'),
+    Meeting(
+        date: '2024-02-15',
+        day: 'Saturday',
+        hour: '10:00 AM',
+        description: 'Training Workshop'),
+    Meeting(
+        date: '2024-02-16',
+        day: 'Sunday',
+        hour: '1:00 PM',
+        description: 'Weekly Review Meeting'),
+    Meeting(
+        date: '2024-02-17',
+        day: 'Monday',
+        hour: '9:00 AM',
+        description: 'Project Kickoff'),
+    Meeting(
+        date: '2024-02-19',
+        day: 'Wednesday',
+        hour: '4:30 PM',
+        description: 'Client Feedback Session'),
+    Meeting(
+        date: '2024-02-20',
+        day: 'Thursday',
+        hour: '12:00 PM',
+        description: 'Lunch Meeting'),
+    Meeting(
+        date: '2024-02-21',
+        day: 'Friday',
+        hour: '3:30 PM',
+        description: 'Team Building Activity'),
+    Meeting(
+        date: '2024-02-22',
+        day: 'Saturday',
+        hour: '2:30 PM',
+        description: 'Quarterly Planning Meeting'),
   ];
 
   @override
@@ -130,7 +178,8 @@ class MeetingPage extends StatelessWidget {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text('Cancel Meeting'),
-                    content: Text('Are you sure you want to cancel this meeting?'),
+                    content:
+                        Text('Are you sure you want to cancel this meeting?'),
                     actions: [
                       TextButton(
                         onPressed: () {

@@ -18,7 +18,7 @@ class _WeiwCoachProfile extends State<WeiwCoachProfile> {
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
-    String description= user.description;
+    String description = user.description;
     int age = calculateAge(user.dateOfBirth);
     return Scaffold(
       backgroundColor: Colors.grey[900],
@@ -90,7 +90,7 @@ class _WeiwCoachProfile extends State<WeiwCoachProfile> {
                         icon: const Icon(Icons.edit))
                 ]),
                 const SizedBox(height: 2.0),
-                 ReadMoreText(
+                ReadMoreText(
                   '$description',
                   trimLines: 1,
                   preDataTextStyle: TextStyle(color: Colors.white),

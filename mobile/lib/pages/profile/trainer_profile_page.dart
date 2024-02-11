@@ -37,8 +37,8 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-               Center(
-              child:CircleAvatar(
+              Center(
+                child: CircleAvatar(
                   backgroundImage: AssetImage('lib/images/handsomeGuy.jpg'),
                   radius: 80.0,
                 ),
@@ -46,17 +46,17 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                const Text(
-                  'Edit',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    letterSpacing: 2.0,
-                    fontSize: 14.0,
+                  const Text(
+                    'Edit',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      letterSpacing: 2.0,
+                      fontSize: 14.0,
+                    ),
                   ),
-                ),
-                IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.edit))
-              ],),
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
+                ],
+              ),
               Divider(
                 height: 10.0,
                 color: Colors.grey[800],
