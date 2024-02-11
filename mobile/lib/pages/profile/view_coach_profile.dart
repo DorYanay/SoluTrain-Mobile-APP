@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../app_model.dart';
+import '../../formaters.dart';
 import 'coach_profile_page.dart';
 
 class WeiwCoachProfile extends StatefulWidget {
@@ -17,6 +18,7 @@ class _WeiwCoachProfile extends State<WeiwCoachProfile> {
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
+    int age = calculateAge(user.dateOfBirth);
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -140,7 +142,7 @@ class _WeiwCoachProfile extends State<WeiwCoachProfile> {
                             ),
                           ),
                           Text(
-                            '14',
+                            '$age',
                             style: TextStyle(
                                 color: Colors.amberAccent[200],
                                 letterSpacing: 2.0,

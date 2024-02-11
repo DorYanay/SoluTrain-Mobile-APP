@@ -4,6 +4,7 @@ import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_model.dart';
+import '../../formaters.dart';
 
 class TrainerProfilePage extends StatefulWidget {
   const TrainerProfilePage({super.key});
@@ -16,6 +17,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
+    int age = calculateAge(user.dateOfBirth);
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -133,7 +135,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                     ),
                   ),
                   Text(
-                    '14',
+                    '$age',
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
