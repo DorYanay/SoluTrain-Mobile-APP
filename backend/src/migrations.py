@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import psycopg
 
 from src.config import init_config
@@ -88,6 +90,10 @@ def create_database(cursor: psycopg.Cursor) -> None:
         );
         """
     )
+
+    for area_name in ["North", "Central", "Samaria", "South"]:
+        area_id = uuid4()
+        cursor.execute("""INSERT INTO public.areas (id, name) VALUES (%s, %s)""", [area_id, area_name])
 
 
 def migrate_db() -> None:
