@@ -34,6 +34,7 @@ def create_area(db: psycopg.Connection, name: str) -> Area:
                 str(area.name),
             ),
         )
+        db.commit()
 
     return area
 
@@ -110,6 +111,7 @@ def create_group(db: psycopg.Connection, coach_id: UUID, name: str, description:
                 str(group.area_id),
             ),
         )
+        db.commit()
 
     return group
 
@@ -191,7 +193,7 @@ def get_tariner_groups(db: psycopg.Connection, trainer_id: UUID) -> list[tuple[U
         cursor.execute(
             """
             SELECT g.id, coach.name, g.name, a.name
-            FROM public.groups_member AS gm
+            FROM public.group_members AS gm
             JOIN public.groups AS g ON gm.group_id = g.id
             JOIN public.users AS coach ON g.coach_id = coach.id
             JOIN public.areas AS a ON g.area_id = a.id
@@ -324,6 +326,7 @@ def create_meet(db: psycopg.Connection, group_id: UUID, max_members: int, meet_d
                 str(meet.street),
             ),
         )
+        db.commit()
 
     return meet
 
@@ -461,7 +464,7 @@ def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUI
             SELECT g.coach_id, gm.user_id, mm.user_id, COUNT(mm2.user_id) >= m.max_members
             FROM public.meetings AS m
             JOIN public.groups AS g ON m.group_id = g.id
-            LEFT JOIN public.groups_member AS gm ON g.id = gm.group_id
+            LEFT JOIN public.group_members AS gm ON g.id = gm.group_id
             LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
             LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
             GROUP BY m.id

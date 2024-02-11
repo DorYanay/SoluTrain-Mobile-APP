@@ -103,8 +103,8 @@ def get_user_by_id(db: psycopg.Connection, user_id: UUID) -> User | None:
             phone=str(row[4]),
             gender=Gender(str(row[5])),
             date_of_birth=str(row[6]),
-            description=str(row[6]),
-            is_coach=bool(row[7]),
+            description=str(row[7]),
+            is_coach=bool(row[8]),
         )
 
 

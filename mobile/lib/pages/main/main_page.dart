@@ -14,6 +14,8 @@ import 'package:mobile/pages/auth/auth_page.dart';
 
 import 'package:mobile/pages/groups/create_group_page.dart';
 
+import 'package:mobile/pages/group/group_page.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -52,7 +54,7 @@ class _MainPageState extends State<MainPage> {
       case CurrentSinglePage.createGroup:
         return const CreateGroupPage();
       case CurrentSinglePage.group:
-        return const GroupsPage();
+        return const GroupPage();
       case CurrentSinglePage.createMeeting:
         return const LocationPage();
       case CurrentSinglePage.meeting:

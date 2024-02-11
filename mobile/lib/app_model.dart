@@ -24,6 +24,8 @@ class AppModel extends ChangeNotifier {
   // pages navigation
   CurrentSinglePage currentPage = CurrentSinglePage.location;
 
+  String currentPageGroupId = "";
+
   AppModel({this.areas = const <AreaSchema>[]});
 
   bool get loggedIn => authToken != null;
@@ -68,12 +70,18 @@ class AppModel extends ChangeNotifier {
   }
 
   void moveToGroupsPage() {
-    currentPage = CurrentSinglePage.group;
+    currentPage = CurrentSinglePage.groups;
     notifyListeners();
   }
 
   void moveToCreateGroupPage() {
     currentPage = CurrentSinglePage.createGroup;
+    notifyListeners();
+  }
+
+  void moveToGroupPage(String groupId) {
+    currentPage = CurrentSinglePage.group;
+    currentPageGroupId = groupId;
     notifyListeners();
   }
 }

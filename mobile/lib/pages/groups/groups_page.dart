@@ -19,6 +19,10 @@ class _GroupsPageState extends State<GroupsPage> {
     Provider.of<AppModel>(context, listen: false).moveToCreateGroupPage();
   }
 
+  void viewGroupOnTap(GroupSchema group) {
+    Provider.of<AppModel>(context, listen: false).moveToGroupPage(group.groupId);
+  }
+
   // hooks
   @override
   void initState() {
@@ -74,6 +78,7 @@ class _GroupsPageState extends State<GroupsPage> {
                       color: Colors.grey[200],
                     ),
                     child: ListTile(
+                      onTap: () => viewGroupOnTap(group),
                       title: Text(
                         group.name,
                       ),
