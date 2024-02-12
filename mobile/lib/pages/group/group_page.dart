@@ -27,11 +27,17 @@ class _GroupPageState extends State<GroupPage> {
 
   void viewMeetingOnPressed(MeetSchema meeting) {}
 
+  void removeParticipantOnPressed(UserBaseSchema user) {}
+
   @override
   void initState() {
     super.initState();
 
-    API.post(context, '/group/get-as-coach').then((Response res) {
+    API.post(context, '/group/get-as-coach', params: {
+      'group_id': widget.groupId,
+    }).then((Response res) {
+      print(res.errorBody);
+      print(res.errorMessage);
       if (res.hasError) {
         return;
       }
@@ -55,8 +61,10 @@ class _GroupPageState extends State<GroupPage> {
 
     final areas = Provider.of<AppModel>(context).areas;
 
-    final areaName =
-        areas.where((element) => element.areaId == fullGroup!.group.areaId);
+    final area =
+        areas.where((element) => element.areaId == fullGroup!.group.areaId).toList();
+
+    final areaName = area[0].name;
 
     return Scaffold(
       appBar: AppBar(
@@ -148,29 +156,25 @@ class _GroupPageState extends State<GroupPage> {
                   ),
                   const SizedBox(height: 10),
                   // Participants List
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Participant 1'),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Remove participant
-                        },
-                        child: const Text('Remove'),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Participant 2'),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Remove participant
-                        },
-                        child: const Text('Remove'),
-                      ),
-                    ],
+                  ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: fullGroup!.members.length,
+                    itemBuilder: (context, index) {
+                      final participant = fullGroup!.members[index];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(participant.name),
+                          ElevatedButton(
+                            onPressed: () {
+                              removeParticipantOnPressed(participant);
+                            },
+                            child: const Text('Remove'),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   // Add more participants as needed
                 ],
