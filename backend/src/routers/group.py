@@ -8,6 +8,7 @@ from src.models import db_dependency
 from src.models.groups import (
     add_member_to_group,
     add_member_to_meet,
+    check_member_in_group,
     check_trainer_in_meet,
     get_group_by_id,
     get_group_meets,
@@ -42,7 +43,9 @@ def route_get(
 
         meets.append(MeetInfoSchema.from_model(meet, members_count, registered))
 
-    return GroupViewInfoSchema(group=GroupSchema.from_model(group, coach_name), meets=meets)
+    registered = check_member_in_group(db, group_id, current_user.user_id)
+
+    return GroupViewInfoSchema(group=GroupSchema.from_model(group, coach_name), meets=meets, registered=registered)
 
 
 @router.post("/get-as-coach")

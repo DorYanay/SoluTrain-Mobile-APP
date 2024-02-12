@@ -158,6 +158,7 @@ class MeetInfoSchema(BaseModel):
 class GroupViewInfoSchema(BaseModel):
     group: GroupSchema
     meets: list[MeetInfoSchema]
+    registered: bool
 
 
 class GroupFullSchema(BaseModel):
