@@ -4,22 +4,22 @@ import 'package:mobile/app_model.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
-class SearchGroupPage extends StatefulWidget {
+class SearchGroupsPage extends StatefulWidget {
   final AreaSchema area;
 
-  const SearchGroupPage(this.area, {Key? key}) : super(key: key);
+  const SearchGroupsPage(this.area, {Key? key}) : super(key: key);
 
   @override
-  State<SearchGroupPage> createState() => _SearchGroupPageState();
+  State<SearchGroupsPage> createState() => _SearchGroupsPageState();
 }
 
-class _SearchGroupPageState extends State<SearchGroupPage> {
+class _SearchGroupsPageState extends State<SearchGroupsPage> {
   AreaSchema? selectedOption; // Make the selectedOption variable nullable
   List<GroupSchema>? groups;
 
   void viewGroupOnPressed(GroupSchema group) {
     Provider.of<AppModel>(context, listen: false)
-        .moveToViewGroupPage(group.groupId);
+        .moveToViewGroupPage(group.groupId, true);
   }
 
   @override
@@ -46,23 +46,21 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
     if (groups == null) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Groups'),
+          title: const Text('Search Groups'),
         ),
         body: const Text("Loading"),
       );
     }
 
-    print(groups);
-
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.group), // Group icon
-            SizedBox(width: 10), // Add some space between icon and title
+            const Icon(Icons.group), // Group icon
+            const SizedBox(width: 10), // Add some space between icon and title
             Text(
-              'Search Group - ${widget.area.name}',
-              style: TextStyle(fontSize: 24), // Big font size
+              'Search Groups - ${widget.area.name}',
+              style: const TextStyle(fontSize: 24), // Big font size
             ),
           ],
         ),
@@ -80,7 +78,7 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
                 onPressed: () {
                   viewGroupOnPressed(group);
                 },
-                child: Text('Info'),
+                child: const Text('Info'),
               ),
             );
           }),

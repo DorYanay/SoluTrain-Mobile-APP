@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class MeetingPage extends StatefulWidget {
-  const MeetingPage({super.key});
+  final String meetingId;
+  final String groupId;
+
+  const MeetingPage(this.meetingId, this.groupId, {super.key});
 
   @override
   State<MeetingPage> createState() => _MeetingPageState();

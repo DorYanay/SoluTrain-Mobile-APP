@@ -39,8 +39,6 @@ class _GroupPageState extends State<GroupPage> {
     API.post(context, '/group/get-as-coach', params: {
       'group_id': widget.groupId,
     }).then((Response res) {
-      print(res.errorBody);
-      print(res.errorMessage);
       if (res.hasError) {
         return;
       }

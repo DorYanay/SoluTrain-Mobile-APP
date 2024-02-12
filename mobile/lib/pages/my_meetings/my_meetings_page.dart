@@ -123,7 +123,7 @@ class _MyMeetingsPageState extends State<MyMeetingsPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MeetingPage(
+                        builder: (context) => _MeetingPage(
                           meeting: meeting,
                           onMeetingCancelled: () {
                             // Remove the cancelled meeting from the list
@@ -145,11 +145,11 @@ class _MyMeetingsPageState extends State<MyMeetingsPage> {
   }
 }
 
-class MeetingPage extends StatelessWidget {
+class _MeetingPage extends StatelessWidget {
   final Meeting meeting;
   final VoidCallback onMeetingCancelled;
 
-  const MeetingPage({
+  const _MeetingPage({
     Key? key,
     required this.meeting,
     required this.onMeetingCancelled,

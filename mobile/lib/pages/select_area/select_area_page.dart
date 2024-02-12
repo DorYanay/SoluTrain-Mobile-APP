@@ -3,14 +3,14 @@ import 'package:mobile/app_model.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
-class LocationPage extends StatefulWidget {
-  const LocationPage({Key? key}) : super(key: key);
+class SelectAreaPage extends StatefulWidget {
+  const SelectAreaPage({Key? key}) : super(key: key);
 
   @override
-  State<LocationPage> createState() => _LocationPageState();
+  State<SelectAreaPage> createState() => _SelectAreaPageState();
 }
 
-class _LocationPageState extends State<LocationPage> {
+class _SelectAreaPageState extends State<SelectAreaPage> {
   AreaSchema? selectedOption; // Make the selectedOption variable nullable
 
   void viewSearchGroupPageOnPressed() {
