@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/api.dart';
+import 'package:mobile/app_model.dart';
+import 'package:mobile/schemas.dart';
+import 'package:provider/provider.dart';
 
 class GroupPage extends StatefulWidget {
   final String groupId;
@@ -10,8 +14,58 @@ class GroupPage extends StatefulWidget {
 }
 
 class _GroupPageState extends State<GroupPage> {
+  GroupFullSchema? fullGroup;
+
+  String getMeetingTitle(MeetSchema meeting) {
+    final month = meeting.meetDate.month.toString().padLeft(2, '0');
+    final day = meeting.meetDate.day.toString().padLeft(2, '0');
+
+    return '$month/$day';
+  }
+
+  void createMeetingOnPressed() {}
+
+  void viewMeetingOnPressed(MeetSchema meeting) {}
+
+  void removeParticipantOnPressed(UserBaseSchema user) {}
+
+  @override
+  void initState() {
+    super.initState();
+
+    API.post(context, '/group/get-as-coach', params: {
+      'group_id': widget.groupId,
+    }).then((Response res) {
+      print(res.errorBody);
+      print(res.errorMessage);
+      if (res.hasError) {
+        return;
+      }
+
+      setState(() {
+        fullGroup = GroupFullSchema.fromJson(res.data);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (fullGroup == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Groups'),
+        ),
+        body: const Text("Loading"),
+      );
+    }
+
+    final areas = Provider.of<AppModel>(context).areas;
+
+    final area =
+        areas.where((element) => element.areaId == fullGroup!.group.areaId).toList();
+
+    final areaName = area[0].name;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Group Details'),
@@ -21,19 +75,19 @@ class _GroupPageState extends State<GroupPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Group Name: Group 1',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              'Group Name: ${fullGroup!.group.name}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Leader: John Doe',
-              style: TextStyle(fontSize: 16),
+            Text(
+              'Leader: ${fullGroup!.group.coachName}',
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Region: North',
-              style: TextStyle(fontSize: 16),
+            Text(
+              'Region: $areaName',
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
             Container(
@@ -55,40 +109,33 @@ class _GroupPageState extends State<GroupPage> {
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       ElevatedButton(
-                        onPressed: () {
-                          // Navigate to create meeting page
-                        },
+                        onPressed: createMeetingOnPressed,
                         child: const Text('Create Meeting'),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   // Meetings List
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Meeting 1'),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Navigate to meeting page
-                        },
-                        child: const Text('View'),
-                      ),
-                    ],
+                  ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: fullGroup!.meets.length,
+                    itemBuilder: (context, index) {
+                      final meeting = fullGroup!.meets[index];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(getMeetingTitle(meeting)),
+                          ElevatedButton(
+                            onPressed: () {
+                              viewMeetingOnPressed(meeting);
+                            },
+                            child: const Text('View'),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Meeting 2'),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Navigate to meeting page
-                        },
-                        child: const Text('View'),
-                      ),
-                    ],
-                  ),
-                  // Add more meetings as needed
                 ],
               ),
             ),
@@ -109,29 +156,25 @@ class _GroupPageState extends State<GroupPage> {
                   ),
                   const SizedBox(height: 10),
                   // Participants List
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Participant 1'),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Remove participant
-                        },
-                        child: const Text('Remove'),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Participant 2'),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Remove participant
-                        },
-                        child: const Text('Remove'),
-                      ),
-                    ],
+                  ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: fullGroup!.members.length,
+                    itemBuilder: (context, index) {
+                      final participant = fullGroup!.members[index];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(participant.name),
+                          ElevatedButton(
+                            onPressed: () {
+                              removeParticipantOnPressed(participant);
+                            },
+                            child: const Text('Remove'),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   // Add more participants as needed
                 ],
