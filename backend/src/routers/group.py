@@ -10,11 +10,13 @@ from src.models.groups import (
     add_member_to_meet,
     check_trainer_in_meet,
     get_group_by_id,
+    get_group_meets,
     get_group_meets_info,
+    get_group_members,
     remove_member_from_group,
 )
 from src.models.users import User
-from src.schemas import GroupSchema, GroupViewInfoSchema, MeetInfoSchema
+from src.schemas import GroupFullSchema, GroupSchema, GroupViewInfoSchema, MeetInfoSchema
 from src.security import get_current_user
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
@@ -41,6 +43,26 @@ def route_get(
         meets.append(MeetInfoSchema.from_model(meet, members_count, registered))
 
     return GroupViewInfoSchema(group=GroupSchema.from_model(group, coach_name), meets=meets)
+
+
+@router.post("/get-as-coach")
+def route_get_as_coach(
+    group_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> GroupFullSchema:
+    group_data = get_group_by_id(db, group_id)
+
+    if not group_data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+
+    group, coach_name = group_data
+
+    if group.coach_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not the coach of this group")
+
+    meets = get_group_meets(db, group_id)
+    members = get_group_members(db, group_id)
+
+    return GroupFullSchema.from_model(group, coach_name, meets, members)
 
 
 @router.post("/register-to-group")

@@ -249,6 +249,41 @@ def get_coach_groups(db: psycopg.Connection, coach_id: UUID) -> list[Group]:
 
 
 @db_named_query
+def get_group_members(db: psycopg.Connection, group_id: UUID) -> list[User]:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT u.id, u.name, u.email, u.password_hash, u.phone, u.gender, u.date_of_birth, u.description, u.is_coach
+            FROM public.group_members AS gm
+            JOIN public.users AS u ON gm.user_id = u.id
+            WHERE gm.group_id = %s
+            """,
+            [str(group_id)],
+        )
+        db.commit()
+
+        rows = cursor.fetchall()
+
+        members: list[User] = []
+
+        for row in rows:
+            user = User(
+                user_id=row[0],
+                name=str(row[1]),
+                email=str(row[2]),
+                password_hash=str(row[3]),
+                phone=str(row[4]),
+                gender=Gender(str(row[5])),
+                date_of_birth=str(row[6]),
+                description=str(row[7]),
+                is_coach=bool(row[8]),
+            )
+            members.append(user)
+
+        return members
+
+
+@db_named_query
 def add_member_to_group(db: psycopg.Connection, group_id: UUID, user_id: UUID) -> None:
     with db.cursor() as cursor:
         cursor.execute(
@@ -491,6 +526,39 @@ def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUI
 
 
 @db_named_query
+def get_group_meets(db: psycopg.Connection, group_id: UUID) -> list[Meet]:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT m.id, m.date, m.duration, m.city, m.street, m.max_members
+            FROM public.meetings AS m
+            WHERE m.group_id = %s;
+            """,
+            [str(group_id)],
+        )
+        db.commit()
+
+        rows = cursor.fetchall()
+
+        meets: list[Meet] = []
+
+        for row in rows:
+            meet = Meet(
+                meet_id=row[0],
+                group_id=group_id,
+                max_members=row[5],
+                meet_date=row[1],
+                duration=row[2],
+                city=row[3],
+                street=row[4],
+            )
+
+            meets.append(meet)
+
+        return meets
+
+
+@db_named_query
 def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) -> list[tuple[Meet, bool, bool]]:
     with db.cursor() as cursor:
         cursor.execute(
@@ -502,7 +570,7 @@ def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) 
             GROUP BY m.id
             WHERE (m.group_id = %s AND (mm2.user_id = %s OR mm2.user_id IS NULL));
             """,
-            (str(user_id), str(group_id)),
+            (str(group_id), str(user_id)),
         )
         db.commit()
 

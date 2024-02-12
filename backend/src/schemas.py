@@ -160,6 +160,20 @@ class GroupViewInfoSchema(BaseModel):
     meets: list[MeetInfoSchema]
 
 
+class GroupFullSchema(BaseModel):
+    group: GroupSchema
+    meets: list[MeetSchema]
+    members: list[UserBaseSchema]
+
+    @staticmethod
+    def from_model(group: Group, coach_name: str, meets: list[Meet], members: list[User]) -> GroupFullSchema:
+        return GroupFullSchema(
+            group=GroupSchema.from_model(group, coach_name),
+            meets=[MeetSchema.from_model(meet, []) for meet in meets],
+            members=[UserBaseSchema.from_model(member) for member in members],
+        )
+
+
 class MyGroupsSchema(BaseModel):
     in_groups: list[GroupInfoSchema]
     coach_groups: list[GroupSchema]
