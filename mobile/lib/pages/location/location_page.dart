@@ -13,6 +13,14 @@ class LocationPage extends StatefulWidget {
 class _LocationPageState extends State<LocationPage> {
   AreaSchema? selectedOption; // Make the selectedOption variable nullable
 
+  void viewSearchGroupPageOnPressed() {
+    if (selectedOption == null) {
+    return;
+    }
+
+    Provider.of<AppModel>(context, listen: false).moveToSearchGroupPage(selectedOption!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,9 +72,8 @@ class _LocationPageState extends State<LocationPage> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: viewSearchGroupPageOnPressed,
               // Implement the functionality for the "Continue" button
-            },
             child: const Text('Continue'),
           ),
         ],

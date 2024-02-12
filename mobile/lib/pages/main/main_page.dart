@@ -15,6 +15,8 @@ import 'package:mobile/pages/auth/auth_page.dart';
 import 'package:mobile/pages/groups/create_group_page.dart';
 import 'package:mobile/pages/group/group_page.dart';
 
+import '../group/search_group_page.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -59,7 +61,7 @@ class _MainPageState extends State<MainPage> {
       case CurrentSinglePage.meeting:
         return const LocationPage();
       case CurrentSinglePage.searchGroups:
-        return const LocationPage();
+        return SearchGroupPage(appModel.currentPageArea!);
       case CurrentSinglePage.coachPage:
         return const LocationPage();
       case CurrentSinglePage.myGroup:
