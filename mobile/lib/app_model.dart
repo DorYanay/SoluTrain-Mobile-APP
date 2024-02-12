@@ -27,6 +27,7 @@ class AppModel extends ChangeNotifier {
 
   String currentPageGroupId = "";
   String currentPageMyGroupId = "";
+  AreaSchema? currentPageArea;
 
   AppModel({this.areas = const <AreaSchema>[]});
 
@@ -73,6 +74,12 @@ class AppModel extends ChangeNotifier {
 
   void moveToGroupsPage() {
     currentPage = CurrentSinglePage.groups;
+    notifyListeners();
+  }
+
+  void moveToSearchGroupPage(AreaSchema area) {
+    currentPage = CurrentSinglePage.searchGroups;
+    currentPageArea = area;
     notifyListeners();
   }
 
