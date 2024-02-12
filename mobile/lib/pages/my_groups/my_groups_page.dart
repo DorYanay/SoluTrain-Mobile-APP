@@ -11,7 +11,8 @@ class MyGroupsPage extends StatefulWidget {
 
 class _MyGroupsPageState extends State<MyGroupsPage> {
   void viewGroupOnPressed() {
-    Provider.of<AppModel>(context, listen: false).moveToViewGroupPage("");
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewGroupPage("", false);
   }
 
   @override

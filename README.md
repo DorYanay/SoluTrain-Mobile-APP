@@ -164,20 +164,40 @@ Pages diagram
 
 ```mermaid
 flowchart TD
+  subgraph auth
+    Login
+    SignUp
+  end
+  subgraph main
+    Select-Area     
+    My-Groups
+    My-Meetings
+    Profile
+  end
+  
   Login --> SignUp
   SignUp --> Login
-  Login ---> Main
-  Main --> Location & My-Groups & My-Meets & Profile
-  Main --> Login
-  Location <--> Search-Groups <--> Group
-  My-Groups ---> Group
-  My-Meets -----> Meet
+  Login <---> Select-Area
+  
+  Select-Area --> Search-Groups
+  Search-Groups --> View-Group
+  View-Group --> View-Meeting & View-Coach
+  My-Groups --> View-Group
+  View-Group -->|from search| Search-Groups
+  View-Meeting --> View-Group & View-Coach
+  View-Coach --> View-Group & View-Meeting
+  My-Meetings --> View-Meeting
+  
   Profile --> Groups
-  Groups --> Create-Group --> Group
-  Groups --> Group
-  Group <--> Coach-Page
-  Group <--> Create-Meet --> Meet
-  Group <--> Meet
+  Groups --> Create-Group
+  Create-Group --> Group & Groups
+  Group --> Groups
+  Group --> Create-Meeting
+  Create-Meeting --> Meeting & Group
+  Group --> Meeting & View-Trainer
+  Meeting --> View-Trainer & Group
+  View-Trainer --> Group
+  View-Trainer -->|from meeting| Meeting
 ```
 
 * Note: Any page can navigate to the Profile page.
