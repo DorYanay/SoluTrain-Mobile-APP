@@ -99,4 +99,10 @@ class AppModel extends ChangeNotifier {
     currentPageViewGroupId = groupId;
     notifyListeners();
   }
+
+  void moveToCreateMeetingPage(String groupId) {
+    currentPage = CurrentSinglePage.createMeeting;
+    currentPageGroupId = groupId;
+    notifyListeners();
+  }
 }

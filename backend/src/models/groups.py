@@ -208,7 +208,7 @@ def get_tariner_groups(db: psycopg.Connection, trainer_id: UUID) -> list[tuple[U
         data_rows: list[tuple[UUID, str, str, str]] = []
 
         for row in rows:
-            data = (UUID(row[0]), str(row[1]), str(row[2]), str(row[3]))
+            data = (row[0], str(row[1]), str(row[2]), str(row[3]))
 
             data_rows.append(data)
 

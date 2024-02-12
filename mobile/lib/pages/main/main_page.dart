@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/pages/meeting/create_meeting_page.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/pages/groups/groups_page.dart';
@@ -58,7 +59,7 @@ class _MainPageState extends State<MainPage> {
       case CurrentSinglePage.viewGroup:
         return ViewGroupPage(appModel.currentPageViewGroupId);
       case CurrentSinglePage.createMeeting:
-        return const LocationPage();
+        return const CreateMeetingPage(appModel.currentPageGroupId);
       case CurrentSinglePage.meeting:
         return const LocationPage();
       case CurrentSinglePage.searchGroups:

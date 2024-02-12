@@ -23,7 +23,9 @@ class _GroupPageState extends State<GroupPage> {
     return '$month/$day';
   }
 
-  void createMeetingOnPressed() {}
+  void createMeetingOnPressed() {
+    Provider.of<AppModel>(context, listen: false).moveToCreateMeetingPage(fullGroup!.group.groupId);
+  }
 
   void viewMeetingOnPressed(MeetSchema meeting) {}
 
