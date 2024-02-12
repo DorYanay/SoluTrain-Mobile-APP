@@ -18,7 +18,8 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
   List<GroupSchema>? groups;
 
   void viewGroupOnPressed(GroupSchema group) {
-    Provider.of<AppModel>(context, listen: false).moveToMyGroupPage(group.groupId);
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewGroupPage(group.groupId);
   }
 
   @override
@@ -67,20 +68,22 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
         ),
       ),
       body: ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: groups!.length,
-        itemBuilder: (context, index) {
-          final group = groups![index];
-          return ListTile(
-            title: Text(group.name),
-            subtitle: Text(group.coachName),
-            trailing: ElevatedButton(
-              onPressed: () { viewGroupOnPressed(group); },
-              child: Text('Info'),
-            ),
-          );
-        }),
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: groups!.length,
+          itemBuilder: (context, index) {
+            final group = groups![index];
+            return ListTile(
+              title: Text(group.name),
+              subtitle: Text(group.coachName),
+              trailing: ElevatedButton(
+                onPressed: () {
+                  viewGroupOnPressed(group);
+                },
+                child: Text('Info'),
+              ),
+            );
+          }),
     );
   }
 }

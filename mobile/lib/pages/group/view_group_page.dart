@@ -4,56 +4,50 @@ import 'package:mobile/app_model.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
-class GroupPage extends StatefulWidget {
+class ViewGroupPage extends StatefulWidget {
   final String groupId;
 
-  const GroupPage(this.groupId, {super.key});
+  const ViewGroupPage(this.groupId, {super.key});
 
   @override
-  State<GroupPage> createState() => _GroupPageState();
+  State<ViewGroupPage> createState() => _ViewGroupPageState();
 }
 
-class _GroupPageState extends State<GroupPage> {
-  GroupFullSchema? fullGroup;
+class _ViewGroupPageState extends State<ViewGroupPage> {
+  GroupViewInfoSchema? groupViewInfo;
 
-  String getMeetingTitle(MeetSchema meeting) {
+  String getMeetingTitle(MeetInfoSchema meeting) {
     final month = meeting.meetDate.month.toString().padLeft(2, '0');
     final day = meeting.meetDate.day.toString().padLeft(2, '0');
 
     return '$month/$day';
   }
 
-  void createMeetingOnPressed() {}
-
-  void viewMeetingOnPressed(MeetSchema meeting) {}
-
-  void removeParticipantOnPressed(UserBaseSchema user) {}
+  void viewMeetingOnPressed(MeetInfoSchema meeting) {}
 
   @override
   void initState() {
     super.initState();
 
-    API.post(context, '/group/get-as-coach', params: {
+    API.post(context, '/group/get', params: {
       'group_id': widget.groupId,
     }).then((Response res) {
-      print(res.errorBody);
-      print(res.errorMessage);
       if (res.hasError) {
         return;
       }
 
       setState(() {
-        fullGroup = GroupFullSchema.fromJson(res.data);
+        groupViewInfo = GroupViewInfoSchema.fromJson(res.data);
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (fullGroup == null) {
+    if (groupViewInfo == null) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Groups'),
+          title: const Text('Group'),
         ),
         body: const Text("Loading"),
       );
@@ -62,7 +56,7 @@ class _GroupPageState extends State<GroupPage> {
     final areas = Provider.of<AppModel>(context).areas;
 
     final area = areas
-        .where((element) => element.areaId == fullGroup!.group.areaId)
+        .where((element) => element.areaId == groupViewInfo!.group.areaId)
         .toList();
 
     final areaName = area[0].name;
@@ -77,12 +71,12 @@ class _GroupPageState extends State<GroupPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Group Name: ${fullGroup!.group.name}',
+              'Group Name: ${groupViewInfo!.group.name}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text(
-              'Leader: ${fullGroup!.group.coachName}',
+              'Leader: ${groupViewInfo!.group.coachName}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 10),
@@ -101,17 +95,13 @@ class _GroupPageState extends State<GroupPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Meetings',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      ElevatedButton(
-                        onPressed: createMeetingOnPressed,
-                        child: const Text('Create Meeting'),
                       ),
                     ],
                   ),
@@ -120,9 +110,9 @@ class _GroupPageState extends State<GroupPage> {
                   ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: fullGroup!.meets.length,
+                    itemCount: groupViewInfo!.meets.length,
                     itemBuilder: (context, index) {
-                      final meeting = fullGroup!.meets[index];
+                      final meeting = groupViewInfo!.meets[index];
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -137,47 +127,6 @@ class _GroupPageState extends State<GroupPage> {
                       );
                     },
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Participants',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  // Participants List
-                  ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: fullGroup!.members.length,
-                    itemBuilder: (context, index) {
-                      final participant = fullGroup!.members[index];
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(participant.name),
-                          ElevatedButton(
-                            onPressed: () {
-                              removeParticipantOnPressed(participant);
-                            },
-                            child: const Text('Remove'),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  // Add more participants as needed
                 ],
               ),
             ),
