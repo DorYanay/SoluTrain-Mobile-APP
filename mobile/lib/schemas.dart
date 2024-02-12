@@ -180,8 +180,9 @@ class MeetInfoSchema {
 class GroupViewInfoSchema {
   final GroupSchema group;
   final List<MeetInfoSchema> meets;
+  final bool registered;
 
-  GroupViewInfoSchema(this.group, this.meets);
+  GroupViewInfoSchema(this.group, this.meets, this.registered);
 
   factory GroupViewInfoSchema.fromJson(dynamic data) {
     return GroupViewInfoSchema(
@@ -189,6 +190,7 @@ class GroupViewInfoSchema {
       (data['meets'] as List<dynamic>)
           .map((meet) => MeetInfoSchema.fromJson(meet))
           .toList(),
+      (data['registered'] as bool),
     );
   }
 }

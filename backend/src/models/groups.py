@@ -402,7 +402,7 @@ def add_member_to_meet(db: psycopg.Connection, meet_id: UUID, user_id: UUID) -> 
 
 
 @db_named_query
-def remove_member_from_meet(db: psycopg.Connection, meet_id: int, user_id: UUID) -> None:
+def remove_member_from_meet(db: psycopg.Connection, meet_id: UUID, user_id: UUID) -> None:
     with db.cursor() as cursor:
         cursor.execute(
             """DELETE FROM public.meeting_members
@@ -414,6 +414,23 @@ def remove_member_from_meet(db: psycopg.Connection, meet_id: int, user_id: UUID)
             ),
         )
         db.commit()
+
+
+@db_named_query
+def check_member_in_group(db: psycopg.Connection, group_id: UUID, user_id: UUID) -> bool:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT gm.group_id, gm.user_id FROM public.group_members AS gm
+            WHERE (group_id = %s AND user_id = %s);
+            """,
+            [str(group_id), str(user_id)],
+        )
+        db.commit()
+
+        row = cursor.fetchone()
+
+        return row is not None
 
 
 @db_named_query

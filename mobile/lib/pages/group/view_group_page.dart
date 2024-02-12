@@ -16,6 +16,8 @@ class ViewGroupPage extends StatefulWidget {
 class _ViewGroupPageState extends State<ViewGroupPage> {
   GroupViewInfoSchema? groupViewInfo;
 
+  bool waitingForRequest = false;
+
   String getMeetingTitle(MeetInfoSchema meeting) {
     final month = meeting.meetDate.month.toString().padLeft(2, '0');
     final day = meeting.meetDate.day.toString().padLeft(2, '0');
@@ -23,12 +25,51 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
     return '$month/$day';
   }
 
+  void registerGroupOnPressed() {
+    if (waitingForRequest) {
+      return;
+    }
+
+    setState(() {
+      waitingForRequest = true;
+    });
+
+    if (groupViewInfo!.registered) {
+      // unregister to group
+      API.post(context, '/group/unregister-to-group', params: {
+        'group_id': groupViewInfo!.group.groupId,
+      }).then((Response res) {
+        setState(() {
+          waitingForRequest = false;
+        });
+
+        if (res.hasError) {
+          return;
+        }
+
+        refresh();
+      });
+    } else {
+      // register to group
+      API.post(context, '/group/register-to-group', params: {
+        'group_id': groupViewInfo!.group.groupId,
+      }).then((Response res) {
+        setState(() {
+          waitingForRequest = false;
+        });
+
+        if (res.hasError) {
+          return;
+        }
+
+        refresh();
+      });
+    }
+  }
+
   void viewMeetingOnPressed(MeetInfoSchema meeting) {}
 
-  @override
-  void initState() {
-    super.initState();
-
+  void refresh() {
     API.post(context, '/group/get', params: {
       'group_id': widget.groupId,
     }).then((Response res) {
@@ -40,6 +81,13 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
         groupViewInfo = GroupViewInfoSchema.fromJson(res.data);
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    refresh();
   }
 
   @override
@@ -61,6 +109,9 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
 
     final areaName = area[0].name;
 
+    final registerButtonText =
+        groupViewInfo!.registered ? "Unregister" : "Register";
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Group Details'),
@@ -70,9 +121,21 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Group Name: ${groupViewInfo!.group.name}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Text(
+                  'Group Name: ${groupViewInfo!.group.name}',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton(
+                    onPressed: registerGroupOnPressed,
+                    child: Column(
+                      children: [
+                        Text(registerButtonText),
+                      ],
+                    )),
+              ],
             ),
             const SizedBox(height: 10),
             Text(
