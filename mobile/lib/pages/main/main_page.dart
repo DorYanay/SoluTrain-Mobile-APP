@@ -6,7 +6,7 @@ import 'package:mobile/pages/my_groups/my_groups_page.dart';
 import 'package:mobile/pages/profile/coach_profile_page.dart';
 import 'package:mobile/pages/profile/trainer_profile_page.dart';
 import 'package:mobile/app_model.dart';
-import 'package:mobile/pages/my_groups/my_group_page.dart';
+import 'package:mobile/pages/group/view_group_page.dart';
 import 'package:mobile/pages/location/location_page.dart';
 import 'package:mobile/pages/my_meetings/my_meetings_page.dart';
 import 'package:mobile/widgets/app_bottom_nav_bar.dart';
@@ -14,8 +14,7 @@ import 'package:mobile/widgets/app_drawer.dart';
 import 'package:mobile/pages/auth/auth_page.dart';
 import 'package:mobile/pages/groups/create_group_page.dart';
 import 'package:mobile/pages/group/group_page.dart';
-
-import '../group/search_group_page.dart';
+import 'package:mobile/pages/group/search_group_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -56,6 +55,8 @@ class _MainPageState extends State<MainPage> {
         return const CreateGroupPage();
       case CurrentSinglePage.group:
         return GroupPage(appModel.currentPageGroupId);
+      case CurrentSinglePage.viewGroup:
+        return ViewGroupPage(appModel.currentPageViewGroupId);
       case CurrentSinglePage.createMeeting:
         return const LocationPage();
       case CurrentSinglePage.meeting:
@@ -64,8 +65,6 @@ class _MainPageState extends State<MainPage> {
         return SearchGroupPage(appModel.currentPageArea!);
       case CurrentSinglePage.coachPage:
         return const LocationPage();
-      case CurrentSinglePage.myGroup:
-        return MyGroupPage(appModel.currentPageMyGroupId);
     }
   }
 

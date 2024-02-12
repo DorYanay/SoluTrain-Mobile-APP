@@ -15,10 +15,11 @@ class _LocationPageState extends State<LocationPage> {
 
   void viewSearchGroupPageOnPressed() {
     if (selectedOption == null) {
-    return;
+      return;
     }
 
-    Provider.of<AppModel>(context, listen: false).moveToSearchGroupPage(selectedOption!);
+    Provider.of<AppModel>(context, listen: false)
+        .moveToSearchGroupPage(selectedOption!);
   }
 
   @override
@@ -73,7 +74,7 @@ class _LocationPageState extends State<LocationPage> {
           ),
           ElevatedButton(
             onPressed: viewSearchGroupPageOnPressed,
-              // Implement the functionality for the "Continue" button
+            // Implement the functionality for the "Continue" button
             child: const Text('Continue'),
           ),
         ],

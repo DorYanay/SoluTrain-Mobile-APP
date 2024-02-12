@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/api.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,26 @@ class TrainerProfilePage extends StatefulWidget {
 }
 
 class _TrainerProfilePageState extends State<TrainerProfilePage> {
+  void uploadCertificateOnPressed() async {
+    API.guestPost('/debug/make-coach', params: {
+      'email': Provider.of<AppModel>(context, listen: false).user!.email,
+    }).then((Response res) {
+      API.post(context, '/auth/logout').then((value) {
+        Provider.of<AppModel>(context, listen: false).setLogout();
+      }).onError((error, stackTrace) {
+        Provider.of<AppModel>(context, listen: false).setLogout();
+      });
+    });
+
+    // TODO: this is ori :)
+    // FilePickerResult? result =
+    //     await FilePicker.platform.pickFiles();
+    // if (result != null) {
+    //   String filePath = result.files.single.path!;
+    //   print(filePath);
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
@@ -98,14 +119,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Column(
                     children: [
                       ElevatedButton(
-                          onPressed: () async {
-                            FilePickerResult? result =
-                                await FilePicker.platform.pickFiles();
-                            if (result != null) {
-                              String filePath = result.files.single.path!;
-                              print(filePath);
-                            }
-                          },
+                          onPressed: uploadCertificateOnPressed,
                           child: const Column(
                             children: [
                               Text('Upload certificate'),

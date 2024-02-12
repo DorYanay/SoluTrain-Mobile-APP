@@ -567,8 +567,8 @@ def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) 
             FROM public.meetings AS m
             LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
             LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
-            GROUP BY m.id
-            WHERE (m.group_id = %s AND (mm2.user_id = %s OR mm2.user_id IS NULL));
+            WHERE (m.group_id = %s AND (mm2.user_id = %s OR mm2.user_id IS NULL))
+            GROUP BY (m.id, mm2.user_id);
             """,
             (str(group_id), str(user_id)),
         )
