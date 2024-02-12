@@ -16,9 +16,16 @@ class GroupPage extends StatefulWidget {
 class _GroupPageState extends State<GroupPage> {
   GroupFullSchema? fullGroup;
 
-  void createMeetingOnPressed() {
+  String getMeetingTitle(MeetSchema meeting) {
+    final month = meeting.meetDate.month.toString().padLeft(2, '0');
+    final day = meeting.meetDate.day.toString().padLeft(2, '0');
 
+    return '$month/$day';
   }
+
+  void createMeetingOnPressed() {}
+
+  void viewMeetingOnPressed(MeetSchema meeting) {}
 
   @override
   void initState() {
@@ -48,7 +55,8 @@ class _GroupPageState extends State<GroupPage> {
 
     final areas = Provider.of<AppModel>(context).areas;
 
-    final areaName = areas.where((element) => element.areaId == fullGroup!.group.areaId);
+    final areaName =
+        areas.where((element) => element.areaId == fullGroup!.group.areaId);
 
     return Scaffold(
       appBar: AppBar(
@@ -100,7 +108,7 @@ class _GroupPageState extends State<GroupPage> {
                   ),
                   const SizedBox(height: 10),
                   // Meetings List
-                    ListView.builder(
+                  ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     itemCount: fullGroup!.meets.length,
@@ -109,19 +117,17 @@ class _GroupPageState extends State<GroupPage> {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(''),
+                          Text(getMeetingTitle(meeting)),
                           ElevatedButton(
                             onPressed: () {
-                              // Navigate to meeting page
+                              viewMeetingOnPressed(meeting);
                             },
                             child: const Text('View'),
                           ),
                         ],
                       );
-                    }),
+                    },
                   ),
-      ),
-                  // Add more meetings as needed
                 ],
               ),
             ),
