@@ -24,7 +24,8 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   void createMeetingOnPressed() {
-    Provider.of<AppModel>(context, listen: false).moveToCreateMeetingPage(fullGroup!.group.groupId);
+    Provider.of<AppModel>(context, listen: false)
+        .moveToCreateMeetingPage(fullGroup!.group.groupId);
   }
 
   void viewMeetingOnPressed(MeetSchema meeting) {}

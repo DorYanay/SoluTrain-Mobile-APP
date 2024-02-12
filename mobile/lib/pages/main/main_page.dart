@@ -59,7 +59,7 @@ class _MainPageState extends State<MainPage> {
       case CurrentSinglePage.viewGroup:
         return ViewGroupPage(appModel.currentPageViewGroupId);
       case CurrentSinglePage.createMeeting:
-        return const CreateMeetingPage(appModel.currentPageGroupId);
+        return CreateMeetingPage(appModel.currentPageGroupId);
       case CurrentSinglePage.meeting:
         return const LocationPage();
       case CurrentSinglePage.searchGroups:
