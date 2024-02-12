@@ -129,11 +129,12 @@ class MeetSchema {
   final String maxMembers;
   final DateTime meetDate;
   final int duration;
-  final String location;
+  final String city;
+  final String street;
   final List<UserBaseSchema> members;
 
   MeetSchema(this.meetId, this.groupId, this.maxMembers, this.meetDate,
-      this.duration, this.location, this.members);
+      this.duration, this.city, this.street, this.members);
 
   factory MeetSchema.fromJson(dynamic data) {
     return MeetSchema(
@@ -142,7 +143,8 @@ class MeetSchema {
       data['max_members'] as String,
       DateTime.parse(data['meet_date'] as String),
       data['duration'] as int,
-      data['location'] as String,
+      data['city'] as String,
+      data['street'] as String,
       (data['members'] as List<dynamic>)
           .map((member) => UserBaseSchema.fromJson(member))
           .toList(),
@@ -154,19 +156,21 @@ class MeetInfoSchema {
   final String meetId;
   final DateTime meetDate;
   final int duration;
-  final String location;
+  final String city;
+  final String street;
   final bool full;
   final bool registered;
 
-  MeetInfoSchema(this.meetId, this.meetDate, this.duration, this.location,
-      this.full, this.registered);
+  MeetInfoSchema(this.meetId, this.meetDate, this.duration, this.city,
+      this.street, this.full, this.registered);
 
   factory MeetInfoSchema.fromJson(dynamic data) {
     return MeetInfoSchema(
       data['meet_id'] as String,
       DateTime.parse(data['meet_date'] as String),
       data['duration'] as int,
-      data['location'] as String,
+      data['city'] as String,
+      data['street'] as String,
       data['full'] as bool,
       data['registered'] as bool,
     );
@@ -184,6 +188,26 @@ class GroupViewInfoSchema {
       GroupSchema.fromJson(data['group']),
       (data['meets'] as List<dynamic>)
           .map((meet) => MeetInfoSchema.fromJson(meet))
+          .toList(),
+    );
+  }
+}
+
+class GroupFullSchema {
+  final GroupSchema group;
+  final List<MeetSchema> meets;
+  final List<UserBaseSchema> members;
+
+  GroupFullSchema(this.group, this.meets, this.members);
+
+  factory GroupFullSchema.fromJson(dynamic data) {
+    return GroupFullSchema(
+      GroupSchema.fromJson(data['group']),
+      (data['meets'] as List<dynamic>)
+          .map((meet) => MeetSchema.fromJson(meet))
+          .toList(),
+      (data['members'] as List<dynamic>)
+          .map((meet) => UserBaseSchema.fromJson(meet))
           .toList(),
     );
   }
