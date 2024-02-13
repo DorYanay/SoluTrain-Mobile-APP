@@ -174,9 +174,14 @@ def user_upload_certificate(db: psycopg.Connection, user_id: UUID, name: str, bo
         cursor.execute(
             """
             INSERT INTO public.certificates (id, user_id, name, body) VALUES (%s, %s, %s, %s);
+            """,
+            [str(file_id), str(user_id), name, psycopg.Binary(body)],
+        )
+        cursor.execute(
+            """
             UPDATE public.users SET is_coach = true WHERE id = %s;
             """,
-            [str(file_id), str(user_id), name, psycopg.Binary(body), str(user_id)],
+            [str(user_id)],
         )
         db.commit()
 
