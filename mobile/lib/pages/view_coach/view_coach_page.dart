@@ -7,14 +7,18 @@ import 'package:mobile/app_model.dart';
 import 'package:mobile/formaters.dart';
 import 'package:mobile/pages/profile/coach_profile_page.dart';
 
-class WeiwCoachProfile extends StatefulWidget {
-  const WeiwCoachProfile({super.key});
+class ViewCoachPage extends StatefulWidget {
+  final String coachId;
+  final String groupId;
+  final String? meetingId;
+
+  const ViewCoachPage(this.coachId, this.groupId, this.meetingId, {super.key});
 
   @override
-  State<WeiwCoachProfile> createState() => _WeiwCoachProfile();
+  State<ViewCoachPage> createState() => _ViewCoachPage();
 }
 
-class _WeiwCoachProfile extends State<WeiwCoachProfile> {
+class _ViewCoachPage extends State<ViewCoachPage> {
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;

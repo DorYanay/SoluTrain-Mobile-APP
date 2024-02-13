@@ -56,6 +56,11 @@ class API {
         errorMessage = '';
       }
 
+      if (kDebugMode) {
+        print("API POST ERROR Message: $endpoint - $errorMessage");
+        print("API POST ERROR Body: $endpoint - ${response.body}");
+      }
+
       return Response(null, response.statusCode, response.body, errorMessage);
     }
 

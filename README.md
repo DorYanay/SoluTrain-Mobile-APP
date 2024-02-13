@@ -96,6 +96,7 @@ Note: the **API** means the backend and the **app** means the mobile app.
   * lib - The source code
     * images - Static images for the app
     * pages - Pages of the app
+      * main - the page that responsible for presetting the current page (other page in pages)
     * widgets - Custom reusable widgets for the app
     * api.dart - Handling the communication with the API
     * app_model.dart - The model (global state) of the app
@@ -133,10 +134,10 @@ Network diagram flow
 
 ```mermaid
 flowchart LR
-    Flutter(Flutter Dart) --> API(FastAPI python) --> PostgresSQL
+    Flutter(Flutter Dart) --- API(FastAPI python) --- PostgresSQL
 ```
 
-Modules diagram
+Services diagram
 
 ```mermaid
 flowchart RL
@@ -144,15 +145,17 @@ flowchart RL
     UI --> State --> Logic
   end
   Logic --> routers
-  subgraph backend
-    routers --> models
-  end
-  subgraph database
-    models --> PostgresSQL
-    PostgresSQL --> models
-  end
-  subgraph backend
-    models --> routers
+  subgraph render.com
+    subgraph backend
+      routers --> models
+    end
+    subgraph database
+      models --> PostgresSQL
+      PostgresSQL --> models
+    end
+    subgraph backend
+      models --> routers
+    end
   end
   routers --> Logic
   subgraph mobile
@@ -160,27 +163,49 @@ flowchart RL
   end
 ```
 
+* You can deploy locally using Docker Compose and not render.com
+
 Pages diagram
 
 ```mermaid
 flowchart TD
+  subgraph auth
+    Login
+    SignUp
+  end
+  subgraph main
+    Select-Area     
+    My-Groups
+    My-Meetings
+    Profile
+  end
+  
   Login --> SignUp
   SignUp --> Login
-  Login ---> Main
-  Main --> Location & My-Groups & My-Meets & Profile
-  Main --> Login
-  Location <--> Search-Groups <--> Group
-  My-Groups ---> Group
-  My-Meets -----> Meet
+  Login <---> Select-Area
+  
+  Select-Area --> Search-Groups
+  Search-Groups --> View-Group
+  View-Group --> View-Meeting & View-Coach
+  My-Groups --> View-Group
+  View-Group -->|from search| Search-Groups
+  View-Meeting --> View-Group & View-Coach
+  View-Coach --> View-Group & View-Meeting
+  My-Meetings --> View-Meeting
+  
   Profile --> Groups
-  Groups --> Create-Group --> Group
-  Groups --> Group
-  Group <--> Coach-Page
-  Group <--> Create-Meet --> Meet
-  Group <--> Meet
+  Groups --> Create-Group
+  Create-Group --> Group & Groups
+  Group --> Groups
+  Group --> Create-Meeting
+  Create-Meeting --> Meeting & Group
+  Group --> Meeting & View-Trainer
+  Meeting --> View-Trainer & Group
+  View-Trainer --> Group
+  View-Trainer -->|from meeting| Meeting
 ```
 
-* Note: Any page can navigate to the Profile page.
+* Note: Any page can navigate to the Select-Area, My-Groups, My-Meetings, Profile and Login (by Logout).
 
 ## Get Started
 
@@ -189,10 +214,20 @@ It will connect to the API in the cloud on render.com
 
 ### Backend Local Development
 
+You can deploy local the backend with the database by docker compose
+
+```bash
+docker compose up --build
+```
+
+* Note: by docker based you need to create the table by SQL using the SQL in backend/src/migration.py
+
+Or you can create database using docker and the backend on python with conda \
+according to the following steps \
 For starting the database run in a terminal the following commands:
 
 ```bash
-docker-compose up -d db
+docker compose up -d db
 ```
 
 For create the tables in the database run in a terminal the following commands:
@@ -213,7 +248,7 @@ And open in a browser the localhost:8000/docs
 You can also run the backend in a docker container by running the following commands:
 
 ```bash
-docker-compose up --build backend
+docker compose up --build backend
 ```
 
 And open in a browser the 0.0.0.0:8000/docs

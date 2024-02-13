@@ -4,7 +4,9 @@ import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
 class CreateMeetingPage extends StatefulWidget {
-  const CreateMeetingPage({super.key});
+  final String groupId;
+
+  const CreateMeetingPage(this.groupId, {super.key});
 
   @override
   State<CreateMeetingPage> createState() => _CreateMeetingPageState();
@@ -12,7 +14,7 @@ class CreateMeetingPage extends StatefulWidget {
 
 class _CreateMeetingPageState extends State<CreateMeetingPage> {
   late TextEditingController meetingNameController;
-  AreaSchema? selectedRegion; // Default value
+  AreaSchema? selectedRegion;
   late TextEditingController descriptionController;
 
   @override
@@ -20,7 +22,6 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
     super.initState();
     meetingNameController = TextEditingController();
     descriptionController = TextEditingController();
-    // selectedRegion = Provider.of<AppModel>(context, listen: false).areas.first; // Set initial value
   }
 
   @override

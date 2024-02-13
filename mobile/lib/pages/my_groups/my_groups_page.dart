@@ -17,7 +17,7 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
 
   void viewGroupOnPressed(GroupInfoSchema group) {
     Provider.of<AppModel>(context, listen: false)
-        .moveToViewGroupPage(group.groupId);
+        .moveToViewGroupPage(group.groupId, false);
   }
 
   @override
@@ -25,7 +25,6 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
     super.initState();
 
     API.post(context, '/my-groups/get').then((Response res) {
-      print(res.errorBody);
       if (res.hasError) {
         return;
       }

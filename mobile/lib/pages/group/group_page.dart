@@ -23,7 +23,10 @@ class _GroupPageState extends State<GroupPage> {
     return '$month/$day';
   }
 
-  void createMeetingOnPressed() {}
+  void createMeetingOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToCreateMeetingPage(fullGroup!.group.groupId);
+  }
 
   void viewMeetingOnPressed(MeetSchema meeting) {}
 
@@ -36,8 +39,6 @@ class _GroupPageState extends State<GroupPage> {
     API.post(context, '/group/get-as-coach', params: {
       'group_id': widget.groupId,
     }).then((Response res) {
-      print(res.errorBody);
-      print(res.errorMessage);
       if (res.hasError) {
         return;
       }

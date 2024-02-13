@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/app_model.dart';
 import 'package:mobile/formaters.dart';
 import 'package:mobile/widgets/app_button.dart';
 import 'package:mobile/widgets/app_textfield.dart';
 import 'package:mobile/api.dart';
+import 'package:provider/provider.dart';
 
 enum Gender { male, female }
 
 class SighUpPage extends StatefulWidget {
-  final void Function() showLogin;
-
-  const SighUpPage({super.key, required this.showLogin});
+  const SighUpPage({super.key});
 
   @override
   State<SighUpPage> createState() => _SighUpPageState();
@@ -140,7 +140,8 @@ class _SighUpPageState extends State<SighUpPage> {
 
   void signUpOnTap() {
     if (moveToLogin) {
-      widget.showLogin();
+      Provider.of<AppModel>(context, listen: false).moveToLoginPage();
+
       return;
     }
 
@@ -242,7 +243,7 @@ class _SighUpPageState extends State<SighUpPage> {
   }
 
   void loginOnTap() {
-    widget.showLogin();
+    Provider.of<AppModel>(context, listen: false).moveToLoginPage();
   }
 
   @override

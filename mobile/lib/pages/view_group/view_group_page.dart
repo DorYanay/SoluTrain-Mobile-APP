@@ -6,8 +6,9 @@ import 'package:provider/provider.dart';
 
 class ViewGroupPage extends StatefulWidget {
   final String groupId;
+  final bool fromSearchGroups;
 
-  const ViewGroupPage(this.groupId, {super.key});
+  const ViewGroupPage(this.groupId, this.fromSearchGroups, {super.key});
 
   @override
   State<ViewGroupPage> createState() => _ViewGroupPageState();
