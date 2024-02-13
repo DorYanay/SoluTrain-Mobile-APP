@@ -1,9 +1,9 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/formaters.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
-
 import 'package:mobile/app_model.dart';
 
 class CoachProfilePage extends StatefulWidget {
@@ -16,19 +16,39 @@ class CoachProfilePage extends StatefulWidget {
 List<String> certificates = [
   "Certificate 1",
   "Certificate 2",
-  "Certificate 3"
+  "Certificate 3",
+  "Certificate 4",
+  "Certificate 5",
+  "Certificate 6",
+  "Certificate 7",
+  "Certificate 8",
+  "Certificate 9",
+  "Certificate 10",
+  "Certificate 11",
+  "Certificate 12",
+
+
+
 ]; // Example list of certificates
 
 class _CoachProfilePage extends State<CoachProfilePage> {
   void viewGroupsOnPressed() {
     Provider.of<AppModel>(context, listen: false).moveToGroupsPage();
   }
-
+  void uploadImageOnPressed() async {
+    FilePickerResult? result =
+    await FilePicker.platform.pickFiles();
+    if (result != null) {
+      String filePath = result.files.single.path!;
+      print(filePath);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
     String description = user.description;
     int age = calculateAge(user.dateOfBirth);
+    String gender =user.gender;
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -48,9 +68,9 @@ class _CoachProfilePage extends State<CoachProfilePage> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Center(
+               Center(
                 child: CircleAvatar(
-                  backgroundImage: AssetImage('lib/images/handsomeGuy.jpg'),
+                  backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
                   radius: 80.0,
                 ),
               ),
@@ -65,7 +85,8 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                       fontSize: 14.0,
                     ),
                   ),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
+                  IconButton(onPressed: uploadImageOnPressed,
+                              icon: const Icon(Icons.edit))
                 ],
               ),
               Divider(
@@ -80,20 +101,21 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Name',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              letterSpacing: 2.0,
-                              fontSize: 16.0,
-                            ),
+                      Row(children: [
+                        const Text(
+                          'Name',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            letterSpacing: 2.0,
+                            fontSize: 16.0,
                           ),
-                          IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.edit))
-                        ],
-                      ),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              _showEditNameDialog(context, user);
+                            },
+                            icon: const Icon(Icons.edit))
+                      ]),
                       Row(
                         children: [
                           const Text(
@@ -177,20 +199,21 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              'Personal Details',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                letterSpacing: 2.0,
-                                fontSize: 16.0,
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: () {}, icon: const Icon(Icons.edit))
-                          ],
+                        Row(children: [
+                        const Text(
+                        'Personal Details',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            letterSpacing: 2.0,
+                            fontSize: 16.0,
+                          ),
                         ),
+                        IconButton(
+                            onPressed: () {
+                              _showEditPersonalDetailsDialog(context, user);
+                            },
+                            icon: const Icon(Icons.edit))
+                        ]),
                         Row(
                           children: [
                             Text(
@@ -263,19 +286,21 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 height: 10.0,
                 color: Colors.grey[800],
               ),
-              Row(
-                children: [
-                  const Text(
-                    'Contact',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2.0,
-                      fontSize: 16.0,
-                    ),
+              Row(children: [
+                const Text(
+                  'Contact',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    letterSpacing: 2.0,
+                    fontSize: 16.0,
                   ),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
-                ],
-              ),
+                ),
+                IconButton(
+                    onPressed: () {
+                      _showEditContactDialog(context, user);
+                    },
+                    icon: const Icon(Icons.edit))
+              ]),
               Row(
                 children: <Widget>[
                   Icon(
@@ -347,6 +372,191 @@ class _CoachProfilePage extends State<CoachProfilePage> {
   }
 }
 
+void _showEditNameDialog(BuildContext context, UserSchema user) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Edit Name'),
+        content: TextField(
+          controller: TextEditingController(text: user.name),
+          keyboardType: TextInputType.multiline,
+          minLines: 5,
+          maxLines: 10, // Allows the TextField to expand vertically
+          decoration: const InputDecoration(
+            hintText: 'Enter your new name...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              // Add functionality to save edited description
+              Navigator.of(context).pop();
+            },
+            child: const Text('Save'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Add functionality to cancel editing
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showEditPersonalDetailsDialog(BuildContext context, UserSchema user) {
+  // Define initial values for dateOfBirth and gender
+  DateTime initialDateOfBirth = user.dateOfBirth ?? DateTime.now();
+  String initialGender = user.gender ?? '';
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // Define variables to hold the current values of dateOfBirth and gender
+      DateTime selectedDateOfBirth = initialDateOfBirth;
+      String selectedGender = initialGender;
+
+      return AlertDialog(
+        title: const Text('Edit Profile'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Date of Birth'),
+                initialValue: selectedDateOfBirth.toString(), // Set initial value
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDateOfBirth ?? DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                  );
+                  if (pickedDate != null) {
+                    // Update selectedDateOfBirth when date is picked
+                    selectedDateOfBirth = pickedDate;
+                  }
+                },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Gender'),
+                initialValue: selectedGender, // Set initial value
+                onChanged: (value) {
+                  // Update selectedGender when input changes
+                  selectedGender = value;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              // Add functionality to save changes
+              // You can access selectedDateOfBirth and selectedGender here
+              // and perform necessary actions like updating the user profile
+              Navigator.of(context).pop();
+            },
+            child: const Text('Save'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Add functionality to close dialog without saving changes
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showEditContactDialog(BuildContext context, UserSchema user) {
+  // Define a TextEditingController to manage the phone number input
+  TextEditingController phoneNumberController =
+  TextEditingController(text: user.phone);
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Edit Phone Number'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: phoneNumberController,
+              decoration: const InputDecoration(labelText: 'Phone Number'),
+              keyboardType: TextInputType.phone,
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              // Validate the phone number before saving
+              String enteredPhoneNumber =
+              phoneNumberController.text.trim();
+              if (isValidPhoneNumber(enteredPhoneNumber)) {
+                // Perform necessary actions with the valid phone number
+                // For example, update the user's profile
+                // user.phoneNumber = enteredPhoneNumber;
+                Navigator.of(context).pop();
+              } else {
+                // Show an error message for invalid phone number
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Invalid phone number'),
+                  ),
+                );
+              }
+            },
+            child: const Text('Save'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+bool isValidPhoneNumber(String phoneNumber) {
+  if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
+      !phoneNumber.startsWith('+')) {
+    return false;
+  }
+
+  if (phoneNumber.length < 10 || phoneNumber.length > 14) {
+    return false;
+  }
+
+  return true;
+}
+
+bool _containsOnlyDigits(String str) {
+  for (int i = 0; i < str.length; i++) {
+    if (!isDigit(str[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool isDigit(String s) {
+  return double.tryParse(s) != null;
+}
+
 void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
   showDialog(
     context: context,
@@ -405,14 +615,12 @@ void _showCertificateDialog(
                     },
                     icon: const Icon(Icons.download),
                   ),
-                  if (user
-                      .isCoach) // Conditionally show delete button based on user.isCoach
-                    IconButton(
-                      onPressed: () {
-                        // Add functionality to delete certificate
-                      },
-                      icon: const Icon(Icons.delete),
-                    ),
+                  IconButton(
+                    onPressed: () {
+                      // Add functionality to delete certificate
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
                 ],
               ),
             );
@@ -431,3 +639,4 @@ void _showCertificateDialog(
     },
   );
 }
+
