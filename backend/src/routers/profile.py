@@ -5,17 +5,20 @@ from src.models import db_dependency
 from src.models.users import (
     User,
     delete_user_certificate,
+    delete_user_profile_image,
     get_user_by_email,
     get_user_by_id,
     get_user_certificate,
     get_user_certificates,
+    get_user_profile_image,
     update_user,
     update_user_password,
     user_upload_certificate,
+    user_upload_profile_image,
 )
 from src.schemas import CertificatesSchema, UserSchema
 from src.security import create_hash, get_current_user
-from src.validators import validate_certificate_name, validate_email
+from src.validators import validate_certificate_name, validate_email, validate_profile_picture_name
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
@@ -106,6 +109,36 @@ def route_delete_certificate(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You need to have at least one certificate")
 
     delete_user_certificate(db, current_user.user_id, certificate_id)
+
+
+@router.get("/get-profile-picture")
+def route_get_profile_picture(db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> Response:
+    image = get_user_profile_image(db, current_user.user_id)
+
+    if image is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="The user does not have a profile picture")
+
+    return Response(content=image.body, media_type=_get_api_media_type(image.name))
+
+
+@router.post("/upload-profile-picture")
+async def route_upload_profile_picture(
+    file: UploadFile, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
+    if file.filename is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File name is empty")
+
+    if not validate_profile_picture_name(file.filename):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only .jpg, .jpeg, .png files are allowed")
+
+    file_body = await file.read()
+
+    user_upload_profile_image(db, current_user.user_id, file.filename, file_body)
+
+
+@router.post("/delete-profile-picture")
+def route_delete_profile_picture(db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)) -> None:
+    delete_user_profile_image(db, current_user.user_id)
 
 
 @router.post("/update-details")
