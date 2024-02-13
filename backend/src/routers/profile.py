@@ -1,19 +1,51 @@
 import psycopg
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
-from starlette import status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, Response, status
 
 from src.models import db_dependency
-from src.models.users import User, get_user_by_email, get_user_by_id, update_user, update_user_password, user_upload_certificate
-from src.schemas import UserSchema
+from src.models.users import User, get_user_by_email, get_user_by_id, update_user, update_user_password, user_upload_certificate, \
+    get_user_certificates, get_user_certificate
+from src.schemas import UserSchema, CertificatesSchema
 from src.security import create_hash, get_current_user
 from src.validators import validate_certificate_name, validate_email
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
+def _get_api_media_type(name):
+    if name.endswith('.pdf'):
+        return 'application/pdf'
+    elif name.endswith('.jpg') or name.endswith('.jpeg'):
+        return 'image/jpeg'
+    elif name.endswith('.png'):
+        return 'image/png'
+
+    return 'application/octet-stream'
+
+
 @router.post("/get")
 def route_get(current_user: User = Depends(get_current_user)) -> UserSchema:
     return UserSchema.from_model(current_user)
+
+
+@router.post("/get-certificates")
+def route_get_certificates(
+    db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> CertificatesSchema:
+    certificates = get_user_certificates(db, current_user.user_id)
+
+    return CertificatesSchema.from_model(certificates)
+
+
+@router.get("/get-certificate/")
+def route_get_certificate(
+    certificate_id: str, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> Response:
+    certificate = get_user_certificate(db, current_user.user_id, certificate_id)
+
+    if certificate is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Certificate not found")
+
+    return Response(content=certificate.body, media_type=_get_api_media_type(certificate.name))
 
 
 @router.post("/upload-first-certificate")
