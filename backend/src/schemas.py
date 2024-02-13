@@ -5,7 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from src.models.groups import Area, Group, Meet
-from src.models.users import Gender, User
+from src.models.users import FileModel, Gender, User
 
 
 class UserBaseSchema(BaseModel):
@@ -51,6 +51,28 @@ class UserSchema(BaseModel):
             date_of_birth=user.date_of_birth,
             description=user.description,
             is_coach=user.is_coach,
+        )
+
+
+class FileSchema(BaseModel):
+    file_id: str
+    name: str
+
+    @staticmethod
+    def from_model(file: FileModel) -> FileSchema:
+        return FileSchema(
+            file_id=str(file.file_id),
+            name=file.name,
+        )
+
+
+class CertificatesSchema(BaseModel):
+    certificates: list[FileSchema]
+
+    @staticmethod
+    def from_model(certificates: list[FileModel]) -> CertificatesSchema:
+        return CertificatesSchema(
+            certificates=[FileSchema.from_model(certificate) for certificate in certificates],
         )
 
 

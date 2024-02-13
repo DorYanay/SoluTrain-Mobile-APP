@@ -22,20 +22,27 @@ class Response {
 
 class API {
   static Future<Response> guestPost(String endpoint,
-      {Map<String, dynamic>? params}) async {
+      {Map<String, dynamic>? params, String? filePath}) async {
     if (kDebugMode) {
       print("API POST send Request: $endpoint");
     }
 
-    final response = await http.post(
-      Uri(
-          scheme: Config.apiIsHttps ? 'https' : 'http',
-          host: Config.apiHost,
-          port: Config.apiPort,
-          path: endpoint,
-          queryParameters: params),
-      headers: {'Content-Type': 'application/json'},
-    );
+    var request = http.MultipartRequest(
+        ''
+        'POST',
+        Uri(
+            scheme: Config.apiIsHttps ? 'https' : 'http',
+            host: Config.apiHost,
+            port: Config.apiPort,
+            path: endpoint,
+            queryParameters: params));
+
+    if (filePath != null) {
+      request.files.add(await http.MultipartFile.fromPath('file', filePath));
+    }
+
+    final streamResponse = await request.send();
+    final response = await http.Response.fromStream(streamResponse);
 
     if (kDebugMode) {
       print("API POST get Response: $endpoint - ${response.statusCode}");
@@ -70,13 +77,13 @@ class API {
   }
 
   static Future<Response> post(BuildContext context, String endpoint,
-      {Map<String, dynamic>? params}) async {
+      {Map<String, dynamic>? params, String? filePath}) async {
     params ??= <String, dynamic>{};
 
     params['auth_token'] =
         Provider.of<AppModel>(context, listen: false).authToken;
 
-    return API.guestPost(endpoint, params: params);
+    return API.guestPost(endpoint, params: params, filePath: filePath);
   }
 
   API._();

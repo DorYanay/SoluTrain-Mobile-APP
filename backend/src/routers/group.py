@@ -1,8 +1,7 @@
 from uuid import UUID
 
 import psycopg
-from fastapi import APIRouter, Depends, HTTPException
-from starlette import status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.models import db_dependency
 from src.models.groups import (
