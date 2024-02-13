@@ -1,5 +1,5 @@
 import psycopg
-from fastapi import APIRouter, Depends, File, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from starlette import status
 
 from src.models import db_dependency
@@ -17,19 +17,21 @@ def route_get(current_user: User = Depends(get_current_user)) -> UserSchema:
 
 
 @router.post("/upload-first-certificate")
-def route_upload_first_certificate(
-    file_name: str, file: bytes = File(), db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+async def route_upload_first_certificate(
+    file: UploadFile, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> None:
     if current_user.is_coach:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Your already have a first certificate")
 
-    if file_name == "":
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File name cannot be empty")
+    if file.filename is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File name is empty")
 
-    if not validate_certificate_name(file_name):
+    if not validate_certificate_name(file.filename):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only .pdf, .jpg, .jpeg, .png files are allowed")
 
-    user_upload_certificate(db, current_user.user_id, file_name, file)
+    file_body = await file.read()
+
+    user_upload_certificate(db, current_user.user_id, file.filename, file_body)
 
 
 @router.post("/update-details")

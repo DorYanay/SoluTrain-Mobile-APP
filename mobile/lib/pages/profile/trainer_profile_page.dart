@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/api.dart';
 import 'package:mobile/schemas.dart';
@@ -14,24 +15,23 @@ class TrainerProfilePage extends StatefulWidget {
 }
 
 class _TrainerProfilePageState extends State<TrainerProfilePage> {
-  void uploadCertificateOnPressed() async {
-    API.guestPost('/debug/make-coach', params: {
-      'email': Provider.of<AppModel>(context, listen: false).user!.email,
-    }).then((Response res) {
-      API.post(context, '/auth/logout').then((value) {
-        Provider.of<AppModel>(context, listen: false).setLogout();
-      }).onError((error, stackTrace) {
-        Provider.of<AppModel>(context, listen: false).setLogout();
-      });
-    });
+  void uploadCertificateOnPressed() {
+    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+      if (result?.files.single.path != null) {
+        String filePath = result!.files.single.path!;
 
-    // TODO: this is ori :)
-    // FilePickerResult? result =
-    //     await FilePicker.platform.pickFiles();
-    // if (result != null) {
-    //   String filePath = result.files.single.path!;
-    //   print(filePath);
-    // }
+        API
+            .post(context, '/profile/upload-first-certificate',
+                filePath: filePath)
+            .then((Response res) {
+          API.post(context, '/auth/logout').then((Response res2) {
+            Provider.of<AppModel>(context, listen: false).setLogout();
+          }).onError((error, stackTrace) {
+            Provider.of<AppModel>(context, listen: false).setLogout();
+          });
+        });
+      }
+    });
   }
 
   @override
