@@ -1,25 +1,34 @@
 import psycopg
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, status
 
 from src.models import db_dependency
-from src.models.users import User, get_user_by_email, get_user_by_id, update_user, update_user_password, user_upload_certificate, \
-    get_user_certificates, get_user_certificate
-from src.schemas import UserSchema, CertificatesSchema
+from src.models.users import (
+    User,
+    delete_user_certificate,
+    get_user_by_email,
+    get_user_by_id,
+    get_user_certificate,
+    get_user_certificates,
+    update_user,
+    update_user_password,
+    user_upload_certificate,
+)
+from src.schemas import CertificatesSchema, UserSchema
 from src.security import create_hash, get_current_user
 from src.validators import validate_certificate_name, validate_email
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
-def _get_api_media_type(name):
-    if name.endswith('.pdf'):
-        return 'application/pdf'
-    elif name.endswith('.jpg') or name.endswith('.jpeg'):
-        return 'image/jpeg'
-    elif name.endswith('.png'):
-        return 'image/png'
+def _get_api_media_type(name: str) -> str:
+    if name.endswith(".pdf"):
+        return "application/pdf"
+    elif name.endswith(".jpg") or name.endswith(".jpeg"):
+        return "image/jpeg"
+    elif name.endswith(".png"):
+        return "image/png"
 
-    return 'application/octet-stream'
+    return "application/octet-stream"
 
 
 @router.post("/get")
@@ -64,6 +73,39 @@ async def route_upload_first_certificate(
     file_body = await file.read()
 
     user_upload_certificate(db, current_user.user_id, file.filename, file_body)
+
+
+@router.post("/upload-certificate")
+async def route_upload_certificate(
+    file: UploadFile, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
+    if not current_user.is_coach:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You need to be a coach to upload a certificate")
+
+    if file.filename is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File name is empty")
+
+    if not validate_certificate_name(file.filename):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only .pdf, .jpg, .jpeg, .png files are allowed")
+
+    file_body = await file.read()
+
+    user_upload_certificate(db, current_user.user_id, file.filename, file_body)
+
+
+@router.post("delete-certificate")
+def route_delete_certificate(
+    certificate_id: str, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
+    if not current_user.is_coach:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You need to be a coach to delete a certificate")
+
+    certificates = get_user_certificates(db, current_user.user_id)
+
+    if len(certificates) == 1:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You need to have at least one certificate")
+
+    delete_user_certificate(db, current_user.user_id, certificate_id)
 
 
 @router.post("/update-details")

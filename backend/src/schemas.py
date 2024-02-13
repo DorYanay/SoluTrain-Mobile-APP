@@ -5,7 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from src.models.groups import Area, Group, Meet
-from src.models.users import Gender, User, FileModel
+from src.models.users import FileModel, Gender, User
 
 
 class UserBaseSchema(BaseModel):
