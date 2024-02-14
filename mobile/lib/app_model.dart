@@ -58,6 +58,11 @@ class AppModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setUser(UserSchema updatedUser) {
+    user = updatedUser;
+    notifyListeners();
+  }
+
   void setLogout() {
     authToken = null;
     user = null;

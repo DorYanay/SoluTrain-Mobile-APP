@@ -75,7 +75,7 @@ class API {
 
     params['auth_token'] =
         Provider.of<AppModel>(context, listen: false).authToken;
-
+    print(params['auth_token']);
     return API.guestPost(endpoint, params: params);
   }
 

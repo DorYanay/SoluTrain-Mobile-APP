@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:mobile/app_model.dart';
 
+import '../../api.dart';
+
 class CoachProfilePage extends StatefulWidget {
   const CoachProfilePage({super.key});
 
@@ -75,18 +77,140 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Edit',
+                    'Edit Profile',
                     style: TextStyle(
                       color: Colors.grey,
                       letterSpacing: 2.0,
                       fontSize: 14.0,
                     ),
                   ),
-                  IconButton(onPressed: uploadImageOnPressed,
-                              icon: const Icon(Icons.edit))
+                  IconButton(onPressed: () {
+                    TextEditingController nameController = TextEditingController(text: null);
+                    TextEditingController descriptionController = TextEditingController(text: null);
+                    TextEditingController emailController = TextEditingController(text: null);
+                    TextEditingController phoneController = TextEditingController(text: null);
+                    TextEditingController genderController = TextEditingController(text: null);
+                    DateTime initialDateOfBirth = user.dateOfBirth ?? DateTime.now();
+                    DateTime selectedDateOfBirth = initialDateOfBirth;
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext dialogContext) {
+                        return AlertDialog(
+                          title: const Text('Edit Details'),
+                          content:Container(
+                            width: 300, // Set your desired width
+                            height: 300, // Set your desired height
+                            child: Scrollbar(
+                              trackVisibility: true,
+                              thumbVisibility: true,
+                              child: SingleChildScrollView(
+                                child:
+                            Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextField(
+                                    controller: nameController,
+                                    keyboardType: TextInputType.name,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Name',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextField(
+                                    controller: descriptionController,
+                                    keyboardType: TextInputType.text,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Description',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextField(
+                                    controller: emailController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Email',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextField(
+                                    controller: phoneController,
+                                    keyboardType: TextInputType.phone,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Phone Number',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                  TextFormField(
+                                    decoration: const InputDecoration(labelText: 'Date of Birth'),
+                                    initialValue: selectedDateOfBirth.toString(), // Set initial value
+                                    onTap: () async {
+                                      DateTime? pickedDate = await showDatePicker(
+                                        context: dialogContext,
+                                        initialDate: selectedDateOfBirth ?? DateTime.now(),
+                                        firstDate: DateTime(1900),
+                                        lastDate: DateTime.now(),
+                                      );
+                                      if (pickedDate != null) {
+                                        // Update selectedDateOfBirth when date is picked
+                                        selectedDateOfBirth = pickedDate;
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextField(
+                                    controller: genderController,
+                                    keyboardType: TextInputType.text,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Gender',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                ],
+                              ),),),),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                UserSchema updatedUser = UserSchema(user.userId, nameController.text, emailController.text, phoneController.text, genderController.text, selectedDateOfBirth, descriptionController.text, user.isCoach);
+                                API.post(context, '/profile/update-details', params: {
+                                  "new_name": updatedUser.name,
+                                  "new_description": updatedUser.description,
+                                  "new_email": updatedUser.email,
+                                  "new_phone": updatedUser.phone,
+                                })
+                                    .then((Response res) {
+                                  if (res.hasError) {
+                                    return;
+                                  }
+
+                                  setState(() {
+                                    Provider.of<AppModel>(context, listen: false).setUser(updatedUser);
+                                    Navigator.of(context).pop(updatedUser);
+                                  });
+                                });
+
+                              },
+                              child: const Text('Save'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                      icon: const Icon(Icons.edit))
                 ],
               ),
               Divider(
@@ -101,7 +225,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(children: [
                         const Text(
                           'Name',
                           style: TextStyle(
@@ -110,12 +233,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             fontSize: 16.0,
                           ),
                         ),
-                        IconButton(
-                            onPressed: () {
-                              _showEditNameDialog(context, user);
-                            },
-                            icon: const Icon(Icons.edit))
-                      ]),
                       Row(
                         children: [
                           const Text(
@@ -147,7 +264,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(children: [
                           const Text(
                             'Description',
                             style: TextStyle(
@@ -156,12 +272,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                               fontSize: 16.0,
                             ),
                           ),
-                          IconButton(
-                              onPressed: () {
-                                _showEditDescriptionDialog(context, user);
-                              },
-                              icon: const Icon(Icons.edit))
-                        ]),
                         ReadMoreText(
                           description,
                           trimLines: 1,
@@ -199,7 +309,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(children: [
                         const Text(
                         'Personal Details',
                           style: TextStyle(
@@ -208,12 +317,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             fontSize: 16.0,
                           ),
                         ),
-                        IconButton(
-                            onPressed: () {
-                              _showEditPersonalDetailsDialog(context, user);
-                            },
-                            icon: const Icon(Icons.edit))
-                        ]),
                         Row(
                           children: [
                             Text(
@@ -286,7 +389,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 height: 10.0,
                 color: Colors.grey[800],
               ),
-              Row(children: [
                 const Text(
                   'Contact',
                   style: TextStyle(
@@ -295,12 +397,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                     fontSize: 16.0,
                   ),
                 ),
-                IconButton(
-                    onPressed: () {
-                      _showEditContactDialog(context, user);
-                    },
-                    icon: const Icon(Icons.edit))
-              ]),
               Row(
                 children: <Widget>[
                   Icon(
@@ -372,164 +468,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
   }
 }
 
-void _showEditNameDialog(BuildContext context, UserSchema user) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit Name'),
-        content: TextField(
-          controller: TextEditingController(text: user.name),
-          keyboardType: TextInputType.multiline,
-          minLines: 5,
-          maxLines: 10, // Allows the TextField to expand vertically
-          decoration: const InputDecoration(
-            hintText: 'Enter your new name...',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to save edited description
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add functionality to cancel editing
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showEditPersonalDetailsDialog(BuildContext context, UserSchema user) {
-  // Define initial values for dateOfBirth and gender
-  DateTime initialDateOfBirth = user.dateOfBirth ?? DateTime.now();
-  String initialGender = user.gender ?? '';
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      // Define variables to hold the current values of dateOfBirth and gender
-      DateTime selectedDateOfBirth = initialDateOfBirth;
-      String selectedGender = initialGender;
-
-      return AlertDialog(
-        title: const Text('Edit Profile'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Date of Birth'),
-                initialValue: selectedDateOfBirth.toString(), // Set initial value
-                onTap: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: selectedDateOfBirth ?? DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (pickedDate != null) {
-                    // Update selectedDateOfBirth when date is picked
-                    selectedDateOfBirth = pickedDate;
-                  }
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Gender'),
-                initialValue: selectedGender, // Set initial value
-                onChanged: (value) {
-                  // Update selectedGender when input changes
-                  selectedGender = value;
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to save changes
-              // You can access selectedDateOfBirth and selectedGender here
-              // and perform necessary actions like updating the user profile
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add functionality to close dialog without saving changes
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showEditContactDialog(BuildContext context, UserSchema user) {
-  // Define a TextEditingController to manage the phone number input
-  TextEditingController phoneNumberController =
-  TextEditingController(text: user.phone);
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit Phone Number'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: phoneNumberController,
-              decoration: const InputDecoration(labelText: 'Phone Number'),
-              keyboardType: TextInputType.phone,
-            ),
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Validate the phone number before saving
-              String enteredPhoneNumber =
-              phoneNumberController.text.trim();
-              if (isValidPhoneNumber(enteredPhoneNumber)) {
-                // Perform necessary actions with the valid phone number
-                // For example, update the user's profile
-                // user.phoneNumber = enteredPhoneNumber;
-                Navigator.of(context).pop();
-              } else {
-                // Show an error message for invalid phone number
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Invalid phone number'),
-                  ),
-                );
-              }
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
 
 bool isValidPhoneNumber(String phoneNumber) {
   if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
@@ -601,30 +539,39 @@ void _showCertificateDialog(
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text('Certificates'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: certificates.map((certificate) {
-            return ListTile(
-              title: Text(certificate),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      // Add functionality to download certificate
-                    },
-                    icon: const Icon(Icons.download),
+        content: Container(
+          width: 300, // Set your desired width
+          height: 300, // Set your desired height
+          child: Scrollbar(
+            trackVisibility: true,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: certificates.map((certificate) {
+                return ListTile(
+                  title: Text(certificate),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          // Add functionality to download certificate
+                        },
+                        icon: const Icon(Icons.download),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          // Add functionality to download certificate
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () {
-                      // Add functionality to delete certificate
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
+            ),
+          )),
         ),
         actions: <Widget>[
           TextButton(
@@ -639,4 +586,3 @@ void _showCertificateDialog(
     },
   );
 }
-

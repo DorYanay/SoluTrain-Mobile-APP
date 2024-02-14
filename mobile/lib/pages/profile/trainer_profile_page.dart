@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/api.dart';
 import 'package:mobile/schemas.dart';
@@ -14,6 +15,7 @@ class TrainerProfilePage extends StatefulWidget {
 }
 
 class _TrainerProfilePageState extends State<TrainerProfilePage> {
+
   void uploadCertificateOnPressed() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles();
@@ -44,10 +46,9 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
     }
   }
 
-
     @override
   Widget build(BuildContext context) {
-    UserSchema user = Provider.of<AppModel>(context).user!;
+    UserSchema user = Provider.of<AppModel>(context, listen: true).user!;
     int age = calculateAge(user.dateOfBirth);
     String gender = user.gender;
     return Scaffold(
@@ -76,17 +77,121 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Edit',
+                    'Edit Profile',
                     style: TextStyle(
                       color: Colors.grey,
                       letterSpacing: 2.0,
                       fontSize: 14.0,
                     ),
                   ),
-                  IconButton(onPressed: uploadImageOnPressed,
+                  IconButton(onPressed: () {
+                    TextEditingController nameController = TextEditingController(text: null);
+                    TextEditingController emailController = TextEditingController(text: null);
+                    TextEditingController phoneController = TextEditingController(text: null);
+                    TextEditingController genderController = TextEditingController(text: null);
+                    DateTime initialDateOfBirth = user.dateOfBirth ?? DateTime.now();
+                    DateTime selectedDateOfBirth = initialDateOfBirth;
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext dialogContext) {
+                        return AlertDialog(
+                          title: const Text('Edit Details'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextField(
+                                controller: nameController,
+                                keyboardType: TextInputType.name,
+                                decoration: const InputDecoration(
+                                  labelText: 'Name',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: const InputDecoration(
+                                  labelText: 'Email',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: phoneController,
+                                keyboardType: TextInputType.phone,
+                                decoration: const InputDecoration(
+                                  labelText: 'Phone Number',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(labelText: 'Date of Birth'),
+                                initialValue: selectedDateOfBirth.toString(), // Set initial value
+                                onTap: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                    context: dialogContext,
+                                    initialDate: selectedDateOfBirth ?? DateTime.now(),
+                                    firstDate: DateTime(1900),
+                                    lastDate: DateTime.now(),
+                                  );
+                                  if (pickedDate != null) {
+                                    // Update selectedDateOfBirth when date is picked
+                                    selectedDateOfBirth = pickedDate;
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: genderController,
+                                keyboardType: TextInputType.text,
+                                decoration: const InputDecoration(
+                                  labelText: 'Gender',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                UserSchema updatedUser = UserSchema(user.userId, nameController.text, emailController.text, phoneController.text, genderController.text, selectedDateOfBirth, "", user.isCoach);
+
+                                API.post(context, '/profile/update-details', params: {
+                                  "new_name": updatedUser.name,
+                                  "new_email": updatedUser.email,
+                                  "new_phone": updatedUser.phone,
+                                })
+                                    .then((Response res) {
+                                  if (res.hasError) {
+                                    return;
+                                  }
+
+                                  setState(() {
+                                    Provider.of<AppModel>(context, listen: false).setUser(updatedUser);
+                                    Navigator.of(context).pop(updatedUser);
+                                  });
+                                });
+
+                              },
+                              child: const Text('Save'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                               icon: const Icon(Icons.edit))
                 ],
               ),
@@ -103,21 +208,14 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(children: [
-                        const Text(
-                          'Name',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            letterSpacing: 2.0,
-                            fontSize: 16.0,
-                          ),
+                      const Text(
+                        'Name',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          letterSpacing: 2.0,
+                          fontSize: 16.0,
                         ),
-                        IconButton(
-                            onPressed: () {
-                              _showEditNameDialog(context, user);
-                            },
-                            icon: const Icon(Icons.edit))
-                      ]),
+                      ),
                       Text(
                         user.name,
                         style: TextStyle(
@@ -132,37 +230,48 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Column(
                     children: [
                       ElevatedButton(
-                          onPressed: uploadCertificateOnPressed,
-                          child: const Column(
-                            children: [
-                              Text('Upload certificate'),
-                              Text('become coach'),
-                              Icon(Icons.add_box) // Add button text
-                            ],
-                          )),
+                        onPressed: uploadCertificateOnPressed,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white70, // Background color
+                          onPrimary: Colors.black, // Text color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), // Rounded corners
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add_box), // Icon
+                            SizedBox(width: 4), // Spacing between icon and text
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Upload certificate',
+                                  style: TextStyle(fontSize: 16), // Text style
+                                ),
+                                Text(
+                                  'to become coach',
+                                  style: TextStyle(fontSize: 16), // Text style
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
-              Divider(
-                height: 10.0,
-                color: Colors.grey[800],
-              ),
-              Row(children: [
-                const Text(
-                  'Personal Details',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    letterSpacing: 2.0,
-                    fontSize: 16.0,
-                  ),
+              const Text(
+                'Personal Details',
+                style: TextStyle(
+                  color: Colors.grey,
+                  letterSpacing: 2.0,
+                  fontSize: 16.0,
                 ),
-                IconButton(
-                    onPressed: () {
-                      _showEditPersonalDetailsDialog(context, user);
-                    },
-                    icon: const Icon(Icons.edit))
-              ]),
+              ),
               const SizedBox(
                 height: 2.0,
               ),
@@ -179,27 +288,6 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   ),
                   Text(
                     '$age',
-                    style: TextStyle(
-                        color: Colors.amberAccent[200],
-                        letterSpacing: 2.0,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Activity level:',
-                    style: TextStyle(
-                      color: Colors.amberAccent[200],
-                      letterSpacing: 2.0,
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Hard',
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
@@ -233,21 +321,14 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 height: 10.0,
                 color: Colors.grey[800],
               ),
-              Row(children: [
-                const Text(
-                  'Contact',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    letterSpacing: 2.0,
-                    fontSize: 16.0,
-                  ),
+              const Text(
+                'Contact',
+                style: TextStyle(
+                  color: Colors.grey,
+                  letterSpacing: 2.0,
+                  fontSize: 16.0,
                 ),
-                IconButton(
-                    onPressed: () {
-                      _showEditContactDialog(context, user);
-                    },
-                    icon: const Icon(Icons.edit))
-              ]),
+              ),
               const SizedBox(
                 height: 10.0,
               ),
@@ -320,165 +401,6 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
       ),
     ); //scaffold
   }
-}
-
-void _showEditNameDialog(BuildContext context, UserSchema user) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit Name'),
-        content: TextField(
-          controller: TextEditingController(text: user.name),
-          keyboardType: TextInputType.multiline,
-          minLines: 5,
-          maxLines: 10, // Allows the TextField to expand vertically
-          decoration: const InputDecoration(
-            hintText: 'Enter your new name...',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to save edited description
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add functionality to cancel editing
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showEditPersonalDetailsDialog(BuildContext context, UserSchema user) {
-  // Define initial values for dateOfBirth and gender
-  DateTime initialDateOfBirth = user.dateOfBirth ?? DateTime.now();
-  String initialGender = user.gender ?? '';
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      // Define variables to hold the current values of dateOfBirth and gender
-      DateTime selectedDateOfBirth = initialDateOfBirth;
-      String selectedGender = initialGender;
-
-      return AlertDialog(
-        title: const Text('Edit Profile'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Date of Birth'),
-                initialValue: selectedDateOfBirth.toString(), // Set initial value
-                onTap: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: selectedDateOfBirth ?? DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (pickedDate != null) {
-                    // Update selectedDateOfBirth when date is picked
-                    selectedDateOfBirth = pickedDate;
-                  }
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Gender'),
-                initialValue: selectedGender, // Set initial value
-                onChanged: (value) {
-                  // Update selectedGender when input changes
-                  selectedGender = value;
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to save changes
-              // You can access selectedDateOfBirth and selectedGender here
-              // and perform necessary actions like updating the user profile
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add functionality to close dialog without saving changes
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showEditContactDialog(BuildContext context, UserSchema user) {
-  // Define a TextEditingController to manage the phone number input
-  TextEditingController phoneNumberController =
-  TextEditingController(text: user.phone);
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit Phone Number'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: phoneNumberController,
-              decoration: const InputDecoration(labelText: 'Phone Number'),
-              keyboardType: TextInputType.phone,
-            ),
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Validate the phone number before saving
-              String enteredPhoneNumber =
-              phoneNumberController.text.trim();
-              if (isValidPhoneNumber(enteredPhoneNumber)) {
-                // Perform necessary actions with the valid phone number
-                // For example, update the user's profile
-                // user.phoneNumber = enteredPhoneNumber;
-                Navigator.of(context).pop();
-              } else {
-                // Show an error message for invalid phone number
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Invalid phone number'),
-                  ),
-                );
-              }
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
 }
 
 bool isValidPhoneNumber(String phoneNumber) {
