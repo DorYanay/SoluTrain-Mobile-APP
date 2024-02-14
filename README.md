@@ -143,6 +143,7 @@ Services diagram
 flowchart RL
   subgraph mobile
     UI --> State --> Logic
+    UI --> Logic
   end
   Logic --> routers
   subgraph render.com
