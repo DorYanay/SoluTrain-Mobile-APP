@@ -50,6 +50,34 @@ class UserSchema {
   }
 }
 
+class FileSchema {
+  final String fileId;
+  final String name;
+
+  FileSchema(this.fileId, this.name);
+
+  factory FileSchema.fromJson(dynamic data) {
+    return FileSchema(
+      data['file_id'] as String,
+      data['name'] as String,
+    );
+  }
+}
+
+class CertificatesSchema {
+  final List<FileSchema> certificates;
+
+  CertificatesSchema(this.certificates);
+
+  factory CertificatesSchema.fromJson(dynamic data) {
+    return CertificatesSchema(
+      (data['areas'] as List<dynamic>)
+          .map((file) => FileSchema.fromJson(file))
+          .toList(),
+    );
+  }
+}
+
 class AreaSchema {
   final String areaId;
   final String name;
