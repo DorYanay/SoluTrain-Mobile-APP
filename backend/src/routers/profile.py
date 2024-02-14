@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, sta
 
 from src.models import db_dependency
 from src.models.users import (
+    Gender,
     User,
     delete_user_certificate,
     delete_user_profile_image,
@@ -146,6 +147,7 @@ def route_update_details(
     new_name: str | None = None,
     new_email: str | None = None,
     new_phone: str | None = None,
+    new_gender: Gender | None = None,
     new_description: str | None = None,
     db: psycopg.Connection = Depends(db_dependency),
     current_user: User = Depends(get_current_user),
@@ -153,6 +155,7 @@ def route_update_details(
     updated_name = current_user.name
     updated_email = current_user.email
     updated_phone = current_user.phone
+    updated_gender = current_user.gender
     updated_description = current_user.description
 
     # validation
@@ -171,10 +174,13 @@ def route_update_details(
     if new_phone is not None:
         updated_phone = new_phone
 
+    if new_gender is not None:
+        updated_gender = new_gender
+
     if new_description is not None:
         updated_description = new_description
 
-    update_user(db, current_user.user_id, updated_name, updated_email, updated_phone, updated_description)
+    update_user(db, current_user.user_id, updated_name, updated_email, updated_phone, updated_gender, updated_description)
 
     user = get_user_by_id(db, current_user.user_id)
 
