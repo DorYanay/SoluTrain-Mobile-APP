@@ -38,6 +38,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
     int age = calculateAge(user.dateOfBirth);
+    String gender = user.gender;
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -57,9 +58,9 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Center(
+              Center(
                 child: CircleAvatar(
-                  backgroundImage: AssetImage('lib/images/handsomeGuy.jpg'),
+                  backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
                   radius: 80.0,
                 ),
               ),
@@ -67,7 +68,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   const Text(
-                    'Edit',
+                    'Edit Profile',
                     style: TextStyle(
                       color: Colors.grey,
                       letterSpacing: 2.0,
@@ -90,19 +91,13 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Name',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              letterSpacing: 2.0,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                          IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.edit))
-                        ],
+                      const Text(
+                        'Name',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          letterSpacing: 2.0,
+                          fontSize: 16.0,
+                        ),
                       ),
                       Text(
                         user.name,
@@ -118,34 +113,47 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Column(
                     children: [
                       ElevatedButton(
-                          onPressed: uploadCertificateOnPressed,
-                          child: const Column(
-                            children: [
-                              Text('Upload certificate'),
-                              Text('become coach'),
-                              Icon(Icons.add_box) // Add button text
-                            ],
-                          )),
+                        onPressed: uploadCertificateOnPressed,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white70, // Background color
+                          onPrimary: Colors.black, // Text color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), // Rounded corners
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add_box), // Icon
+                            SizedBox(width: 4), // Spacing between icon and text
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Upload certificate',
+                                  style: TextStyle(fontSize: 16), // Text style
+                                ),
+                                Text(
+                                  'to become coach',
+                                  style: TextStyle(fontSize: 16), // Text style
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
-              Divider(
-                height: 10.0,
-                color: Colors.grey[800],
-              ),
-              Row(
-                children: [
-                  const Text(
-                    'Personal Details',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2.0,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
-                ],
+              const Text(
+                'Personal Details',
+                style: TextStyle(
+                  color: Colors.grey,
+                  letterSpacing: 2.0,
+                  fontSize: 16.0,
+                ),
               ),
               const SizedBox(
                 height: 2.0,
@@ -163,27 +171,6 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   ),
                   Text(
                     '$age',
-                    style: TextStyle(
-                        color: Colors.amberAccent[200],
-                        letterSpacing: 2.0,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Activity level:',
-                    style: TextStyle(
-                      color: Colors.amberAccent[200],
-                      letterSpacing: 2.0,
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Hard',
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
@@ -217,18 +204,13 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 height: 10.0,
                 color: Colors.grey[800],
               ),
-              Row(
-                children: [
-                  const Text(
-                    'Contact',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2.0,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
-                ],
+              const Text(
+                'Contact',
+                style: TextStyle(
+                  color: Colors.grey,
+                  letterSpacing: 2.0,
+                  fontSize: 16.0,
+                ),
               ),
               const SizedBox(
                 height: 10.0,
@@ -302,4 +284,30 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
       ),
     ); //scaffold
   }
+}
+
+bool isValidPhoneNumber(String phoneNumber) {
+  if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
+      !phoneNumber.startsWith('+')) {
+    return false;
+  }
+
+  if (phoneNumber.length < 10 || phoneNumber.length > 14) {
+    return false;
+  }
+
+  return true;
+}
+
+bool _containsOnlyDigits(String str) {
+  for (int i = 0; i < str.length; i++) {
+    if (!isDigit(str[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool isDigit(String s) {
+  return double.tryParse(s) != null;
 }
