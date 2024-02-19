@@ -65,7 +65,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
                     'Edit Profile',
