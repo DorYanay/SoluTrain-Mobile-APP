@@ -35,6 +35,108 @@ List<String> certificates = [
 ]; // Example list of certificates
 
 class _CoachProfilePage extends State<CoachProfilePage> {
+  void uploadCertificateOnPressed() {
+    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+      if (result?.files.single.path != null) {
+        String filePath = result!.files.single.path!;
+
+        API
+            .post(context, '/profile/upload-first-certificate',
+            filePath: filePath)
+            .then((Response res) {
+          API.post(context, '/auth/logout').then((Response res2) {
+            Provider.of<AppModel>(context, listen: false).setLogout();
+          }).onError((error, stackTrace) {
+            Provider.of<AppModel>(context, listen: false).setLogout();
+          });
+        });
+      }
+    });
+  }
+
+  void _showCertificateDialog(
+      BuildContext context, String certificate, UserSchema user) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Certificates'),
+              ElevatedButton(
+                onPressed: uploadCertificateOnPressed,
+                style: ElevatedButton.styleFrom(
+                  onPrimary: Colors.black, // Text color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // Rounded corners
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add_box), // Icon
+                    SizedBox(width: 4), // Spacing between icon and text
+                    Text(
+                      'Add',
+                      style: TextStyle(fontSize: 16), // Text style
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          content: Container(
+            width: 300, // Set your desired width
+            height: 300, // Set your desired height
+            child: Scrollbar(
+                trackVisibility: true,
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: certificates.map((certificate) {
+                      return ListTile(
+                        title: Text(certificate),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                // Add functionality to download certificate
+                              },
+                              icon: const Icon(Icons.download),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                // Add functionality to download certificate
+                              },
+                              icon: const Icon(Icons.delete),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                )),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Add functionality to close dialog
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
   void viewGroupsOnPressed() {
     Provider.of<AppModel>(context, listen: false).moveToGroupsPage();
   }
@@ -115,11 +217,23 @@ class _CoachProfilePage extends State<CoachProfilePage> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-               Center(
-                child: CircleAvatar(
-                  backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
-                  radius: 80.0,
-                ),
+               Center(child: Stack(
+                 children: [
+                   CircleAvatar(
+                     backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
+                     radius: 80.0,
+                   ),
+                   Positioned(
+                     bottom: 0.0,
+                     right: 0.0,
+                     child: FloatingActionButton(
+                       onPressed: uploadImageOnPressed,
+                       mini: true,
+                       child: Icon(Icons.camera_alt_rounded),
+                     ),
+                   ),
+                 ],
+               ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -455,57 +569,3 @@ void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
   );
 }
 
-void _showCertificateDialog(
-    BuildContext context, String certificate, UserSchema user) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Certificates'),
-        content: Container(
-          width: 300, // Set your desired width
-          height: 300, // Set your desired height
-          child: Scrollbar(
-            trackVisibility: true,
-            thumbVisibility: true,
-            child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: certificates.map((certificate) {
-                return ListTile(
-                  title: Text(certificate),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          // Add functionality to download certificate
-                        },
-                        icon: const Icon(Icons.download),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          // Add functionality to download certificate
-                        },
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-          )),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to close dialog
-              Navigator.of(context).pop();
-            },
-            child: const Text('Close'),
-          ),
-        ],
-      );
-    },
-  );
-}

@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/api.dart';
+import 'package:mobile/pages/profile/edit_details.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
@@ -34,6 +35,58 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
     });
   }
 
+  void editProfileOnPressed() {
+    UserSchema user = Provider.of<AppModel>(context, listen: false).user!;
+
+    EditDetails.open(context, user, editProfileDialogOnSave);
+  }
+
+  void editProfileDialogOnSave(Function closeDialog, String name,String email, String phone, String gender, String description){
+    UserSchema user = Provider.of<AppModel>(context, listen: false).user!;
+
+    Map<String, dynamic> params = {};
+
+    if(name != user.name){
+      params["new_name"] = name;
+    }
+
+    if(email != user.email){
+      params["new_email"] = email;
+    }
+
+    if(phone != user.phone){
+      params["new_phone"] = phone;
+    }
+
+    if(gender != user.gender){
+      params["new_gender"] = gender;
+    }
+
+    API.post(context, '/profile/update-details', params: params)
+        .then((Response res) {
+      if (res.hasError) {
+        closeDialog();
+        return;
+      }
+
+      UserSchema updatedUser = UserSchema.fromJson(res.data);
+
+      Provider.of<AppModel>(context, listen: false).setUser(updatedUser);
+
+      closeDialog();
+    });
+  }
+
+
+  void uploadImageOnPressed() async {
+    FilePickerResult? result =
+    await FilePicker.platform.pickFiles();
+    if (result != null) {
+      String filePath = result.files.single.path!;
+      print(filePath);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
@@ -59,9 +112,22 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Center(
-                child: CircleAvatar(
-                  backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
-                  radius: 80.0,
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
+                      radius: 80.0,
+                    ),
+                    Positioned(
+                      bottom: 0.0,
+                      right: 0.0,
+                      child: FloatingActionButton(
+                        onPressed: uploadImageOnPressed,
+                        mini: true,
+                        child: Icon(Icons.camera_alt_rounded),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Row(
@@ -75,8 +141,8 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       fontSize: 14.0,
                     ),
                   ),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
-                ],
+                  IconButton(onPressed: editProfileOnPressed,
+                      icon: const Icon(Icons.edit))                ],
               ),
               Divider(
                 height: 10.0,
