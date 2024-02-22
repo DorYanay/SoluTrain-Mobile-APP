@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/formaters.dart';
+import 'package:mobile/pages/profile/certificates_view.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -16,126 +17,12 @@ class CoachProfilePage extends StatefulWidget {
   State<CoachProfilePage> createState() => _CoachProfilePage();
 }
 
-List<String> certificates = [
-  "Certificate 1",
-  "Certificate 2",
-  "Certificate 3",
-  "Certificate 4",
-  "Certificate 5",
-  "Certificate 6",
-  "Certificate 7",
-  "Certificate 8",
-  "Certificate 9",
-  "Certificate 10",
-  "Certificate 11",
-  "Certificate 12",
-
-
-
-]; // Example list of certificates
-
 class _CoachProfilePage extends State<CoachProfilePage> {
-  void uploadCertificateOnPressed() {
-    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
-      if (result?.files.single.path != null) {
-        String filePath = result!.files.single.path!;
+  void showCertificatesOnPressed() {
+    String userAutoToken = Provider.of<AppModel>(context, listen: false).authToken!;
 
-        API
-            .post(context, '/profile/upload-first-certificate',
-            filePath: filePath)
-            .then((Response res) {
-          API.post(context, '/auth/logout').then((Response res2) {
-            Provider.of<AppModel>(context, listen: false).setLogout();
-          }).onError((error, stackTrace) {
-            Provider.of<AppModel>(context, listen: false).setLogout();
-          });
-        });
-      }
-    });
+    CertificatesView.open(context, userAutoToken);
   }
-
-  void _showCertificateDialog(
-      BuildContext context, String certificate, UserSchema user) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Certificates'),
-              ElevatedButton(
-                onPressed: uploadCertificateOnPressed,
-                style: ElevatedButton.styleFrom(
-                  onPrimary: Colors.black, // Text color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Rounded corners
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add_box), // Icon
-                    SizedBox(width: 4), // Spacing between icon and text
-                    Text(
-                      'Add',
-                      style: TextStyle(fontSize: 16), // Text style
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          content: Container(
-            width: 300, // Set your desired width
-            height: 300, // Set your desired height
-            child: Scrollbar(
-                trackVisibility: true,
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: certificates.map((certificate) {
-                      return ListTile(
-                        title: Text(certificate),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                // Add functionality to download certificate
-                              },
-                              icon: const Icon(Icons.download),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                // Add functionality to download certificate
-                              },
-                              icon: const Icon(Icons.delete),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                )),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // Add functionality to close dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
 
   void viewGroupsOnPressed() {
     Provider.of<AppModel>(context, listen: false).moveToGroupsPage();
@@ -189,9 +76,10 @@ class _CoachProfilePage extends State<CoachProfilePage> {
     await FilePicker.platform.pickFiles();
     if (result != null) {
       String filePath = result.files.single.path!;
-      print(filePath);
+
     }
   }
+
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
@@ -282,8 +170,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           ),
                           IconButton(
                               onPressed: () {
-                                _showCertificateDialog(
-                                    context, certificates[0], user);
+                                showCertificatesOnPressed();
                               },
                               icon: const Icon(Icons.remove_red_eye))
                         ],
@@ -532,40 +419,4 @@ bool isDigit(String s) {
   return double.tryParse(s) != null;
 }
 
-void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit Description'),
-        content: TextField(
-          controller: TextEditingController(text: user.name),
-          keyboardType: TextInputType.multiline,
-          minLines: 5,
-          maxLines: 10, // Allows the TextField to expand vertically
-          decoration: const InputDecoration(
-            hintText: 'Enter your description...',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to save edited description
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add functionality to cancel editing
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
 

@@ -18,6 +18,21 @@ class ViewCoachPage extends StatefulWidget {
   State<ViewCoachPage> createState() => _ViewCoachPage();
 }
 
+List<String> certificates = [
+"Certificate 1",
+"Certificate 2",
+"Certificate 3",
+"Certificate 4",
+"Certificate 5",
+"Certificate 6",
+"Certificate 7",
+"Certificate 8",
+"Certificate 9",
+"Certificate 10",
+"Certificate 11",
+"Certificate 12",
+];
+
 class _ViewCoachPage extends State<ViewCoachPage> {
   @override
   Widget build(BuildContext context) {
@@ -77,7 +92,6 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                 ],
               ),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
                   const Text(
                     'Description',
                     style: TextStyle(
@@ -86,13 +100,6 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                       fontSize: 16.0,
                     ),
                   ),
-                  if (user.isCoach)
-                    IconButton(
-                        onPressed: () {
-                          _showEditDescriptionDialog(context, user);
-                        },
-                        icon: const Icon(Icons.edit))
-                ]),
                 const SizedBox(height: 2.0),
                 ReadMoreText(
                   description,
@@ -306,42 +313,6 @@ class _ViewCoachPage extends State<ViewCoachPage> {
   }
 }
 
-void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit Description'),
-        content: TextField(
-          controller: TextEditingController(text: user.name),
-          keyboardType: TextInputType.multiline,
-          minLines: 5,
-          maxLines: 10, // Allows the TextField to expand vertically
-          decoration: const InputDecoration(
-            hintText: 'Enter your description...',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to save edited description
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add functionality to cancel editing
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
 
 void _showCertificateDialog(
     BuildContext context, String certificate, UserSchema user) {
