@@ -82,13 +82,12 @@ class API {
       print("API GET send Request: $endpoint");
     }
 
-    final response = await http.get(
-        Uri(
-            scheme: Config.apiIsHttps ? 'https' : 'http',
-            host: Config.apiHost,
-            port: Config.apiPort,
-            path: endpoint,
-            queryParameters: params));
+    final response = await http.get(Uri(
+        scheme: Config.apiIsHttps ? 'https' : 'http',
+        host: Config.apiHost,
+        port: Config.apiPort,
+        path: endpoint,
+        queryParameters: params));
 
     if (kDebugMode) {
       print("API GET get Response: $endpoint - ${response.statusCode}");
@@ -152,8 +151,7 @@ class API {
         host: Config.apiHost,
         port: Config.apiPort,
         path: endpoint,
-        queryParameters: params
-    );
+        queryParameters: params);
 
     return uri.toString();
   }
