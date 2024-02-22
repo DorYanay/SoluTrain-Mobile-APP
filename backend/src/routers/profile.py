@@ -49,7 +49,7 @@ def route_get_certificates(
     return CertificatesSchema.from_model(certificates)
 
 
-@router.get("/get-certificate/")
+@router.get("/get-certificate")
 def route_get_certificate(
     certificate_id: str, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> Response:
@@ -97,7 +97,7 @@ async def route_upload_certificate(
     user_upload_certificate(db, current_user.user_id, file.filename, file_body)
 
 
-@router.post("delete-certificate")
+@router.post("/delete-certificate")
 def route_delete_certificate(
     certificate_id: str, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> None:
