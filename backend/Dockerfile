@@ -9,6 +9,7 @@ COPY pyproject.toml poetry.lock /app/
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-root
 
+COPY assets /app/assets
 COPY src /app/src
 
 EXPOSE 8000

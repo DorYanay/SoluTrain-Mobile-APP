@@ -4,6 +4,7 @@ import psycopg
 from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, status
 from fastapi.responses import FileResponse
 
+from src.api import get_api_media_type
 from src.config import config
 from src.models import db_dependency
 from src.models.users import (
@@ -26,17 +27,6 @@ from src.security import create_hash, get_current_user
 from src.validators import validate_certificate_name, validate_email, validate_profile_picture_name
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
-
-
-def _get_api_media_type(name: str) -> str:
-    if name.endswith(".pdf"):
-        return "application/pdf"
-    elif name.endswith(".jpg") or name.endswith(".jpeg"):
-        return "image/jpeg"
-    elif name.endswith(".png"):
-        return "image/png"
-
-    return "application/octet-stream"
 
 
 @router.post("/get")
@@ -62,7 +52,7 @@ def route_get_certificate(
     if certificate is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Certificate not found")
 
-    return Response(content=certificate.body, media_type=_get_api_media_type(certificate.name))
+    return Response(content=certificate.body, media_type=get_api_media_type(certificate.name))
 
 
 @router.post("/upload-first-certificate")
@@ -125,7 +115,7 @@ def route_get_profile_picture(db: psycopg.Connection = Depends(db_dependency), c
             return FileResponse(os.path.join(config.assets_dir, "avatar_man_image.png"))
         return FileResponse(os.path.join(config.assets_dir, "avatar_woman_image.png"))
 
-    return Response(content=image.body, media_type=_get_api_media_type(image.name))
+    return Response(content=image.body, media_type=get_api_media_type(image.name))
 
 
 @router.post("/upload-profile-picture")
