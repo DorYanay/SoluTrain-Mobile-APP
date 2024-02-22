@@ -1,6 +1,10 @@
+import os
+
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, status
+from fastapi.responses import FileResponse
 
+from src.config import config
 from src.models import db_dependency
 from src.models.users import (
     Gender,
@@ -117,7 +121,9 @@ def route_get_profile_picture(db: psycopg.Connection = Depends(db_dependency), c
     image = get_user_profile_image(db, current_user.user_id)
 
     if image is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="The user does not have a profile picture")
+        if current_user.gender == Gender.male:
+            return FileResponse(os.path.join(config.assets_dir, "avatar_man_image.png"))
+        return FileResponse(os.path.join(config.assets_dir, "avatar_woman_image.png"))
 
     return Response(content=image.body, media_type=_get_api_media_type(image.name))
 
