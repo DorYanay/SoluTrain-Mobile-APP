@@ -18,6 +18,7 @@ from src.routers.my_meets import router as my_meets_router
 from src.routers.profile import router as profile_router
 from src.routers.search_groups import router as search_groups_router
 from src.routers.view_coach import router as view_coach_router
+from src.routers.view_trainer import router as view_trainer_router
 
 
 @asynccontextmanager
@@ -55,6 +56,7 @@ app.include_router(my_meets_router, prefix="/my-meets")
 app.include_router(profile_router, prefix="/profile")
 app.include_router(search_groups_router, prefix="/search-groups")
 app.include_router(view_coach_router, prefix="/view-coach")
+app.include_router(view_trainer_router, prefix="/view-trainer")
 app.include_router(debug_router, prefix="/debug")
 
 

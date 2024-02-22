@@ -16,6 +16,8 @@ class Config:
 
     logger_level: str = "DEBUG"
 
+    assets_dir: str = "assets"
+
 
 config = Config()
 

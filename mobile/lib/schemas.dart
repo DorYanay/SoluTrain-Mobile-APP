@@ -71,7 +71,7 @@ class CertificatesSchema {
 
   factory CertificatesSchema.fromJson(dynamic data) {
     return CertificatesSchema(
-      (data['areas'] as List<dynamic>)
+      (data['certificates'] as List<dynamic>)
           .map((file) => FileSchema.fromJson(file))
           .toList(),
     );
@@ -270,6 +270,22 @@ class MyMeetsSchema {
     return MyMeetsSchema(
       (data['meets'] as List<dynamic>)
           .map((meet) => MeetInfoSchema.fromJson(meet))
+          .toList(),
+    );
+  }
+}
+
+class ViewCoachSchema {
+  final UserBaseSchema coach;
+  final List<FileSchema> certificates;
+
+  ViewCoachSchema(this.coach, this.certificates);
+
+  factory ViewCoachSchema.fromJson(dynamic data) {
+    return ViewCoachSchema(
+      UserBaseSchema.fromJson(data['coach']),
+      (data['certificates'] as List<dynamic>)
+          .map((file) => FileSchema.fromJson(file))
           .toList(),
     );
   }

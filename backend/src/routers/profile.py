@@ -1,6 +1,11 @@
+import os
+
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, status
+from fastapi.responses import FileResponse
 
+from src.api import get_api_media_type
+from src.config import config
 from src.models import db_dependency
 from src.models.users import (
     Gender,
@@ -24,17 +29,6 @@ from src.validators import validate_certificate_name, validate_email, validate_p
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
-def _get_api_media_type(name: str) -> str:
-    if name.endswith(".pdf"):
-        return "application/pdf"
-    elif name.endswith(".jpg") or name.endswith(".jpeg"):
-        return "image/jpeg"
-    elif name.endswith(".png"):
-        return "image/png"
-
-    return "application/octet-stream"
-
-
 @router.post("/get")
 def route_get(current_user: User = Depends(get_current_user)) -> UserSchema:
     return UserSchema.from_model(current_user)
@@ -49,7 +43,7 @@ def route_get_certificates(
     return CertificatesSchema.from_model(certificates)
 
 
-@router.get("/get-certificate/")
+@router.get("/get-certificate")
 def route_get_certificate(
     certificate_id: str, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> Response:
@@ -58,7 +52,7 @@ def route_get_certificate(
     if certificate is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Certificate not found")
 
-    return Response(content=certificate.body, media_type=_get_api_media_type(certificate.name))
+    return Response(content=certificate.body, media_type=get_api_media_type(certificate.name))
 
 
 @router.post("/upload-first-certificate")
@@ -97,7 +91,7 @@ async def route_upload_certificate(
     user_upload_certificate(db, current_user.user_id, file.filename, file_body)
 
 
-@router.post("delete-certificate")
+@router.post("/delete-certificate")
 def route_delete_certificate(
     certificate_id: str, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> None:
@@ -117,9 +111,11 @@ def route_get_profile_picture(db: psycopg.Connection = Depends(db_dependency), c
     image = get_user_profile_image(db, current_user.user_id)
 
     if image is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="The user does not have a profile picture")
+        if current_user.gender == Gender.male:
+            return FileResponse(os.path.join(config.assets_dir, "avatar_man_image.png"))
+        return FileResponse(os.path.join(config.assets_dir, "avatar_woman_image.png"))
 
-    return Response(content=image.body, media_type=_get_api_media_type(image.name))
+    return Response(content=image.body, media_type=get_api_media_type(image.name))
 
 
 @router.post("/upload-profile-picture")
