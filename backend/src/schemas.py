@@ -204,3 +204,15 @@ class MyGroupsSchema(BaseModel):
 
 class MyMeetsSchema(BaseModel):
     meets: list[MeetInfoSchema]
+
+
+class ViewCoachSchema(BaseModel):
+    coach: UserBaseSchema
+    certificates: list[FileSchema]
+
+    @staticmethod
+    def from_model(coach: User, certificates: list[FileModel]) -> ViewCoachSchema:
+        return ViewCoachSchema(
+            coach=UserBaseSchema.from_model(coach),
+            certificates=[FileSchema.from_model(certificate) for certificate in certificates],
+        )
