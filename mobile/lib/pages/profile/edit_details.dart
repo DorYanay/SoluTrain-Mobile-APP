@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/app_model.dart';
 import 'package:mobile/schemas.dart';
-import 'package:provider/provider.dart';
 
-import 'package:mobile/api.dart';
 
 typedef OnSaveHandler = void Function(Function closeDialog, String name,String email, String phone, String gender,String description);
 

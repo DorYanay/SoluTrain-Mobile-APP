@@ -87,6 +87,46 @@ class _CertificatesViewState extends State<CertificatesView> {
     });
   }
 
+  void downloadCertificateOnPressed(FileSchema certificate){
+    String certificateUrl = API.getURL('profile/get-certificate', widget.autoToken, params: {
+      'certificate_id': certificate.fileId, 'auth_token': widget.autoToken
+    });
+
+    openFile(url: certificateUrl, fileName: certificate.name);
+  }
+
+  Future openFile({required String url, String? fileName}) async {
+    final file = await downloadFile(url,fileName!);
+    if(file == null)return;
+
+    OpenFile.open(file.path);
+  }
+
+  Future<File?> downloadFile(String url, String name) async {
+    final appStorage = await getApplicationDocumentsDirectory();
+
+    final file = File('${appStorage.path}/$name');
+
+    try{
+      final response = await dio.Dio().get(
+        url,
+        options: dio.Options(
+          responseType:dio.ResponseType.bytes,
+          followRedirects: false,
+          receiveTimeout: 0,
+        ),
+      );
+
+      final raf = file.openSync(mode: FileMode.write);
+      raf.writeFromSync(response.data);
+      await raf.close();
+
+      return file;
+    }catch(e){
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -133,9 +173,7 @@ class _CertificatesViewState extends State<CertificatesView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              onPressed: () {
-                                // Add functionality to download certificate
-                              },
+                              onPressed:(){downloadCertificateOnPressed(certificate);},
                               icon: const Icon(Icons.download),
                             ),
                             if(certificatesData.certificates.length != 1)

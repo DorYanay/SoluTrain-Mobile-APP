@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/formaters.dart';
 import 'package:mobile/pages/profile/certificates_view.dart';
+import 'package:mobile/pages/view_coach/view_coach_page.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -20,6 +21,8 @@ class CoachProfilePage extends StatefulWidget {
 class _CoachProfilePage extends State<CoachProfilePage> {
   void showCertificatesOnPressed() {
     String userAutoToken = Provider.of<AppModel>(context, listen: false).authToken!;
+
+    bool userClassification = Provider.of<AppModel>(context, listen: false).user!.isCoach;
 
     CertificatesView.open(context, userAutoToken);
   }
@@ -41,6 +44,10 @@ class _CoachProfilePage extends State<CoachProfilePage> {
 
     if(name != user.name){
       params["new_name"] = name;
+    }
+
+    if(name != user.description){
+      params["new_description"] = description;
     }
 
     if(email != user.email){
@@ -83,14 +90,21 @@ class _CoachProfilePage extends State<CoachProfilePage> {
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
+
+    String authToken = Provider.of<AppModel>(context).authToken!;
+
+    String imageUrl = API.getURL('/profile/get-profile-picture',authToken);
+
     String description = user.description;
+
     int age = calculateAge(user.dateOfBirth);
+
     String gender =user.gender;
+
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: const Text(
-          'Coach Profile',
+          'Profile',
           style: TextStyle(
             color: Colors.white,
             letterSpacing: 2.0,
@@ -108,7 +122,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                Center(child: Stack(
                  children: [
                    CircleAvatar(
-                     backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
+                     backgroundImage: NetworkImage(imageUrl),
                      radius: 80.0,
                    ),
                    Positioned(
@@ -129,7 +143,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   const Text(
                     'Edit Profile',
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black87,
                       letterSpacing: 2.0,
                       fontSize: 14.0,
                     ),
@@ -153,7 +167,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                         const Text(
                           'Name',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: Colors.black87,
                             letterSpacing: 2.0,
                             fontSize: 16.0,
                           ),
@@ -163,7 +177,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           const Text(
                             "View Certificates",
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.black54,
                               letterSpacing: 2.0,
                               fontSize: 12.0,
                             ),
@@ -180,7 +194,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     user.name,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold),
@@ -191,7 +205,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           const Text(
                             'Description',
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.black87,
                               letterSpacing: 2.0,
                               fontSize: 16.0,
                             ),
@@ -200,19 +214,19 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           description,
                           trimLines: 1,
                           preDataTextStyle:
-                              const TextStyle(color: Colors.white),
+                              const TextStyle(color: Colors.black87),
                           postDataTextStyle:
-                              const TextStyle(color: Colors.white),
-                          delimiterStyle: const TextStyle(color: Colors.white),
-                          lessStyle: const TextStyle(color: Colors.white),
-                          moreStyle: const TextStyle(color: Colors.white),
-                          colorClickableText: Colors.amber,
+                              const TextStyle(color: Colors.black87),
+                          delimiterStyle: const TextStyle(color: Colors.black87),
+                          lessStyle: const TextStyle(color: Colors.black87),
+                          moreStyle: const TextStyle(color: Colors.black87),
+                          colorClickableText: Colors.black87,
                           trimMode: TrimMode.Line,
                           trimCollapsedText: "Read more...",
                           style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                              color: Colors.black87),
                           trimExpandedText: "Less...",
                         ),
                       ])
@@ -236,7 +250,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                         const Text(
                         'Personal Details',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: Colors.black87,
                             letterSpacing: 2.0,
                             fontSize: 16.0,
                           ),
@@ -246,7 +260,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             Text(
                               'Age:',
                               style: TextStyle(
-                                color: Colors.amberAccent[200],
+                                color: Colors.black87,
                                 letterSpacing: 2.0,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.bold,
@@ -255,7 +269,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             Text(
                               '$age',
                               style: TextStyle(
-                                  color: Colors.amberAccent[200],
+                                  color: Colors.black87,
                                   letterSpacing: 2.0,
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.bold),
@@ -267,7 +281,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             Text(
                               'Gender:',
                               style: TextStyle(
-                                color: Colors.amberAccent[200],
+                                color: Colors.black87,
                                 letterSpacing: 2.0,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.bold,
@@ -276,7 +290,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             Text(
                               user.gender,
                               style: TextStyle(
-                                  color: Colors.amberAccent[200],
+                                  color: Colors.black87,
                                   letterSpacing: 2.0,
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.bold),
@@ -295,7 +309,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             const Text(
                               "Groups",
                               style: TextStyle(
-                                color: Colors.grey,
+                                color: Colors.black54,
                                 letterSpacing: 2.0,
                                 fontSize: 12.0,
                               ),
@@ -316,7 +330,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 const Text(
                   'Contact',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.black87,
                     letterSpacing: 2.0,
                     fontSize: 16.0,
                   ),
@@ -334,7 +348,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     'Email', // Change to user.email or appropriate data
                     style: TextStyle(
-                      color: Colors.grey[400],
+                      color: Colors.black87,
                       fontSize: 18.0,
                       letterSpacing: 1.0,
                     ),
@@ -345,7 +359,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     user.email,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
@@ -359,7 +373,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 children: <Widget>[
                   Icon(
                     Icons.phone,
-                    color: Colors.grey[400],
+                    color: Colors.black87,
                     size: 35.0,
                   ),
                   const SizedBox(
@@ -368,7 +382,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     'Phone', // Change to user.phone or appropriate data
                     style: TextStyle(
-                      color: Colors.grey[400],
+                      color: Colors.black87,
                       fontSize: 18.0,
                       letterSpacing: 1.0,
                     ),
@@ -379,7 +393,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     user.phone,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
