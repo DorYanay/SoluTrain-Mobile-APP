@@ -64,7 +64,6 @@ class _CertificatesViewState extends State<CertificatesView> {
             .guestPost('/profile/upload-certificate',
                 params: {
                   "auth_token": widget.autoToken,
-                  "certificate_id": certificatesData
                 },
                 filePath: filePath)
             .then((Response res) {
