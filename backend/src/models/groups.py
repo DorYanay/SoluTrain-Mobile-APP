@@ -520,11 +520,8 @@ def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUI
             LEFT JOIN public.group_members AS gm ON g.id = gm.group_id
             LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
             LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
-            GROUP BY m.id
-            WHERE (m.id = %s
-                    AND (gm.user_id = %s OR gm.user_id IS NULL)
-                    AND (mm.user_id = %s OR mm.user_id IS NULL)
-                    );
+            WHERE ((m.id = %s) AND (gm.user_id = %s OR gm.user_id IS NULL) AND (mm.user_id = %s OR mm.user_id IS NULL))
+            GROUP BY m.id, g.coach_id, gm.user_id, mm.user_id, m.max_members;
             """,
             (str(meet_id), str(trainer_id), str(trainer_id)),
         )
@@ -535,7 +532,7 @@ def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUI
         if row is None:
             return None, False, False, False
 
-        coach_id = UUID(row[0])
+        coach_id = row[0]
         registered_to_group = row[1] is not None
         registered_to_meet = row[2] is not None
         meet_is_full = row[3]
@@ -624,8 +621,8 @@ def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet,
             FROM public.meetings AS m
             LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
             LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
-            GROUP BY m.id
-            WHERE (mm2.user_id = %s);
+            WHERE (mm2.user_id = %s)
+            GROUP BY m.id, mm2.user_id;
             """,
             [str(user_id)],
         )
