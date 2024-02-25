@@ -22,8 +22,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
   void showCertificatesOnPressed() {
     String userAutoToken = Provider.of<AppModel>(context, listen: false).authToken!;
 
-    bool userClassification = Provider.of<AppModel>(context, listen: false).user!.isCoach;
-
     CertificatesView.open(context, userAutoToken);
   }
 
@@ -79,13 +77,53 @@ class _CoachProfilePage extends State<CoachProfilePage> {
 
 
   void uploadImageOnPressed() async {
-    FilePickerResult? result =
-    await FilePicker.platform.pickFiles();
-    if (result != null) {
-      String filePath = result.files.single.path!;
+    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+      if (result?.files.single.path != null) {
+        String filePath = result!.files.single.path!;
 
-    }
+        API
+            .post(context, '/profile/upload-profile-picture',
+            filePath: filePath);
+      }
+    });
   }
+
+  // void uploadProfilePictureOnPressed() {
+  //   FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+  //     if (result?.files.single.path != null) {
+  //       String filePath = result!.files.single.path!;
+  //
+  //       API
+  //           .post(context, '/profile/upload-profile-picture',
+  //           filePath: filePath)
+  //           .then((Response res) {
+  //         // Handle response if needed
+  //       }).onError((error, stackTrace) {
+  //         // Handle error if needed
+  //       });
+  //     }
+  //   });
+  // }
+
+  void uploadProfilePictureOnPressed() {
+    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+      if (result?.files.single.path != null) {
+        String filePath = result!.files.single.path!;
+
+        API
+            .guestPost('/profile/upload-profile-picture',
+            filePath: filePath)
+            .then((Response res) {
+          if (res.hasError) {
+            return;
+          }
+        });
+      }
+    });
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -86,24 +86,6 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
       print(filePath);
     }
   }
-  // void uploadCertificateOnPressed() {
-  //   FilePicker.platform.pickFiles().then((FilePickerResult? result) {
-  //     if (result?.files.single.path != null) {
-  //       String filePath = result!.files.single.path!;
-  //
-  //       API
-  //           .post(context, '/profile/upload-first-certificate',
-  //           filePath: filePath)
-  //           .then((Response res) {
-  //         API.post(context, '/auth/logout').then((Response res2) {
-  //           Provider.of<AppModel>(context, listen: false).setLogout();
-  //         }).onError((error, stackTrace) {
-  //           Provider.of<AppModel>(context, listen: false).setLogout();
-  //         });
-  //       });
-  //     }
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
