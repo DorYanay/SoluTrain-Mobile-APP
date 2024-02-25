@@ -195,6 +195,7 @@ class MeetSchema {
 
 class MeetInfoSchema {
   final String meetId;
+  final String groupId;
   final DateTime meetDate;
   final DateTime startTime;
   final DateTime endTime;
@@ -204,12 +205,13 @@ class MeetInfoSchema {
   final bool full;
   final bool registered;
 
-  MeetInfoSchema(this.meetId, this.meetDate, this.startTime, this.endTime,
+  MeetInfoSchema(this.meetId, this.groupId, this.meetDate, this.startTime, this.endTime,
       this.duration, this.city, this.street, this.full, this.registered);
 
   factory MeetInfoSchema.fromJson(dynamic data) {
     return MeetInfoSchema(
       data['meet_id'] as String,
+      data['group_id'] as String,
       DateTime.parse(data['meet_date'] as String),
       DateTime.parse(data['start_time'] as String),
       DateTime.parse(data['start_end'] as String),

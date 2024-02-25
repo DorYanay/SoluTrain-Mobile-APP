@@ -164,6 +164,7 @@ class MeetSchema(BaseModel):
 
 class MeetInfoSchema(BaseModel):
     meet_id: str
+    group_id: str
     meet_date: str
     start_time: str
     end_time: str
@@ -179,6 +180,7 @@ class MeetInfoSchema(BaseModel):
 
         return MeetInfoSchema(
             meet_id=str(meet.meet_id),
+            group_id=str(meet.group_id),
             meet_date=meet.meet_date.date().strftime("%Y-%m-%d %H:%M:%S"),
             start_time=meet.meet_date.time().strftime("%Y-%m-%d %H:%M:%S"),
             end_time=end_time.time().strftime("%Y-%m-%d %H:%M:%S"),
