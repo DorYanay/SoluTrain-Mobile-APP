@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'package:mobile/api.dart';
 
-
 class CoachCertificatesView extends StatefulWidget {
   static void open(BuildContext context, String autoToken) {
     showDialog(
@@ -39,12 +38,11 @@ class _CoachCertificatesView extends State<CoachCertificatesView> {
     refreshCertificates();
   }
 
-  void refreshCertificates(){
-    API
-        .guestPost('/profile/get-certificates', params: {
-      "auth_token": widget.autoToken
-    },)
-        .then((Response res) {
+  void refreshCertificates() {
+    API.guestPost(
+      '/profile/get-certificates',
+      params: {"auth_token": widget.autoToken},
+    ).then((Response res) {
       if (res.hasError) {
         return;
       }
@@ -57,17 +55,19 @@ class _CoachCertificatesView extends State<CoachCertificatesView> {
     });
   }
 
-  void downloadCertificateOnPressed(FileSchema certificate){
-    String certificateUrl = API.getURL('profile/get-certificate', widget.autoToken, params: {
-      'certificate_id': certificate.fileId, 'auth_token': widget.autoToken
+  void downloadCertificateOnPressed(FileSchema certificate) {
+    String certificateUrl = API.getURL(
+        'profile/get-certificate', widget.autoToken, params: {
+      'certificate_id': certificate.fileId,
+      'auth_token': widget.autoToken
     });
 
     openFile(url: certificateUrl, fileName: certificate.name);
   }
 
   Future openFile({required String url, String? fileName}) async {
-    final file = await downloadFile(url,fileName!);
-    if(file == null)return;
+    final file = await downloadFile(url, fileName!);
+    if (file == null) return;
 
     OpenFile.open(file.path);
   }
@@ -77,11 +77,11 @@ class _CoachCertificatesView extends State<CoachCertificatesView> {
 
     final file = File('${appStorage.path}/$name');
 
-    try{
+    try {
       final response = await dio.Dio().get(
         url,
         options: dio.Options(
-          responseType:dio.ResponseType.bytes,
+          responseType: dio.ResponseType.bytes,
           followRedirects: false,
           receiveTimeout: 0,
         ),
@@ -92,14 +92,13 @@ class _CoachCertificatesView extends State<CoachCertificatesView> {
       await raf.close();
 
       return file;
-    }catch(e){
+    } catch (e) {
       return null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return AlertDialog(
       title: Text('Certificates'),
       content: Container(
@@ -118,7 +117,9 @@ class _CoachCertificatesView extends State<CoachCertificatesView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          onPressed:(){downloadCertificateOnPressed(certificate);},
+                          onPressed: () {
+                            downloadCertificateOnPressed(certificate);
+                          },
                           icon: const Icon(Icons.download),
                         ),
                       ],

@@ -20,7 +20,8 @@ class CoachProfilePage extends StatefulWidget {
 
 class _CoachProfilePage extends State<CoachProfilePage> {
   void showCertificatesOnPressed() {
-    String userAutoToken = Provider.of<AppModel>(context, listen: false).authToken!;
+    String userAutoToken =
+        Provider.of<AppModel>(context, listen: false).authToken!;
 
     CertificatesView.open(context, userAutoToken);
   }
@@ -35,32 +36,34 @@ class _CoachProfilePage extends State<CoachProfilePage> {
     EditDetails.open(context, user, editProfileDialogOnSave);
   }
 
-  void editProfileDialogOnSave(Function closeDialog, String name,String email, String phone, String gender, String description){
+  void editProfileDialogOnSave(Function closeDialog, String name, String email,
+      String phone, String gender, String description) {
     UserSchema user = Provider.of<AppModel>(context, listen: false).user!;
 
     Map<String, dynamic> params = {};
 
-    if(name != user.name){
+    if (name != user.name) {
       params["new_name"] = name;
     }
 
-    if(name != user.description){
+    if (name != user.description) {
       params["new_description"] = description;
     }
 
-    if(email != user.email){
+    if (email != user.email) {
       params["new_email"] = email;
     }
 
-    if(phone != user.phone){
+    if (phone != user.phone) {
       params["new_phone"] = phone;
     }
 
-    if(gender != user.gender){
+    if (gender != user.gender) {
       params["new_gender"] = gender;
     }
 
-    API.post(context, '/profile/update-details', params: params)
+    API
+        .post(context, '/profile/update-details', params: params)
         .then((Response res) {
       if (res.hasError) {
         closeDialog();
@@ -75,14 +78,12 @@ class _CoachProfilePage extends State<CoachProfilePage> {
     });
   }
 
-
   void uploadImageOnPressed() async {
     FilePicker.platform.pickFiles().then((FilePickerResult? result) {
       if (result?.files.single.path != null) {
         String filePath = result!.files.single.path!;
 
-        API
-            .post(context, '/profile/upload-profile-picture',
+        API.post(context, '/profile/upload-profile-picture',
             filePath: filePath);
       }
     });
@@ -111,8 +112,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
         String filePath = result!.files.single.path!;
 
         API
-            .guestPost('/profile/upload-profile-picture',
-            filePath: filePath)
+            .guestPost('/profile/upload-profile-picture', filePath: filePath)
             .then((Response res) {
           if (res.hasError) {
             return;
@@ -122,22 +122,19 @@ class _CoachProfilePage extends State<CoachProfilePage> {
     });
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = API.getURL('/profile/get-profile-picture',authToken);
+    String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
 
     String description = user.description;
 
     int age = calculateAge(user.dateOfBirth);
 
-    String gender =user.gender;
+    String gender = user.gender;
 
     return Scaffold(
       appBar: AppBar(
@@ -157,23 +154,24 @@ class _CoachProfilePage extends State<CoachProfilePage> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-               Center(child: Stack(
-                 children: [
-                   CircleAvatar(
-                     backgroundImage: NetworkImage(imageUrl),
-                     radius: 80.0,
-                   ),
-                   Positioned(
-                     bottom: 0.0,
-                     right: 0.0,
-                     child: FloatingActionButton(
-                       onPressed: uploadImageOnPressed,
-                       mini: true,
-                       child: Icon(Icons.camera_alt_rounded),
-                     ),
-                   ),
-                 ],
-               ),
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(imageUrl),
+                      radius: 80.0,
+                    ),
+                    Positioned(
+                      bottom: 0.0,
+                      right: 0.0,
+                      child: FloatingActionButton(
+                        onPressed: uploadImageOnPressed,
+                        mini: true,
+                        child: Icon(Icons.camera_alt_rounded),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -186,7 +184,8 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                       fontSize: 14.0,
                     ),
                   ),
-                  IconButton(onPressed: editProfileOnPressed,
+                  IconButton(
+                      onPressed: editProfileOnPressed,
                       icon: const Icon(Icons.edit))
                 ],
               ),
@@ -202,14 +201,14 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                        const Text(
-                          'Name',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            letterSpacing: 2.0,
-                            fontSize: 16.0,
-                          ),
+                      const Text(
+                        'Name',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          letterSpacing: 2.0,
+                          fontSize: 16.0,
                         ),
+                      ),
                       Row(
                         children: [
                           const Text(
@@ -240,14 +239,14 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                          const Text(
-                            'Description',
-                            style: TextStyle(
-                              color: Colors.black87,
-                              letterSpacing: 2.0,
-                              fontSize: 16.0,
-                            ),
+                        const Text(
+                          'Description',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            letterSpacing: 2.0,
+                            fontSize: 16.0,
                           ),
+                        ),
                         ReadMoreText(
                           description,
                           trimLines: 1,
@@ -255,7 +254,8 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                               const TextStyle(color: Colors.black87),
                           postDataTextStyle:
                               const TextStyle(color: Colors.black87),
-                          delimiterStyle: const TextStyle(color: Colors.black87),
+                          delimiterStyle:
+                              const TextStyle(color: Colors.black87),
                           lessStyle: const TextStyle(color: Colors.black87),
                           moreStyle: const TextStyle(color: Colors.black87),
                           colorClickableText: Colors.black87,
@@ -286,7 +286,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                        'Personal Details',
+                          'Personal Details',
                           style: TextStyle(
                             color: Colors.black87,
                             letterSpacing: 2.0,
@@ -365,14 +365,14 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 height: 10.0,
                 color: Colors.grey[800],
               ),
-                const Text(
-                  'Contact',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    letterSpacing: 2.0,
-                    fontSize: 16.0,
-                  ),
+              const Text(
+                'Contact',
+                style: TextStyle(
+                  color: Colors.black87,
+                  letterSpacing: 2.0,
+                  fontSize: 16.0,
                 ),
+              ),
               Row(
                 children: <Widget>[
                   Icon(
@@ -444,7 +444,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
   }
 }
 
-
 bool isValidPhoneNumber(String phoneNumber) {
   if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
       !phoneNumber.startsWith('+')) {
@@ -470,5 +469,3 @@ bool _containsOnlyDigits(String str) {
 bool isDigit(String s) {
   return double.tryParse(s) != null;
 }
-
-

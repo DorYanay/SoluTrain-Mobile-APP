@@ -26,12 +26,11 @@ class _ViewTrainerPageState extends State<ViewTrainerPage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = API.getURL('/profile/get-profile-picture',authToken);
+    String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
 
     int age = calculateAge(user.dateOfBirth);
 
     String gender = user.gender;
-
 
     return Scaffold(
       backgroundColor: Colors.black12,
@@ -71,22 +70,22 @@ class _ViewTrainerPageState extends State<ViewTrainerPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                      const Text(
-                        'Name',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          letterSpacing: 2.0,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      Text(
-                        user.name,
-                        style: TextStyle(
-                            color: Colors.amberAccent[200],
-                            letterSpacing: 2.0,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold),
-                      ),
+                  const Text(
+                    'Name',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      letterSpacing: 2.0,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  Text(
+                    user.name,
+                    style: TextStyle(
+                        color: Colors.amberAccent[200],
+                        letterSpacing: 2.0,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
               const Text(

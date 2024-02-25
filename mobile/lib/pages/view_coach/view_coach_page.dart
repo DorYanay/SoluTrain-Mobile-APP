@@ -20,10 +20,10 @@ class ViewCoachPage extends StatefulWidget {
   State<ViewCoachPage> createState() => _ViewCoachPage();
 }
 
-
 class _ViewCoachPage extends State<ViewCoachPage> {
   void showCertificatesOnPressed() {
-    String userAutoToken = Provider.of<AppModel>(context, listen: false).authToken!;
+    String userAutoToken =
+        Provider.of<AppModel>(context, listen: false).authToken!;
 
     CoachCertificatesView.open(context, userAutoToken);
   }
@@ -34,7 +34,7 @@ class _ViewCoachPage extends State<ViewCoachPage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = API.getURL('/profile/get-profile-picture',authToken);
+    String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
 
     int age = calculateAge(user.dateOfBirth);
 
@@ -61,14 +61,15 @@ class _ViewCoachPage extends State<ViewCoachPage> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Center(child: Stack(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(imageUrl),
-                    radius: 80.0,
-                  ),
-                ],
-              ),
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(imageUrl),
+                      radius: 80.0,
+                    ),
+                  ],
+                ),
               ),
               Divider(
                 height: 10.0,
@@ -132,9 +133,9 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                           description,
                           trimLines: 1,
                           preDataTextStyle:
-                          const TextStyle(color: Colors.white),
+                              const TextStyle(color: Colors.white),
                           postDataTextStyle:
-                          const TextStyle(color: Colors.white),
+                              const TextStyle(color: Colors.white),
                           delimiterStyle: const TextStyle(color: Colors.white),
                           lessStyle: const TextStyle(color: Colors.white),
                           moreStyle: const TextStyle(color: Colors.white),
@@ -303,4 +304,3 @@ class _ViewCoachPage extends State<ViewCoachPage> {
     ); //scaffold
   }
 }
-

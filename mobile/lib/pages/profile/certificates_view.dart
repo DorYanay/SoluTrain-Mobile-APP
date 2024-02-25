@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'package:mobile/api.dart';
 
-
 class CertificatesView extends StatefulWidget {
   static void open(BuildContext context, String autoToken) {
     showDialog(
@@ -39,12 +38,11 @@ class _CertificatesViewState extends State<CertificatesView> {
     refreshCertificates();
   }
 
-  void refreshCertificates(){
-    API
-        .guestPost('/profile/get-certificates', params: {
-      "auth_token": widget.autoToken
-    },)
-        .then((Response res) {
+  void refreshCertificates() {
+    API.guestPost(
+      '/profile/get-certificates',
+      params: {"auth_token": widget.autoToken},
+    ).then((Response res) {
       if (res.hasError) {
         return;
       }
@@ -63,10 +61,12 @@ class _CertificatesViewState extends State<CertificatesView> {
         String filePath = result!.files.single.path!;
 
         API
-            .guestPost('/profile/upload-certificate', params: {
-          "auth_token": widget.autoToken, "certificate_id": certificatesData
-        },
-            filePath: filePath)
+            .guestPost('/profile/upload-certificate',
+                params: {
+                  "auth_token": widget.autoToken,
+                  "certificate_id": certificatesData
+                },
+                filePath: filePath)
             .then((Response res) {
           if (res.hasError) {
             return;
@@ -78,12 +78,11 @@ class _CertificatesViewState extends State<CertificatesView> {
     });
   }
 
-  void _deleteCertificateOnPressed(String certificateId){
-    API
-        .guestPost('/profile/delete-certificate', params: {
-    "auth_token": widget.autoToken,"certificate_id": certificateId
-    },)
-        .then((Response res) {
+  void _deleteCertificateOnPressed(String certificateId) {
+    API.guestPost(
+      '/profile/delete-certificate',
+      params: {"auth_token": widget.autoToken, "certificate_id": certificateId},
+    ).then((Response res) {
       if (res.hasError) {
         return;
       }
@@ -92,17 +91,19 @@ class _CertificatesViewState extends State<CertificatesView> {
     });
   }
 
-  void downloadCertificateOnPressed(FileSchema certificate){
-    String certificateUrl = API.getURL('profile/get-certificate', widget.autoToken, params: {
-      'certificate_id': certificate.fileId, 'auth_token': widget.autoToken
+  void downloadCertificateOnPressed(FileSchema certificate) {
+    String certificateUrl = API.getURL(
+        'profile/get-certificate', widget.autoToken, params: {
+      'certificate_id': certificate.fileId,
+      'auth_token': widget.autoToken
     });
 
     openFile(url: certificateUrl, fileName: certificate.name);
   }
 
   Future openFile({required String url, String? fileName}) async {
-    final file = await downloadFile(url,fileName!);
-    if(file == null)return;
+    final file = await downloadFile(url, fileName!);
+    if (file == null) return;
 
     OpenFile.open(file.path);
   }
@@ -112,11 +113,11 @@ class _CertificatesViewState extends State<CertificatesView> {
 
     final file = File('${appStorage.path}/$name');
 
-    try{
+    try {
       final response = await dio.Dio().get(
         url,
         options: dio.Options(
-          responseType:dio.ResponseType.bytes,
+          responseType: dio.ResponseType.bytes,
           followRedirects: false,
           receiveTimeout: 0,
         ),
@@ -127,7 +128,7 @@ class _CertificatesViewState extends State<CertificatesView> {
       await raf.close();
 
       return file;
-    }catch(e){
+    } catch (e) {
       return null;
     }
   }
@@ -135,73 +136,78 @@ class _CertificatesViewState extends State<CertificatesView> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Certificates'),
-              ElevatedButton(
-                onPressed: uploadCertificateOnPressed,
-                style: ElevatedButton.styleFrom(
-                  onPrimary: Colors.black, // Text color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Rounded corners
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add_box), // Icon
-                    SizedBox(width: 4), // Spacing between icon and text
-                    Text(
-                      'Add',
-                      style: TextStyle(fontSize: 16), // Text style
-                    ),
-                  ],
-                ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Certificates'),
+          ElevatedButton(
+            onPressed: uploadCertificateOnPressed,
+            style: ElevatedButton.styleFrom(
+              onPrimary: Colors.black, // Text color
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8), // Rounded corners
               ),
-            ],
-          ),
-          content: Container(
-            width: 300, // Set your desired width
-            height: 300, // Set your desired height
-            child: Scrollbar(
-                trackVisibility: true,
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: certificatesData.certificates.map((certificate) {
-                      return ListTile(
-                        title: Text(certificate.name),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed:(){downloadCertificateOnPressed(certificate);},
-                              icon: const Icon(Icons.download),
-                            ),
-                            if(certificatesData.certificates.length != 1)
-                              IconButton(
-                                onPressed: (){_deleteCertificateOnPressed(certificate.fileId);},
-                                icon: const Icon(Icons.delete),
-                              ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                )),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // Add functionality to close dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
+              padding:
+                  EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
             ),
-          ],
-        );
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.add_box), // Icon
+                SizedBox(width: 4), // Spacing between icon and text
+                Text(
+                  'Add',
+                  style: TextStyle(fontSize: 16), // Text style
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      content: Container(
+        width: 300, // Set your desired width
+        height: 300, // Set your desired height
+        child: Scrollbar(
+            trackVisibility: true,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: certificatesData.certificates.map((certificate) {
+                  return ListTile(
+                    title: Text(certificate.name),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            downloadCertificateOnPressed(certificate);
+                          },
+                          icon: const Icon(Icons.download),
+                        ),
+                        if (certificatesData.certificates.length != 1)
+                          IconButton(
+                            onPressed: () {
+                              _deleteCertificateOnPressed(certificate.fileId);
+                            },
+                            icon: const Icon(Icons.delete),
+                          ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            )),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            // Add functionality to close dialog
+            Navigator.of(context).pop();
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
   }
 }

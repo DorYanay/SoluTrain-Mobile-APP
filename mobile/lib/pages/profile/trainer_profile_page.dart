@@ -41,28 +41,30 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
     EditDetails.open(context, user, editProfileDialogOnSave);
   }
 
-  void editProfileDialogOnSave(Function closeDialog, String name,String email, String phone, String gender, String description){
+  void editProfileDialogOnSave(Function closeDialog, String name, String email,
+      String phone, String gender, String description) {
     UserSchema user = Provider.of<AppModel>(context, listen: false).user!;
 
     Map<String, dynamic> params = {};
 
-    if(name != user.name){
+    if (name != user.name) {
       params["new_name"] = name;
     }
 
-    if(email != user.email){
+    if (email != user.email) {
       params["new_email"] = email;
     }
 
-    if(phone != user.phone){
+    if (phone != user.phone) {
       params["new_phone"] = phone;
     }
 
-    if(gender != user.gender){
+    if (gender != user.gender) {
       params["new_gender"] = gender;
     }
 
-    API.post(context, '/profile/update-details', params: params)
+    API
+        .post(context, '/profile/update-details', params: params)
         .then((Response res) {
       if (res.hasError) {
         closeDialog();
@@ -77,10 +79,8 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
     });
   }
 
-
   void uploadImageOnPressed() async {
-    FilePickerResult? result =
-    await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       String filePath = result.files.single.path!;
       print(filePath);
@@ -93,12 +93,11 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = API.getURL('/profile/get-profile-picture',authToken);
+    String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
 
     int age = calculateAge(user.dateOfBirth);
 
     String gender = user.gender;
-
 
     return Scaffold(
       appBar: AppBar(
@@ -148,8 +147,10 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       fontSize: 14.0,
                     ),
                   ),
-                  IconButton(onPressed: editProfileOnPressed,
-                      icon: const Icon(Icons.edit))                ],
+                  IconButton(
+                      onPressed: editProfileOnPressed,
+                      icon: const Icon(Icons.edit))
+                ],
               ),
               Divider(
                 height: 10.0,
@@ -191,9 +192,11 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                           primary: Colors.white70, // Background color
                           onPrimary: Colors.black87, // Text color
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // Rounded corners
+                            borderRadius:
+                                BorderRadius.circular(8), // Rounded corners
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
+                          padding: EdgeInsets.symmetric(
+                              vertical: 6, horizontal: 6), // Padding
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
