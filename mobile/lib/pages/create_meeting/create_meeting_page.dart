@@ -16,15 +16,25 @@ class CreateMeetingPage extends StatefulWidget {
 
 class _CreateMeetingPageState extends State<CreateMeetingPage> {
   late TextEditingController maxMembersController= TextEditingController();
+  late TextEditingController dateController = TextEditingController(text: DateTime.now().toString().split(" ")[0]);
+  DateTime date = DateTime.now();
 
-  void datePicker() {
+  void datePickerOnTap() {
     showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: date,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(Duration(days: widget.meetingOpeningDayLimit)),
+    ).then((DateTime? value) {
+      if (value == null) {
+        return;
+      }
 
-    )
+      setState(() {
+        date = value;
+        dateController.text = date.toString().split(" ")[0];
+      });
+    });
   }
 
   void createMeetingOnPressed() {
@@ -51,14 +61,14 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: maxMembersController,
+              controller: dateController,
               decoration: const InputDecoration(
                 labelText: 'Date',
-                filled: true,
                 prefixIcon: Icon(Icons.calendar_today),
                 border: OutlineInputBorder(),
               ),
               readOnly: true,
+              onTap: datePickerOnTap,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
