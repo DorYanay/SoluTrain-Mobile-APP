@@ -4,8 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:mobile/app_model.dart';
 import 'package:mobile/formaters.dart';
-
-import '../../api.dart';
+import 'package:mobile/api.dart';
 
 class ViewTrainerPage extends StatefulWidget {
   final String trainerId;
@@ -20,23 +19,30 @@ class ViewTrainerPage extends StatefulWidget {
 }
 
 class _ViewTrainerPageState extends State<ViewTrainerPage> {
+  UserBaseSchema? trainer;
+
   @override
   Widget build(BuildContext context) {
-    UserSchema user = Provider.of<AppModel>(context).user!;
+    if (trainer == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('View Trainer'),
+        ),
+        body: const Text("Loading..."),
+      );
+    }
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
     String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
 
-    int age = calculateAge(user.dateOfBirth);
-
-    String gender = user.gender;
+    int age = calculateAge(trainer!.dateOfBirth);
 
     return Scaffold(
       backgroundColor: Colors.black12,
       appBar: AppBar(
         title: const Text(
-          'Profile',
+          'View Trainer',
           style: TextStyle(
             color: Colors.white,
             letterSpacing: 2.0,
@@ -79,7 +85,7 @@ class _ViewTrainerPageState extends State<ViewTrainerPage> {
                     ),
                   ),
                   Text(
-                    user.name,
+                    trainer!.name,
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
@@ -132,7 +138,7 @@ class _ViewTrainerPageState extends State<ViewTrainerPage> {
                     ),
                   ),
                   Text(
-                    user.gender,
+                    trainer!.gender,
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
@@ -178,7 +184,7 @@ class _ViewTrainerPageState extends State<ViewTrainerPage> {
                     width: 3.0,
                   ),
                   Text(
-                    user.email,
+                    trainer!.email,
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
@@ -212,7 +218,7 @@ class _ViewTrainerPageState extends State<ViewTrainerPage> {
                     width: 3.0,
                   ),
                   Text(
-                    user.phone,
+                    trainer!.phone,
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,

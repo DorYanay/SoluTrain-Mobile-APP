@@ -68,7 +68,10 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
     }
   }
 
-  void viewMeetingOnPressed(MeetInfoSchema meeting) {}
+  void viewMeetingOnPressed(MeetInfoSchema meeting) {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewMeetingPage(meeting.meetId, meeting.groupId);
+  }
 
   void refresh() {
     API.post(context, '/group/get', params: {
