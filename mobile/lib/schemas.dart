@@ -156,13 +156,24 @@ class MeetSchema {
   final String groupId;
   final String maxMembers;
   final DateTime meetDate;
+  final DateTime startTime;
+  final DateTime endTime;
   final int duration;
   final String city;
   final String street;
   final List<UserBaseSchema> members;
 
-  MeetSchema(this.meetId, this.groupId, this.maxMembers, this.meetDate,
-      this.duration, this.city, this.street, this.members);
+  MeetSchema(
+      this.meetId,
+      this.groupId,
+      this.maxMembers,
+      this.meetDate,
+      this.startTime,
+      this.endTime,
+      this.duration,
+      this.city,
+      this.street,
+      this.members);
 
   factory MeetSchema.fromJson(dynamic data) {
     return MeetSchema(
@@ -170,6 +181,8 @@ class MeetSchema {
       data['group_id'] as String,
       data['max_members'] as String,
       DateTime.parse(data['meet_date'] as String),
+      DateTime.parse(data['start_time'] as String),
+      DateTime.parse(data['start_end'] as String),
       data['duration'] as int,
       data['city'] as String,
       data['street'] as String,
@@ -183,19 +196,23 @@ class MeetSchema {
 class MeetInfoSchema {
   final String meetId;
   final DateTime meetDate;
+  final DateTime startTime;
+  final DateTime endTime;
   final int duration;
   final String city;
   final String street;
   final bool full;
   final bool registered;
 
-  MeetInfoSchema(this.meetId, this.meetDate, this.duration, this.city,
-      this.street, this.full, this.registered);
+  MeetInfoSchema(this.meetId, this.meetDate, this.startTime, this.endTime,
+      this.duration, this.city, this.street, this.full, this.registered);
 
   factory MeetInfoSchema.fromJson(dynamic data) {
     return MeetInfoSchema(
       data['meet_id'] as String,
       DateTime.parse(data['meet_date'] as String),
+      DateTime.parse(data['start_time'] as String),
+      DateTime.parse(data['start_end'] as String),
       data['duration'] as int,
       data['city'] as String,
       data['street'] as String,

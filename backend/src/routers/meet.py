@@ -52,7 +52,7 @@ def route_update_details(
 
     # update
     max_members = meet.max_members
-    meet_date = meet.meet_date
+    meet_date = meet.meet_date.strftime("%Y-%m-%d %H:%M:%S")
     duration = meet.duration
     city = meet.city
     street = meet.street
