@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID, uuid4
 
 import psycopg
@@ -317,7 +318,7 @@ class Meet:
     meet_id: UUID
     group_id: UUID
     max_members: int
-    meet_date: str
+    meet_date: datetime
     duration: int
     city: str
     street: str
@@ -326,7 +327,7 @@ class Meet:
         self.meet_id = meet_id
         self.group_id = group_id
         self.max_members = max_members
-        self.meet_date = meet_date
+        self.meet_date = datetime.strptime(meet_date, "%Y-%m-%d %H:%M:%S")
         self.duration = duration
         self.city = city
         self.street = street
