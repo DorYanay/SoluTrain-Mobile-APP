@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/api.dart';
+import 'package:mobile/app_model.dart';
 import 'package:mobile/schemas.dart';
+import 'package:provider/provider.dart';
+
+String timeToText(DateTime time) {
+  return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+}
 
 class ViewMeetingPage extends StatefulWidget {
   final String meetingId;
@@ -15,7 +21,7 @@ class ViewMeetingPage extends StatefulWidget {
 class _ViewMeetingPageState extends State<ViewMeetingPage> {
   MeetInfoSchema? meet;
 
-   bool waitingForRequest = false;
+  bool waitingForRequest = false;
 
   @override
   void initState() {
@@ -44,6 +50,15 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
         meet = MeetInfoSchema.fromJson(res.data);
       });
     });
+  }
+
+  void groupNameOnnPressed() {
+    if (meet == null) {
+      return;
+    }
+
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewGroupPage(meet!.groupId, false);
   }
 
   void registerMeetingOnPressed() {
@@ -110,9 +125,17 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const Text('Group Name',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 40),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue,
+                textStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 20),
+              ),
+              onPressed: groupNameOnnPressed,
+              child: Text(meet!.groupName),
+            ),
+            const SizedBox(height: 10),
             ElevatedButton(
                 onPressed: registerMeetingOnPressed,
                 child: Column(
@@ -123,9 +146,9 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
             const SizedBox(height: 20),
             Text('Date ${meet!.meetDate.toString().split(' ')[0]}'),
             const SizedBox(height: 20),
-            Text('Start Time ${meet!.startTime.toString().split(' ')[1]}'),
+            Text('Start Time ${timeToText(meet!.startTime)}'),
             const SizedBox(height: 20),
-            Text('End Time ${meet!.endTime.toString().split(' ')[1]}'),
+            Text('End Time ${timeToText(meet!.endTime)}'),
             const SizedBox(height: 20),
             Text('City: ${meet!.city}'),
             const SizedBox(height: 20),

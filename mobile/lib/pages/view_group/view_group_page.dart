@@ -193,7 +193,9 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
                               viewMeetingOnPressed(meeting);
                             },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: groupViewInfo!.registered ? null : Colors.grey,
+                              backgroundColor: groupViewInfo!.registered
+                                  ? null
+                                  : Colors.grey,
                             ),
                             child: const Text('View'),
                           ),

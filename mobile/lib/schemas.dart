@@ -196,6 +196,7 @@ class MeetSchema {
 class MeetInfoSchema {
   final String meetId;
   final String groupId;
+  final String groupName;
   final DateTime meetDate;
   final DateTime startTime;
   final DateTime endTime;
@@ -208,6 +209,7 @@ class MeetInfoSchema {
   MeetInfoSchema(
       this.meetId,
       this.groupId,
+      this.groupName,
       this.meetDate,
       this.startTime,
       this.endTime,
@@ -221,6 +223,7 @@ class MeetInfoSchema {
     return MeetInfoSchema(
       data['meet_id'] as String,
       data['group_id'] as String,
+      data['group_name'] as String,
       DateTime.parse(data['meet_date'] as String),
       DateTime.parse(data['start_time'] as String),
       DateTime.parse(data['end_time'] as String),

@@ -613,16 +613,17 @@ def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) 
 
 
 @db_named_query
-def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet, bool, bool]]:
+def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet, str, bool, bool]]:
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT m.id, m.group_id, m.date, m.duration, m.city, m.street, m.max_members, COUNT(mm.user_id), mm2.user_id
+            SELECT m.id, m.group_id, m.date, m.duration, m.city, m.street, m.max_members, g.name, COUNT(mm.user_id), mm2.user_id
             FROM public.meetings AS m
+            JOIN public.groups AS g ON m.group_id = g.id
             LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
             LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
             WHERE (mm2.user_id = %s)
-            GROUP BY m.id, mm2.user_id;
+            GROUP BY m.id, g.group_id, mm2.user_id;
             """,
             [str(user_id)],
         )
@@ -630,7 +631,7 @@ def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet,
 
         rows = cursor.fetchall()
 
-        meets: list[tuple[Meet, bool, bool]] = []
+        meets: list[tuple[Meet, str, bool, bool]] = []
 
         for row in rows:
             meet = Meet(
@@ -643,9 +644,11 @@ def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet,
                 street=row[5],
             )
 
-            registered = row[8] is not None
-            full = row[7] >= row[6]
+            group_name = str(row[7])
 
-            meets.append((meet, full, registered))
+            registered = row[9] is not None
+            full = row[8] >= row[6]
+
+            meets.append((meet, group_name, full, registered))
 
         return meets

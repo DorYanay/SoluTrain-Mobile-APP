@@ -13,7 +13,8 @@ from src.models.groups import (
     get_group_meets,
     get_group_meets_info,
     get_group_members,
-    remove_member_from_group, remove_member_from_meet,
+    remove_member_from_group,
+    remove_member_from_meet,
 )
 from src.models.users import User
 from src.schemas import GroupFullSchema, GroupSchema, GroupViewInfoSchema, MeetInfoSchema
@@ -40,7 +41,7 @@ def route_get(
     for meet_data in meets_data:
         meet, members_count, registered = meet_data
 
-        meets.append(MeetInfoSchema.from_model(meet, members_count, registered))
+        meets.append(MeetInfoSchema.from_model(meet, group.name, members_count, registered))
 
     registered = check_member_in_group(db, group_id, current_user.user_id)
 
@@ -109,7 +110,7 @@ def route_unregister_to_group(
 def route_register_to_meet(
     meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> None:
-    coach_id, registered_to_group, registered_to_meet, meet_is_full = check_trainer_in_meet(db,  current_user.user_id, meet_id)
+    coach_id, registered_to_group, registered_to_meet, meet_is_full = check_trainer_in_meet(db, current_user.user_id, meet_id)
 
     if coach_id is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
