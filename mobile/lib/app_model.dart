@@ -189,7 +189,7 @@ class AppModel extends ChangeNotifier {
   }
 
   void moveToMeetingPage(String meetingId, String groupId) {
-    currentPage = CurrentSinglePage.createMeeting;
+    currentPage = CurrentSinglePage.meeting;
     currentPageGroupId = groupId;
     currentPageMeetingId = meetingId;
 
