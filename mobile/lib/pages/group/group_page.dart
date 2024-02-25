@@ -28,7 +28,10 @@ class _GroupPageState extends State<GroupPage> {
         .moveToCreateMeetingPage(fullGroup!.group.groupId);
   }
 
-  void viewMeetingOnPressed(MeetSchema meeting) {}
+  void viewMeetingOnPressed(MeetSchema meeting) {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToMeetingPage(meeting.meetId, meeting.groupId);
+  }
 
   void removeParticipantOnPressed(UserBaseSchema user) {}
 
