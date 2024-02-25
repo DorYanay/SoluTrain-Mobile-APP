@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/formaters.dart';
+import 'package:mobile/pages/profile/certificates_view.dart';
+import 'package:mobile/pages/view_coach/view_coach_page.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -16,126 +18,12 @@ class CoachProfilePage extends StatefulWidget {
   State<CoachProfilePage> createState() => _CoachProfilePage();
 }
 
-List<String> certificates = [
-  "Certificate 1",
-  "Certificate 2",
-  "Certificate 3",
-  "Certificate 4",
-  "Certificate 5",
-  "Certificate 6",
-  "Certificate 7",
-  "Certificate 8",
-  "Certificate 9",
-  "Certificate 10",
-  "Certificate 11",
-  "Certificate 12",
-
-
-
-]; // Example list of certificates
-
 class _CoachProfilePage extends State<CoachProfilePage> {
-  void uploadCertificateOnPressed() {
-    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
-      if (result?.files.single.path != null) {
-        String filePath = result!.files.single.path!;
+  void showCertificatesOnPressed() {
+    String userAutoToken = Provider.of<AppModel>(context, listen: false).authToken!;
 
-        API
-            .post(context, '/profile/upload-first-certificate',
-            filePath: filePath)
-            .then((Response res) {
-          API.post(context, '/auth/logout').then((Response res2) {
-            Provider.of<AppModel>(context, listen: false).setLogout();
-          }).onError((error, stackTrace) {
-            Provider.of<AppModel>(context, listen: false).setLogout();
-          });
-        });
-      }
-    });
+    CertificatesView.open(context, userAutoToken);
   }
-
-  void _showCertificateDialog(
-      BuildContext context, String certificate, UserSchema user) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Certificates'),
-              ElevatedButton(
-                onPressed: uploadCertificateOnPressed,
-                style: ElevatedButton.styleFrom(
-                  onPrimary: Colors.black, // Text color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Rounded corners
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add_box), // Icon
-                    SizedBox(width: 4), // Spacing between icon and text
-                    Text(
-                      'Add',
-                      style: TextStyle(fontSize: 16), // Text style
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          content: Container(
-            width: 300, // Set your desired width
-            height: 300, // Set your desired height
-            child: Scrollbar(
-                trackVisibility: true,
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: certificates.map((certificate) {
-                      return ListTile(
-                        title: Text(certificate),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                // Add functionality to download certificate
-                              },
-                              icon: const Icon(Icons.download),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                // Add functionality to download certificate
-                              },
-                              icon: const Icon(Icons.delete),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                )),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // Add functionality to close dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
 
   void viewGroupsOnPressed() {
     Provider.of<AppModel>(context, listen: false).moveToGroupsPage();
@@ -154,6 +42,10 @@ class _CoachProfilePage extends State<CoachProfilePage> {
 
     if(name != user.name){
       params["new_name"] = name;
+    }
+
+    if(name != user.description){
+      params["new_description"] = description;
     }
 
     if(email != user.email){
@@ -185,24 +77,72 @@ class _CoachProfilePage extends State<CoachProfilePage> {
 
 
   void uploadImageOnPressed() async {
-    FilePickerResult? result =
-    await FilePicker.platform.pickFiles();
-    if (result != null) {
-      String filePath = result.files.single.path!;
-      print(filePath);
-    }
+    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+      if (result?.files.single.path != null) {
+        String filePath = result!.files.single.path!;
+
+        API
+            .post(context, '/profile/upload-profile-picture',
+            filePath: filePath);
+      }
+    });
   }
+
+  // void uploadProfilePictureOnPressed() {
+  //   FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+  //     if (result?.files.single.path != null) {
+  //       String filePath = result!.files.single.path!;
+  //
+  //       API
+  //           .post(context, '/profile/upload-profile-picture',
+  //           filePath: filePath)
+  //           .then((Response res) {
+  //         // Handle response if needed
+  //       }).onError((error, stackTrace) {
+  //         // Handle error if needed
+  //       });
+  //     }
+  //   });
+  // }
+
+  void uploadProfilePictureOnPressed() {
+    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+      if (result?.files.single.path != null) {
+        String filePath = result!.files.single.path!;
+
+        API
+            .guestPost('/profile/upload-profile-picture',
+            filePath: filePath)
+            .then((Response res) {
+          if (res.hasError) {
+            return;
+          }
+        });
+      }
+    });
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
+
+    String authToken = Provider.of<AppModel>(context).authToken!;
+
+    String imageUrl = API.getURL('/profile/get-profile-picture',authToken);
+
     String description = user.description;
+
     int age = calculateAge(user.dateOfBirth);
+
     String gender =user.gender;
+
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: const Text(
-          'Coach Profile',
+          'Profile',
           style: TextStyle(
             color: Colors.white,
             letterSpacing: 2.0,
@@ -220,7 +160,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                Center(child: Stack(
                  children: [
                    CircleAvatar(
-                     backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
+                     backgroundImage: NetworkImage(imageUrl),
                      radius: 80.0,
                    ),
                    Positioned(
@@ -241,7 +181,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   const Text(
                     'Edit Profile',
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black87,
                       letterSpacing: 2.0,
                       fontSize: 14.0,
                     ),
@@ -265,7 +205,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                         const Text(
                           'Name',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: Colors.black87,
                             letterSpacing: 2.0,
                             fontSize: 16.0,
                           ),
@@ -275,15 +215,14 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           const Text(
                             "View Certificates",
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.black54,
                               letterSpacing: 2.0,
                               fontSize: 12.0,
                             ),
                           ),
                           IconButton(
                               onPressed: () {
-                                _showCertificateDialog(
-                                    context, certificates[0], user);
+                                showCertificatesOnPressed();
                               },
                               icon: const Icon(Icons.remove_red_eye))
                         ],
@@ -293,7 +232,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     user.name,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold),
@@ -304,7 +243,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           const Text(
                             'Description',
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.black87,
                               letterSpacing: 2.0,
                               fontSize: 16.0,
                             ),
@@ -313,19 +252,19 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                           description,
                           trimLines: 1,
                           preDataTextStyle:
-                              const TextStyle(color: Colors.white),
+                              const TextStyle(color: Colors.black87),
                           postDataTextStyle:
-                              const TextStyle(color: Colors.white),
-                          delimiterStyle: const TextStyle(color: Colors.white),
-                          lessStyle: const TextStyle(color: Colors.white),
-                          moreStyle: const TextStyle(color: Colors.white),
-                          colorClickableText: Colors.amber,
+                              const TextStyle(color: Colors.black87),
+                          delimiterStyle: const TextStyle(color: Colors.black87),
+                          lessStyle: const TextStyle(color: Colors.black87),
+                          moreStyle: const TextStyle(color: Colors.black87),
+                          colorClickableText: Colors.black87,
                           trimMode: TrimMode.Line,
                           trimCollapsedText: "Read more...",
                           style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                              color: Colors.black87),
                           trimExpandedText: "Less...",
                         ),
                       ])
@@ -349,7 +288,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                         const Text(
                         'Personal Details',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: Colors.black87,
                             letterSpacing: 2.0,
                             fontSize: 16.0,
                           ),
@@ -359,7 +298,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             Text(
                               'Age:',
                               style: TextStyle(
-                                color: Colors.amberAccent[200],
+                                color: Colors.black87,
                                 letterSpacing: 2.0,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.bold,
@@ -368,7 +307,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             Text(
                               '$age',
                               style: TextStyle(
-                                  color: Colors.amberAccent[200],
+                                  color: Colors.black87,
                                   letterSpacing: 2.0,
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.bold),
@@ -380,7 +319,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             Text(
                               'Gender:',
                               style: TextStyle(
-                                color: Colors.amberAccent[200],
+                                color: Colors.black87,
                                 letterSpacing: 2.0,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.bold,
@@ -389,7 +328,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             Text(
                               user.gender,
                               style: TextStyle(
-                                  color: Colors.amberAccent[200],
+                                  color: Colors.black87,
                                   letterSpacing: 2.0,
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.bold),
@@ -408,7 +347,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             const Text(
                               "Groups",
                               style: TextStyle(
-                                color: Colors.grey,
+                                color: Colors.black54,
                                 letterSpacing: 2.0,
                                 fontSize: 12.0,
                               ),
@@ -429,7 +368,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 const Text(
                   'Contact',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.black87,
                     letterSpacing: 2.0,
                     fontSize: 16.0,
                   ),
@@ -447,7 +386,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     'Email', // Change to user.email or appropriate data
                     style: TextStyle(
-                      color: Colors.grey[400],
+                      color: Colors.black87,
                       fontSize: 18.0,
                       letterSpacing: 1.0,
                     ),
@@ -458,7 +397,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     user.email,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
@@ -472,7 +411,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                 children: <Widget>[
                   Icon(
                     Icons.phone,
-                    color: Colors.grey[400],
+                    color: Colors.black87,
                     size: 35.0,
                   ),
                   const SizedBox(
@@ -481,7 +420,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     'Phone', // Change to user.phone or appropriate data
                     style: TextStyle(
-                      color: Colors.grey[400],
+                      color: Colors.black87,
                       fontSize: 18.0,
                       letterSpacing: 1.0,
                     ),
@@ -492,7 +431,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   Text(
                     user.phone,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
@@ -532,40 +471,4 @@ bool isDigit(String s) {
   return double.tryParse(s) != null;
 }
 
-void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit Description'),
-        content: TextField(
-          controller: TextEditingController(text: user.name),
-          keyboardType: TextInputType.multiline,
-          minLines: 5,
-          maxLines: 10, // Allows the TextField to expand vertically
-          decoration: const InputDecoration(
-            hintText: 'Enter your description...',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to save edited description
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add functionality to cancel editing
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
 

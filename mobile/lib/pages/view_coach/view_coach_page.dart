@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/pages/view_coach/coach_cartificates_view.dart';
 import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
 import 'package:mobile/app_model.dart';
 import 'package:mobile/formaters.dart';
-import 'package:mobile/pages/profile/coach_profile_page.dart';
+
+import '../../api.dart';
 
 class ViewCoachPage extends StatefulWidget {
   final String coachId;
@@ -18,17 +20,33 @@ class ViewCoachPage extends StatefulWidget {
   State<ViewCoachPage> createState() => _ViewCoachPage();
 }
 
+
 class _ViewCoachPage extends State<ViewCoachPage> {
+  void showCertificatesOnPressed() {
+    String userAutoToken = Provider.of<AppModel>(context, listen: false).authToken!;
+
+    CoachCertificatesView.open(context, userAutoToken);
+  }
+
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
-    String description = user.description;
+
+    String authToken = Provider.of<AppModel>(context).authToken!;
+
+    String imageUrl = API.getURL('/profile/get-profile-picture',authToken);
+
     int age = calculateAge(user.dateOfBirth);
+
+    String description = user.description;
+
+    String gender = user.gender;
+
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: const Text(
-          'Wiew Coach Profile',
+          'Coach Profile',
           style: TextStyle(
             color: Colors.white,
             letterSpacing: 2.0,
@@ -43,14 +61,17 @@ class _ViewCoachPage extends State<ViewCoachPage> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Center(
-                child: CircleAvatar(
-                  backgroundImage: AssetImage('lib/images/handsomeGuy.jpg'),
-                  radius: 80.0,
-                ),
+              Center(child: Stack(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(imageUrl),
+                    radius: 80.0,
+                  ),
+                ],
+              ),
               ),
               Divider(
-                height: 60.0,
+                height: 10.0,
                 color: Colors.grey[800],
               ),
               // Each Row contains the code in the first column and an ElevatedButton in the second column
@@ -58,129 +79,17 @@ class _ViewCoachPage extends State<ViewCoachPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Name',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2.0,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  Text(
-                    user.name,
-                    style: TextStyle(
-                        color: Colors.amberAccent[200],
-                        letterSpacing: 2.0,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  const Text(
-                    'Description',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2.0,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  if (user.isCoach)
-                    IconButton(
-                        onPressed: () {
-                          _showEditDescriptionDialog(context, user);
-                        },
-                        icon: const Icon(Icons.edit))
-                ]),
-                const SizedBox(height: 2.0),
-                ReadMoreText(
-                  description,
-                  trimLines: 1,
-                  preDataTextStyle: const TextStyle(color: Colors.white),
-                  postDataTextStyle: const TextStyle(color: Colors.white),
-                  delimiterStyle: const TextStyle(color: Colors.white),
-                  lessStyle: const TextStyle(color: Colors.white),
-                  moreStyle: const TextStyle(color: Colors.white),
-                  colorClickableText: Colors.amber,
-                  trimMode: TrimMode.Line,
-                  trimCollapsedText: "Read more...",
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                  trimExpandedText: "Less...",
-                ),
-              ]),
-              // Second column: ElevatedButton
-              Divider(
-                height: 10.0,
-                color: Colors.grey[800],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Personal Details',
+                        'Name',
                         style: TextStyle(
                           color: Colors.grey,
                           letterSpacing: 2.0,
                           fontSize: 16.0,
                         ),
                       ),
-                      const SizedBox(
-                        height: 2.0,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Age:',
-                            style: TextStyle(
-                              color: Colors.amberAccent[200],
-                              letterSpacing: 2.0,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '$age',
-                            style: TextStyle(
-                                color: Colors.amberAccent[200],
-                                letterSpacing: 2.0,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Gender:',
-                            style: TextStyle(
-                              color: Colors.amberAccent[200],
-                              letterSpacing: 2.0,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            user.gender,
-                            style: TextStyle(
-                                color: Colors.amberAccent[200],
-                                letterSpacing: 2.0,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
                       Row(
                         children: [
                           const Text(
@@ -193,33 +102,125 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                           ),
                           IconButton(
                               onPressed: () {
-                                _showCertificateDialog(
-                                    context, certificates[0], user);
+                                showCertificatesOnPressed();
                               },
                               icon: const Icon(Icons.remove_red_eye))
                         ],
                       ),
-                      if (user.isCoach)
-                        Row(
-                          children: [
-                            const Text(
-                              "Groups",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                letterSpacing: 2.0,
-                                fontSize: 12.0,
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.remove_red_eye))
-                          ],
-                        ),
                     ],
-                  )
+                  ),
+                  Text(
+                    user.name,
+                    style: TextStyle(
+                        color: Colors.amberAccent[200],
+                        letterSpacing: 2.0,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Description',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            letterSpacing: 2.0,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        ReadMoreText(
+                          description,
+                          trimLines: 1,
+                          preDataTextStyle:
+                          const TextStyle(color: Colors.white),
+                          postDataTextStyle:
+                          const TextStyle(color: Colors.white),
+                          delimiterStyle: const TextStyle(color: Colors.white),
+                          lessStyle: const TextStyle(color: Colors.white),
+                          moreStyle: const TextStyle(color: Colors.white),
+                          colorClickableText: Colors.amber,
+                          trimMode: TrimMode.Line,
+                          trimCollapsedText: "Read more...",
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                          trimExpandedText: "Less...",
+                        ),
+                      ])
                 ],
               ),
+              // Second column: ElevatedButton
 
+              Divider(
+                height: 10.0,
+                color: Colors.grey[800],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // First column: Code
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Personal Details',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            letterSpacing: 2.0,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Age:',
+                              style: TextStyle(
+                                color: Colors.amberAccent[200],
+                                letterSpacing: 2.0,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '$age',
+                              style: TextStyle(
+                                  color: Colors.amberAccent[200],
+                                  letterSpacing: 2.0,
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Gender:',
+                              style: TextStyle(
+                                color: Colors.amberAccent[200],
+                                letterSpacing: 2.0,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              user.gender,
+                              style: TextStyle(
+                                  color: Colors.amberAccent[200],
+                                  letterSpacing: 2.0,
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Second column: ElevatedButton
+                ],
+              ),
               Divider(
                 height: 10.0,
                 color: Colors.grey[800],
@@ -229,11 +230,8 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                 style: TextStyle(
                   color: Colors.grey,
                   letterSpacing: 2.0,
-                  fontSize: 20.0,
+                  fontSize: 16.0,
                 ),
-              ),
-              const SizedBox(
-                height: 10.0,
               ),
               Row(
                 children: <Widget>[
@@ -306,87 +304,3 @@ class _ViewCoachPage extends State<ViewCoachPage> {
   }
 }
 
-void _showEditDescriptionDialog(BuildContext context, UserSchema user) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit Description'),
-        content: TextField(
-          controller: TextEditingController(text: user.name),
-          keyboardType: TextInputType.multiline,
-          minLines: 5,
-          maxLines: 10, // Allows the TextField to expand vertically
-          decoration: const InputDecoration(
-            hintText: 'Enter your description...',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to save edited description
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add functionality to cancel editing
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showCertificateDialog(
-    BuildContext context, String certificate, UserSchema user) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Certificates'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: certificates.map((certificate) {
-            return ListTile(
-              title: Text(certificate),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      // Add functionality to download certificate
-                    },
-                    icon: const Icon(Icons.download),
-                  ),
-                  if (user
-                      .isCoach) // Conditionally show delete button based on user.isCoach
-                    IconButton(
-                      onPressed: () {
-                        // Add functionality to delete certificate
-                      },
-                      icon: const Icon(Icons.delete),
-                    ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // Add functionality to close dialog
-              Navigator.of(context).pop();
-            },
-            child: const Text('Close'),
-          ),
-        ],
-      );
-    },
-  );
-}

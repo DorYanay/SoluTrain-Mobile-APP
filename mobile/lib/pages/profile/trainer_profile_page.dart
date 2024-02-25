@@ -90,10 +90,17 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
   @override
   Widget build(BuildContext context) {
     UserSchema user = Provider.of<AppModel>(context).user!;
+
+    String authToken = Provider.of<AppModel>(context).authToken!;
+
+    String imageUrl = API.getURL('/profile/get-profile-picture',authToken);
+
     int age = calculateAge(user.dateOfBirth);
+
     String gender = user.gender;
+
+
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: const Text(
           'Profile',
@@ -103,7 +110,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.grey[850],
+        backgroundColor: Colors.grey[800],
         elevation: 0.0,
       ),
       body: Padding(
@@ -115,7 +122,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 child: Stack(
                   children: [
                     CircleAvatar(
-                      backgroundImage: AssetImage(gender=='male' ? 'lib/images/avatar_man_image.png' : 'lib/images/avatar_woman_image.png'),
+                      backgroundImage: NetworkImage(imageUrl),
                       radius: 80.0,
                     ),
                     Positioned(
@@ -136,7 +143,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   const Text(
                     'Edit Profile',
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black87,
                       letterSpacing: 2.0,
                       fontSize: 14.0,
                     ),
@@ -160,7 +167,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       const Text(
                         'Name',
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: Colors.black87,
                           letterSpacing: 2.0,
                           fontSize: 16.0,
                         ),
@@ -168,7 +175,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       Text(
                         user.name,
                         style: TextStyle(
-                            color: Colors.amberAccent[200],
+                            color: Colors.black87,
                             letterSpacing: 2.0,
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold),
@@ -182,7 +189,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                         onPressed: uploadCertificateOnPressed,
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white70, // Background color
-                          onPrimary: Colors.black, // Text color
+                          onPrimary: Colors.black87, // Text color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8), // Rounded corners
                           ),
@@ -216,7 +223,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
               const Text(
                 'Personal Details',
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: Colors.black87,
                   letterSpacing: 2.0,
                   fontSize: 16.0,
                 ),
@@ -229,7 +236,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Text(
                     'Age:',
                     style: TextStyle(
-                      color: Colors.amberAccent[200],
+                      color: Colors.black87,
                       letterSpacing: 2.0,
                       fontSize: 14.0,
                       fontWeight: FontWeight.bold,
@@ -238,7 +245,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Text(
                     '$age',
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
@@ -250,7 +257,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Text(
                     'Gender:',
                     style: TextStyle(
-                      color: Colors.amberAccent[200],
+                      color: Colors.black87,
                       letterSpacing: 2.0,
                       fontSize: 14.0,
                       fontWeight: FontWeight.bold,
@@ -259,7 +266,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Text(
                     user.gender,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
@@ -273,7 +280,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
               const Text(
                 'Contact',
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: Colors.black87,
                   letterSpacing: 2.0,
                   fontSize: 16.0,
                 ),
@@ -285,7 +292,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 children: <Widget>[
                   Icon(
                     Icons.email,
-                    color: Colors.grey[400],
+                    color: Colors.black87,
                     size: 35.0,
                   ),
                   const SizedBox(
@@ -294,7 +301,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Text(
                     'Email', // Change to user.email or appropriate data
                     style: TextStyle(
-                      color: Colors.grey[400],
+                      color: Colors.black87,
                       fontSize: 18.0,
                       letterSpacing: 1.0,
                     ),
@@ -305,7 +312,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Text(
                     user.email,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
@@ -319,7 +326,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                 children: <Widget>[
                   Icon(
                     Icons.phone,
-                    color: Colors.grey[400],
+                    color: Colors.black87,
                     size: 35.0,
                   ),
                   const SizedBox(
@@ -328,7 +335,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Text(
                     'Phone', // Change to user.phone or appropriate data
                     style: TextStyle(
-                      color: Colors.grey[400],
+                      color: Colors.black87,
                       fontSize: 18.0,
                       letterSpacing: 1.0,
                     ),
@@ -339,7 +346,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   Text(
                     user.phone,
                     style: TextStyle(
-                        color: Colors.amberAccent[200],
+                        color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
