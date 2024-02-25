@@ -69,6 +69,10 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
   }
 
   void viewMeetingOnPressed(MeetInfoSchema meeting) {
+    if (!groupViewInfo!.registered) {
+      return;
+    }
+
     Provider.of<AppModel>(context, listen: false)
         .moveToViewMeetingPage(meeting.meetId, meeting.groupId);
   }
@@ -188,6 +192,11 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
                             onPressed: () {
                               viewMeetingOnPressed(meeting);
                             },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: groupViewInfo!.registered
+                                  ? null
+                                  : Colors.grey,
+                            ),
                             child: const Text('View'),
                           ),
                         ],

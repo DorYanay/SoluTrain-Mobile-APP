@@ -165,6 +165,7 @@ class MeetSchema(BaseModel):
 class MeetInfoSchema(BaseModel):
     meet_id: str
     group_id: str
+    group_name: str
     meet_date: str
     start_time: str
     end_time: str
@@ -175,12 +176,13 @@ class MeetInfoSchema(BaseModel):
     registered: bool
 
     @staticmethod
-    def from_model(meet: Meet, full: bool, registered: bool) -> MeetInfoSchema:
+    def from_model(meet: Meet, group_name: str, full: bool, registered: bool) -> MeetInfoSchema:
         end_time = meet.meet_date + timedelta(minutes=meet.duration)
 
         return MeetInfoSchema(
             meet_id=str(meet.meet_id),
             group_id=str(meet.group_id),
+            group_name=group_name,
             meet_date=meet.meet_date.date().strftime("%Y-%m-%d %H:%M:%S"),
             start_time=meet.meet_date.time().strftime("%Y-%m-%d %H:%M:%S"),
             end_time=end_time.time().strftime("%Y-%m-%d %H:%M:%S"),
