@@ -7,8 +7,8 @@ from src.models import db_named_query
 
 
 class Gender(StrEnum):
-    male = "female"
-    female = "male"
+    male = "male"
+    female = "female"
 
 
 class User:
