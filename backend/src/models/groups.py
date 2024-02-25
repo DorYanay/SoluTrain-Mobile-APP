@@ -350,7 +350,7 @@ def create_meet(db: psycopg.Connection, group_id: UUID, max_members: int, meet_d
     with db.cursor() as cursor:
         cursor.execute(
             """INSERT INTO public.meetings (id, group_id, max_members, date, duration, city, street)
-            VALUES (%s, %s, %s, %s, %s, %s);
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
             """,
             (
                 str(meet.meet_id),
