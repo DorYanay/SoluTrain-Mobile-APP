@@ -196,7 +196,7 @@ class AppModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void moveViewTrainerPage(
+  void moveToViewTrainerPage(
       String trainerId, String groupId, String? meetingId) {
     currentPage = CurrentSinglePage.createMeeting;
     currentPageViewTrainerId = trainerId;
