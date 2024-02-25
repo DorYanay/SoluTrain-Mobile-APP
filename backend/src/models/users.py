@@ -236,11 +236,15 @@ def user_upload_profile_image(db: psycopg.Connection, user_id: UUID, name: str, 
     with db.cursor() as cursor:
         cursor.execute(
             """
-            INSERT INTO public.profiles (id, user_id, name, body) VALUES (%s, %s, %s, %s)
-            ON CONFLICT (user_id)
-            DO UPDATE SET name = %s, body = %s;
+            DELETE FROM public.profiles WHERE user_id = %s;
             """,
-            [str(file_id), str(user_id), name, psycopg.Binary(body), name, psycopg.Binary(body)],
+            [str(user_id)],
+        )
+        cursor.execute(
+            """
+            INSERT INTO public.profiles (id, user_id, name, body) VALUES (%s, %s, %s, %s);
+            """,
+            [str(file_id), str(user_id), name, psycopg.Binary(body)],
         )
         db.commit()
 
@@ -248,7 +252,7 @@ def user_upload_profile_image(db: psycopg.Connection, user_id: UUID, name: str, 
 @db_named_query
 def get_user_profile_image(db: psycopg.Connection, user_id: UUID) -> FileModel | None:
     with db.cursor() as cursor:
-        cursor.execute("SELECT id, user_id, name FROM public.profiles WHERE user_id = %s", [str(user_id)])
+        cursor.execute("SELECT id, user_id, name, body FROM public.profiles WHERE user_id = %s", [str(user_id)])
         db.commit()
 
         row = cursor.fetchone()
