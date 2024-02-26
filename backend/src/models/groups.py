@@ -623,7 +623,7 @@ def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet,
             LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
             LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
             WHERE (mm2.user_id = %s)
-            GROUP BY m.id, g.group_id, mm2.user_id;
+            GROUP BY m.id, g.id, mm2.user_id;
             """,
             [str(user_id)],
         )
