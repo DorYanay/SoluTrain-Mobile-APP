@@ -216,6 +216,11 @@ class GroupFullSchema(BaseModel):
         )
 
 
+class MeetViewInfoSchema(BaseModel):
+    group: GroupSchema
+    meet: MeetInfoSchema
+
+
 class MyGroupsSchema(BaseModel):
     in_groups: list[GroupInfoSchema]
     coach_groups: list[GroupSchema]
