@@ -276,6 +276,20 @@ class GroupFullSchema {
   }
 }
 
+class MeetViewInfoSchema {
+  final GroupSchema group;
+  final MeetInfoSchema meet;
+
+  MeetViewInfoSchema(this.group, this.meet);
+
+  factory MeetViewInfoSchema.fromJson(dynamic data) {
+    return MeetViewInfoSchema(
+      GroupSchema.fromJson(data['group']),
+      MeetInfoSchema.fromJson(data['meet']),
+    );
+  }
+}
+
 class MyGroupsSchema {
   final List<GroupInfoSchema> inGroups;
   final List<GroupSchema> coachGroups;

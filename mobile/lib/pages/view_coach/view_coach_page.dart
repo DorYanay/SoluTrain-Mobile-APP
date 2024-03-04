@@ -40,6 +40,16 @@ class _ViewCoachPage extends State<ViewCoachPage> {
     });
   }
 
+  void leadingPageOnPressed() {
+    if (widget.meetingId == null) {
+      Provider.of<AppModel>(context, listen: false)
+          .moveToViewGroupPage(widget.groupId, false);
+    } else {
+      Provider.of<AppModel>(context, listen: false)
+          .moveToViewMeetingPage(widget.meetingId!, widget.groupId);
+    }
+  }
+
   void showCertificatesOnPressed() {
     String userAutoToken =
         Provider.of<AppModel>(context, listen: false).authToken!;
@@ -52,6 +62,10 @@ class _ViewCoachPage extends State<ViewCoachPage> {
     if (coachInfo == null) {
       return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: leadingPageOnPressed,
+          ),
           title: const Text('Coach Profile'),
         ),
         body: const Text("Loading..."),
@@ -69,6 +83,10 @@ class _ViewCoachPage extends State<ViewCoachPage> {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: leadingPageOnPressed,
+        ),
         title: const Text(
           'Coach Profile',
           style: TextStyle(

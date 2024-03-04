@@ -29,6 +29,23 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
     return '$month/$day $hour:$minute In ${meeting.city}, ${meeting.street}';
   }
 
+  void leadingPageOnPressed() {
+    if (groupViewInfo == null) {
+      return;
+    }
+
+    if (widget.fromSearchGroups) {
+      final areas = Provider.of<AppModel>(context, listen: false).areas;
+
+      final area = areas
+          .where((element) => element.areaId == groupViewInfo!.group.areaId)
+          .toList();
+
+      Provider.of<AppModel>(context, listen: false)
+          .moveToSearchGroupPage(area[0]);
+    }
+  }
+
   void registerGroupOnPressed() {
     if (waitingForRequest) {
       return;
@@ -130,6 +147,10 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: ((widget.fromSearchGroups) ? IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: leadingPageOnPressed,
+    ) : null),
         title: const Text('Group Details'),
       ),
       body: Padding(

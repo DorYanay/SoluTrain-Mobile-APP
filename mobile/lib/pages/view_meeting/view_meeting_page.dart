@@ -19,7 +19,7 @@ class ViewMeetingPage extends StatefulWidget {
 }
 
 class _ViewMeetingPageState extends State<ViewMeetingPage> {
-  MeetInfoSchema? meet;
+  MeetViewInfoSchema? viewMeet;
 
   bool waitingForRequest = false;
 
@@ -28,6 +28,11 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
     super.initState();
 
     refresh();
+  }
+
+  void leadingPageOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewGroupPage(widget.groupId, false);
   }
 
   void refresh() {
@@ -47,18 +52,27 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
       }
 
       setState(() {
-        meet = MeetInfoSchema.fromJson(res.data);
+        viewMeet = MeetViewInfoSchema.fromJson(res.data);
       });
     });
   }
 
-  void groupNameOnnPressed() {
-    if (meet == null) {
+  void groupNameOnPressed() {
+    if (viewMeet == null) {
       return;
     }
 
     Provider.of<AppModel>(context, listen: false)
-        .moveToViewGroupPage(meet!.groupId, false);
+        .moveToViewGroupPage(viewMeet!.meet.groupId, false);
+  }
+
+  void coachNameOnPressed() {
+    if (viewMeet == null) {
+      return;
+    }
+
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewCoachPage(viewMeet!.group.coachId, widget.groupId, widget.meetingId);
   }
 
   void registerMeetingOnPressed() {
@@ -70,7 +84,7 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
       waitingForRequest = true;
     });
 
-    if (meet!.registered) {
+    if (viewMeet!.meet.registered) {
       // unregister to group
       API.post(context, '/group/unregister-to-meet', params: {
         'meet_id': widget.meetingId,
@@ -105,7 +119,7 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (meet == null) {
+    if (viewMeet == null) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Meeting Details'),
@@ -114,11 +128,15 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
       );
     }
 
-    final meetFullText = meet!.full ? 'The meet is full' : '';
-    final registerButtonText = meet!.registered ? "Unregister" : "Register";
+    final meetFullText = viewMeet!.meet.full ? 'The meet is full' : '';
+    final registerButtonText = viewMeet!.meet.registered ? "Unregister" : "Register";
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: leadingPageOnPressed,
+        ),
         title: const Text('Meeting Details'),
       ),
       body: Padding(
@@ -132,8 +150,18 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
                     color: Colors.black,
                     fontSize: 20),
               ),
-              onPressed: groupNameOnnPressed,
-              child: Text(meet!.groupName),
+              onPressed: groupNameOnPressed,
+              child: Text(viewMeet!.meet.groupName),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue,
+                textStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 20),
+              ),
+              onPressed: coachNameOnPressed,
+              child: Text(viewMeet!.group.coachName),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
@@ -144,15 +172,15 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
                   ],
                 )),
             const SizedBox(height: 20),
-            Text('Date ${meet!.meetDate.toString().split(' ')[0]}'),
+            Text('Date ${viewMeet!.meet.meetDate.toString().split(' ')[0]}'),
             const SizedBox(height: 20),
-            Text('Start Time ${timeToText(meet!.startTime)}'),
+            Text('Start Time ${timeToText(viewMeet!.meet.startTime)}'),
             const SizedBox(height: 20),
-            Text('End Time ${timeToText(meet!.endTime)}'),
+            Text('End Time ${timeToText(viewMeet!.meet.endTime)}'),
             const SizedBox(height: 20),
-            Text('City: ${meet!.city}'),
+            Text('City: ${viewMeet!.meet.city}'),
             const SizedBox(height: 20),
-            Text('Street: ${meet!.street}'),
+            Text('Street: ${viewMeet!.meet.street}'),
             const SizedBox(height: 20),
             Text(meetFullText),
           ],

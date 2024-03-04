@@ -14,7 +14,7 @@ class SearchGroupsPage extends StatefulWidget {
 }
 
 class _SearchGroupsPageState extends State<SearchGroupsPage> {
-  AreaSchema? selectedOption; // Make the selectedOption variable nullable
+  AreaSchema? selectedOption;
   List<GroupSchema>? groups;
 
   void viewGroupOnPressed(GroupSchema group) {
