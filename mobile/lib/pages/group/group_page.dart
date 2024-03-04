@@ -126,29 +126,19 @@ class _GroupPageState extends State<GroupPage> {
                       children: [
                         Container(
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Meetings',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  ElevatedButton(
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Center(
+                                  child: ElevatedButton(
                                     onPressed: createMeetingOnPressed,
                                     child: const Text('Create Meeting'),
                                   ),
-                                ],
+                                ),
                               ),
                               const SizedBox(height: 10),
                               ListView.builder(
@@ -177,21 +167,10 @@ class _GroupPageState extends State<GroupPage> {
                         ),
                         Container(
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Participants',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 10),
-                              // Participants List
                               ListView.builder(
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
@@ -214,7 +193,6 @@ class _GroupPageState extends State<GroupPage> {
                                   );
                                 },
                               ),
-                              // Add more participants as needed
                             ],
                           ),
                         ),

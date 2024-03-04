@@ -48,6 +48,16 @@ class _MeetingPageState extends State<MeetingPage> {
     refresh();
   }
 
+  void leadingPageOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToGroupPage(widget.groupId);
+  }
+
+  void groupNameOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToGroupPage(widget.groupId);
+  }
+
   void clearData() {
     setState(() {
       maxMembersController.text = meet!.maxMembers.toString();
@@ -245,6 +255,10 @@ class _MeetingPageState extends State<MeetingPage> {
     if (meet == null) {
       return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: leadingPageOnPressed,
+          ),
           title: const Text('Meeting Details'),
         ),
         body: const Text("Loading..."),
@@ -253,15 +267,25 @@ class _MeetingPageState extends State<MeetingPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: leadingPageOnPressed,
+        ),
         title: const Text('Meeting Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const Text('Group Name',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 40),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue,
+                textStyle: const TextStyle(color: Colors.black, fontSize: 20),
+              ),
+              onPressed: groupNameOnPressed,
+              child: Text('Group Name: ${meet!.groupName}'),
+            ),
+            const SizedBox(height: 10),
             if (!editMode)
               ElevatedButton(
                 onPressed: editOnPressed,

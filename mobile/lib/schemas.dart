@@ -156,6 +156,7 @@ class GroupInfoSchema {
 class MeetSchema {
   final String meetId;
   final String groupId;
+  final String groupName;
   final int maxMembers;
   final DateTime meetDate;
   final DateTime startTime;
@@ -168,6 +169,7 @@ class MeetSchema {
   MeetSchema(
       this.meetId,
       this.groupId,
+      this.groupName,
       this.maxMembers,
       this.meetDate,
       this.startTime,
@@ -181,6 +183,7 @@ class MeetSchema {
     return MeetSchema(
       data['meet_id'] as String,
       data['group_id'] as String,
+      data['group_name'] as String,
       data['max_members'] as int,
       DateTime.parse(data['meet_date'] as String),
       DateTime.parse(data['start_time'] as String),
