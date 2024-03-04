@@ -19,6 +19,11 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
 
   bool waitingForRequest = false;
 
+  void leadingPageOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToGroupsPage();
+  }
+
   void createGroupOnPressed() {
     if (waitingForRequest) {
       return;
@@ -69,6 +74,10 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: leadingPageOnPressed,
+        ),
         title: const Text('Create Group'),
       ),
       body: Padding(

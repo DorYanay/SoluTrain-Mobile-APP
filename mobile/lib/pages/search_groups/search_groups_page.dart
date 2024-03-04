@@ -17,6 +17,11 @@ class _SearchGroupsPageState extends State<SearchGroupsPage> {
   AreaSchema? selectedOption;
   List<GroupSchema>? groups;
 
+  void leadingPageOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToSelectAreaPage();
+  }
+
   void viewGroupOnPressed(GroupSchema group) {
     Provider.of<AppModel>(context, listen: false)
         .moveToViewGroupPage(group.groupId, true);
@@ -46,6 +51,10 @@ class _SearchGroupsPageState extends State<SearchGroupsPage> {
     if (groups == null) {
       return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: leadingPageOnPressed,
+          ),
           title: const Text('Search Groups'),
         ),
         body: const Text("Loading"),
@@ -54,6 +63,10 @@ class _SearchGroupsPageState extends State<SearchGroupsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: leadingPageOnPressed,
+        ),
         title: Row(
           children: [
             const Icon(Icons.group), // Group icon

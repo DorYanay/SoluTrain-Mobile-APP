@@ -23,6 +23,11 @@ class _GroupPageState extends State<GroupPage> {
     return '$month/$day';
   }
 
+  void leadingPageOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToGroupsPage();
+  }
+
   void createMeetingOnPressed() {
     Provider.of<AppModel>(context, listen: false)
         .moveToCreateMeetingPage(fullGroup!.group.groupId);
@@ -57,6 +62,10 @@ class _GroupPageState extends State<GroupPage> {
     if (fullGroup == null) {
       return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: leadingPageOnPressed,
+          ),
           title: const Text('Groups'),
         ),
         body: const Text("Loading"),
@@ -73,6 +82,10 @@ class _GroupPageState extends State<GroupPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: leadingPageOnPressed,
+        ),
         title: const Text('Group Details'),
       ),
       body: Padding(

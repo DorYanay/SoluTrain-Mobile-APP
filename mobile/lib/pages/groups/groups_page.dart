@@ -15,6 +15,11 @@ class GroupsPage extends StatefulWidget {
 class _GroupsPageState extends State<GroupsPage> {
   MyGroupsSchema? myGroups;
 
+  void leadingPageOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToProfilePage();
+  }
+
   void createGroupOnPressed() {
     Provider.of<AppModel>(context, listen: false).moveToCreateGroupPage();
   }
@@ -45,6 +50,10 @@ class _GroupsPageState extends State<GroupsPage> {
     if (myGroups == null) {
       return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: leadingPageOnPressed,
+          ),
           title: const Text('Groups'),
         ),
         body: const Text("Loading"),
@@ -53,6 +62,10 @@ class _GroupsPageState extends State<GroupsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: leadingPageOnPressed,
+        ),
         title: const Text('Groups'),
       ),
       body: Center(
@@ -62,7 +75,10 @@ class _GroupsPageState extends State<GroupsPage> {
             OutlinedButton.icon(
               onPressed: createGroupOnPressed,
               icon: const Icon(Icons.add, size: 18),
-              label: const Text("OUTLINED BUTTON"),
+              label: const Text("Create Group"),
+            ),
+            const SizedBox(
+              height: 10.0,
             ),
             ListView.builder(
               scrollDirection: Axis.vertical,
@@ -87,7 +103,7 @@ class _GroupsPageState extends State<GroupsPage> {
                   ),
                 );
               },
-            )
+            ),
           ],
         ),
       ),

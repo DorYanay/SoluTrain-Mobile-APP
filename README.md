@@ -185,17 +185,17 @@ flowchart TD
   SignUp --> Login
   Login <---> Select-Area
   
-  Select-Area --> Search-Groups
+  Select-Area <--> Search-Groups
   Search-Groups --> View-Group
   View-Group --> View-Meeting & View-Coach
-  My-Groups --> View-Group
+  My-Groups <--> View-Group
   View-Group -->|from search| Search-Groups
   View-Meeting --> View-Group & View-Coach
   View-Coach --> View-Group & View-Meeting
   My-Meetings --> View-Meeting
   
-  Profile --> Groups
-  Groups --> Create-Group
+  Profile <--> Groups
+  Groups --> Create-Group & Group
   Create-Group --> Group & Groups
   Group --> Groups
   Group --> Create-Meeting
