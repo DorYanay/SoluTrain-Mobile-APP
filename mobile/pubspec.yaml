@@ -17,14 +17,10 @@ dependencies:
   provider: ^6.1.1
   file_picker: ^4.0.1
   readmore: ^2.2.0
-
-  #download and save file
   dio: ^4.0.0
   path_provider: ^2.0.5
-
-  #open file
   open_file: ^3.2.1
-
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
