@@ -18,6 +18,7 @@ enum CurrentSinglePage {
   createMeeting,
   meeting,
   viewTrainer,
+  notifications,
 }
 
 class AppModel extends ChangeNotifier {
@@ -203,6 +204,13 @@ class AppModel extends ChangeNotifier {
     currentPageGroupId = groupId;
     currentPageMeetingId = meetingId;
 
+    notifyListeners();
+  }
+
+  void moveToNotificationsPage() {
+    _cleanPagesData();
+
+    currentPage = CurrentSinglePage.notifications;
     notifyListeners();
   }
 }

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.models import db_dependency
 from src.models.groups import get_group_by_id, get_meet, get_meet_members, remove_member_from_meet, update_meet
+from src.models.notifications import create_notification
 from src.models.users import User
 from src.schemas import MeetSchema
 from src.security import get_current_user
@@ -74,22 +75,34 @@ def route_update_details(
     city = meet.city
     street = meet.street
 
+    send_notification = False
+
     if new_max_members is not None:
         max_members = new_max_members
 
     if new_date is not None:
         meet_date = new_date
+        send_notification = True
 
     if new_duration is not None:
         duration = new_duration
+        send_notification = True
 
     if new_city is not None:
         city = new_city
+        send_notification = True
 
     if new_street is not None:
         street = new_street
+        send_notification = True
 
     update_meet(db, meet_id, max_members, meet_date, duration, city, street)
+
+    # send notification to the members
+    if send_notification:
+        members = get_meet_members(db, meet_id)
+        for member in members:
+            create_notification(db, member.user_id, f"Meet details have been updated by {current_user.name}")
 
     return None
 
@@ -128,5 +141,8 @@ def route_remove_member(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Member not found in meet")
 
     remove_member_from_meet(db, meet_id, member_id)
+
+    # send notification to the member
+    create_notification(db, member_id, f"You have been removed from meet in {group.name} by {current_user.name}")
 
     return MeetSchema.from_model(meet, group.name, members)

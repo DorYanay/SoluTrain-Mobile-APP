@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:mobile/app_model.dart';
+import 'package:mobile/widgets/app_bottom_nav_bar.dart';
+import 'package:mobile/widgets/app_drawer.dart';
+import 'package:mobile/pages/login/login_page.dart';
+import 'package:mobile/pages/sign_up/sign_up_page.dart';
 import 'package:mobile/pages/create_group/create_group_page.dart';
 import 'package:mobile/pages/create_meeting/create_meeting_page.dart';
 import 'package:mobile/pages/group/group_page.dart';
@@ -6,6 +13,7 @@ import 'package:mobile/pages/groups/groups_page.dart';
 import 'package:mobile/pages/meeting/meeting_page.dart';
 import 'package:mobile/pages/my_groups/my_groups_page.dart';
 import 'package:mobile/pages/my_meetings/my_meetings_page.dart';
+import 'package:mobile/pages/notifications/notifications_page.dart';
 import 'package:mobile/pages/profile/coach_profile_page.dart';
 import 'package:mobile/pages/profile/trainer_profile_page.dart';
 import 'package:mobile/pages/search_groups/search_groups_page.dart';
@@ -14,13 +22,6 @@ import 'package:mobile/pages/view_coach/view_coach_page.dart';
 import 'package:mobile/pages/view_group/view_group_page.dart';
 import 'package:mobile/pages/view_meeting/view_meeting_page.dart';
 import 'package:mobile/pages/view_trainer/view_trainer_page.dart';
-import 'package:provider/provider.dart';
-
-import 'package:mobile/app_model.dart';
-import 'package:mobile/widgets/app_bottom_nav_bar.dart';
-import 'package:mobile/widgets/app_drawer.dart';
-import 'package:mobile/pages/login/login_page.dart';
-import 'package:mobile/pages/sign_up/sign_up_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -30,18 +31,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  void navigateBottomBar(int index) {
-    if (index == 0) {
-      Provider.of<AppModel>(context, listen: false).moveToSelectAreaPage();
-    } else if (index == 1) {
-      Provider.of<AppModel>(context, listen: false).moveToMyGroupsPage();
-    } else if (index == 2) {
-      Provider.of<AppModel>(context, listen: false).moveToMyMeetingsPage();
-    } else {
-      Provider.of<AppModel>(context, listen: false).moveToProfilePage();
-    }
-  }
-
   Widget getCurrentPage(AppModel appModel) {
     switch (appModel.currentPage) {
       case CurrentSinglePage.login:
@@ -86,6 +75,24 @@ class _MainPageState extends State<MainPage> {
       case CurrentSinglePage.viewTrainer:
         return ViewTrainerPage(appModel.currentPageViewTrainerId!,
             appModel.currentPageGroupId!, appModel.currentPageMeetingId);
+      case CurrentSinglePage.notifications:
+        return const NotificationsPage();
+    }
+  }
+
+  void notificationsOnPressed() {
+    Provider.of<AppModel>(context, listen: false).moveToNotificationsPage();
+  }
+
+  void navigateBottomBar(int index) {
+    if (index == 0) {
+      Provider.of<AppModel>(context, listen: false).moveToSelectAreaPage();
+    } else if (index == 1) {
+      Provider.of<AppModel>(context, listen: false).moveToMyGroupsPage();
+    } else if (index == 2) {
+      Provider.of<AppModel>(context, listen: false).moveToMyMeetingsPage();
+    } else {
+      Provider.of<AppModel>(context, listen: false).moveToProfilePage();
     }
   }
 
@@ -117,6 +124,18 @@ class _MainPageState extends State<MainPage> {
               'SoluTrain',
               style: TextStyle(color: Colors.grey.shade800),
             ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.notifications,
+                    color: Colors.grey.shade800,
+                  ),
+                  onPressed: notificationsOnPressed,
+                ),
+              ),
+            ],
           ),
           drawer: const AppDrawer(),
           body: getCurrentPage(appModel),

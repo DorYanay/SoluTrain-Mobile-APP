@@ -104,12 +104,22 @@ class _MeetingPageState extends State<MeetingPage> {
       return;
     }
 
+    DateTime firstDate = DateTime.now();
+    if (firstDate.millisecondsSinceEpoch > date.millisecondsSinceEpoch) {
+      firstDate = date;
+    }
+
+    DateTime lastDate =
+        DateTime.now().add(Duration(days: widget.meetingOpeningDayLimit));
+    if (lastDate.millisecondsSinceEpoch < date.millisecondsSinceEpoch) {
+      lastDate = date;
+    }
+
     showDatePicker(
       context: context,
       initialDate: date,
-      firstDate: DateTime.now(),
-      lastDate:
-          DateTime.now().add(Duration(days: widget.meetingOpeningDayLimit)),
+      firstDate: firstDate,
+      lastDate: lastDate,
     ).then((DateTime? value) {
       if (value == null) {
         return;

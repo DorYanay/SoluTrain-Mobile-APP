@@ -18,6 +18,7 @@ from src.models.groups import (
     remove_member_from_group,
     remove_member_from_meet,
 )
+from src.models.notifications import create_notification
 from src.models.users import User
 from src.schemas import GroupFullSchema, GroupSchema, GroupViewInfoSchema, MeetInfoSchema
 from src.security import get_current_user
@@ -84,7 +85,13 @@ def route_register_to_group(
     if group.coach_id == current_user.user_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are the coach of this group")
 
+    if check_member_in_group(db, group_id, current_user.user_id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are already registered to this group")
+
     add_member_to_group(db, group_id, current_user.user_id)
+
+    # send notification to the coach
+    create_notification(db, group.coach_id, f"{current_user.name} registered to the group {group.name}")
 
     return None
 
@@ -103,7 +110,13 @@ def route_unregister_to_group(
     if group.coach_id == current_user.user_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are the coach of this group")
 
+    if not check_member_in_group(db, group_id, current_user.user_id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not registered to this group")
+
     remove_member_from_group(db, group_id, current_user.user_id)
+
+    # send notification to the coach
+    create_notification(db, group.coach_id, f"{current_user.name} unregistered from the group {group.name}")
 
     return None
 
@@ -125,7 +138,7 @@ def route_register_to_meet(
     if not check_member_in_group(db, meet.group_id, current_user.user_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not registered to the group")
 
-    if check_member_in_meet(db, meet.group_id, current_user.user_id):
+    if check_member_in_meet(db, meet_id, current_user.user_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are already registered to this meet")
 
     meet_full = get_meet_members_count(db, meet_id) >= meet.max_members
@@ -155,10 +168,20 @@ def route_unregister_to_meet(
     if not check_member_in_group(db, meet.group_id, current_user.user_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not registered to the group")
 
-    if not check_member_in_meet(db, meet.group_id, current_user.user_id):
+    if not check_member_in_meet(db, meet_id, current_user.user_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not registered to this meet")
 
+    group_data = get_group_by_id(db, meet.group_id)
+    if group_data is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="internal server error: group not found")
+
+    group = group_data[0]
+
     remove_member_from_meet(db, meet_id, current_user.user_id)
+
+    # send notification to the coach
+    meet_name = meet.meet_date.strftime("%d-%m-%Y %H:%M")
+    create_notification(db, coach_id, f"{current_user.name} unregistered from the meet {meet_name} in {group.name}")
 
     return None
 
@@ -181,5 +204,8 @@ def route_remove_member(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Member not found in the group")
 
     remove_member_from_group(db, group_id, member_id)
+
+    # send notification to the member
+    create_notification(db, member_id, f"You have been removed from the group {group.name} by {current_user.name}")
 
     return route_get_as_coach(group.group_id, db, current_user)

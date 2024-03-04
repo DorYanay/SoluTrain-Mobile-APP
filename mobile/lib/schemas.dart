@@ -340,3 +340,33 @@ class ViewCoachSchema {
     );
   }
 }
+
+class NotificationSchema {
+  final String notificationId;
+  final String message;
+  final DateTime date;
+
+  NotificationSchema(this.notificationId, this.message, this.date);
+
+  factory NotificationSchema.fromJson(dynamic data) {
+    return NotificationSchema(
+      data['notification_id'] as String,
+      data['message'] as String,
+      DateTime.parse(data['date'] as String),
+    );
+  }
+}
+
+class NotificationsSchema {
+  final List<NotificationSchema> notifications;
+
+  NotificationsSchema(this.notifications);
+
+  factory NotificationsSchema.fromJson(dynamic data) {
+    return NotificationsSchema(
+      (data['notifications'] as List<dynamic>)
+          .map((notification) => NotificationSchema.fromJson(notification))
+          .toList(),
+    );
+  }
+}

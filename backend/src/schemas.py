@@ -6,6 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from src.models.groups import Area, Group, Meet
+from src.models.notifications import Notification
 from src.models.users import FileModel, Gender, User
 
 
@@ -241,4 +242,28 @@ class ViewCoachSchema(BaseModel):
         return ViewCoachSchema(
             coach=UserBaseSchema.from_model(coach),
             certificates=[FileSchema.from_model(certificate) for certificate in certificates],
+        )
+
+
+class NotificationSchema(BaseModel):
+    notification_id: str
+    message: str
+    date: str
+
+    @staticmethod
+    def from_model(notification: Notification) -> NotificationSchema:
+        return NotificationSchema(
+            notification_id=str(notification.notification_id),
+            message=notification.message,
+            date=notification.date.strftime("%Y-%m-%d %H:%M:%S"),
+        )
+
+
+class NotificationsSchema(BaseModel):
+    notifications: list[NotificationSchema]
+
+    @staticmethod
+    def from_model(notifications: list[Notification]) -> NotificationsSchema:
+        return NotificationsSchema(
+            notifications=[NotificationSchema.from_model(notification) for notification in notifications],
         )
