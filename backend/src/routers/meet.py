@@ -4,7 +4,7 @@ import psycopg
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.models import db_dependency
-from src.models.groups import get_meet, get_meet_members, remove_member_from_meet, update_meet
+from src.models.groups import get_group_by_id, get_meet, get_meet_members, remove_member_from_meet, update_meet
 from src.models.users import User
 from src.schemas import MeetSchema
 from src.security import get_current_user
@@ -22,9 +22,16 @@ def route_get(meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), cu
     if meet is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
 
+    group_data = get_group_by_id(db, meet.group_id)
+
+    if group_data is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error: group not found")
+
+    group = group_data[0]
+
     members = get_meet_members(db, meet_id)
 
-    return MeetSchema.from_model(meet, members)
+    return MeetSchema.from_model(meet, group.name, members)
 
 
 @router.post("/update-details")
@@ -89,6 +96,13 @@ def route_remove_member(
     if meet is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
 
+    group_data = get_group_by_id(db, meet.group_id)
+
+    if group_data is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error: group not found")
+
+    group = group_data[0]
+
     members = get_meet_members(db, meet_id)
 
     members_count = len(members)
@@ -100,4 +114,4 @@ def route_remove_member(
 
     remove_member_from_meet(db, meet_id, member_id)
 
-    return MeetSchema.from_model(meet, members)
+    return MeetSchema.from_model(meet, group.name, members)

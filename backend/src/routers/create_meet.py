@@ -38,4 +38,4 @@ def route_create_meet(
 
     meet = create_meet(db, group_id, max_members, meet_date, duration, city, street)
 
-    return MeetSchema.from_model(meet, [])
+    return MeetSchema.from_model(meet, group.name, [])

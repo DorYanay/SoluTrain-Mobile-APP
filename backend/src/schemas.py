@@ -136,6 +136,7 @@ class GroupInfoSchema(BaseModel):
 class MeetSchema(BaseModel):
     meet_id: str
     group_id: str
+    group_name: str
     max_members: int
     meet_date: str
     start_time: str
@@ -147,12 +148,13 @@ class MeetSchema(BaseModel):
     members: list[UserBaseSchema]
 
     @staticmethod
-    def from_model(meet: Meet, members: list[User]) -> MeetSchema:
+    def from_model(meet: Meet, group_name: str, members: list[User]) -> MeetSchema:
         end_time = meet.meet_date + timedelta(minutes=meet.duration)
 
         return MeetSchema(
             meet_id=str(meet.meet_id),
             group_id=str(meet.group_id),
+            group_name=group_name,
             max_members=meet.max_members,
             meet_date=meet.meet_date.date().strftime("%Y-%m-%d %H:%M:%S"),
             start_time=meet.meet_date.time().strftime("%Y-%m-%d %H:%M:%S"),
@@ -211,7 +213,7 @@ class GroupFullSchema(BaseModel):
     def from_model(group: Group, coach_name: str, meets: list[Meet], members: list[User]) -> GroupFullSchema:
         return GroupFullSchema(
             group=GroupSchema.from_model(group, coach_name),
-            meets=[MeetSchema.from_model(meet, []) for meet in meets],
+            meets=[MeetSchema.from_model(meet, group.name, []) for meet in meets],
             members=[UserBaseSchema.from_model(member) for member in members],
         )
 
