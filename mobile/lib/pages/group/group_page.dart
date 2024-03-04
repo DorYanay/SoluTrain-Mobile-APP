@@ -40,6 +40,11 @@ class _GroupPageState extends State<GroupPage> {
         .moveToMeetingPage(meeting.meetId, meeting.groupId);
   }
 
+  void viewParticipantOnPressed(UserBaseSchema participant) {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewTrainerPage(participant.userId, widget.groupId, null);
+  }
+
   void removeParticipantOnPressed(UserBaseSchema user) {}
 
   @override
@@ -111,7 +116,7 @@ class _GroupPageState extends State<GroupPage> {
             ),
             const SizedBox(height: 20),
             DefaultTabController(
-              length: 3,
+              length: 2,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -120,7 +125,6 @@ class _GroupPageState extends State<GroupPage> {
                     Tab(text: "Participants"),
                   ]),
                   SizedBox(
-                    //Add this to give height
                     height: 400,
                     child: TabBarView(
                       children: [
@@ -181,7 +185,18 @@ class _GroupPageState extends State<GroupPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(participant.name),
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.blue,
+                                          textStyle: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20),
+                                        ),
+                                        onPressed: () {
+                                          viewParticipantOnPressed(participant);
+                                        },
+                                        child: Text(participant.name),
+                                      ),
                                       ElevatedButton(
                                         onPressed: () {
                                           removeParticipantOnPressed(

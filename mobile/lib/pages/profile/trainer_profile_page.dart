@@ -101,7 +101,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
+    String imageUrl = '${API.getURL('/profile/get-profile-picture', authToken)}&now=${DateTime.now().millisecondsSinceEpoch.toString()}';
 
     int age = calculateAge(user.dateOfBirth);
 

@@ -77,24 +77,14 @@ class _CoachProfilePage extends State<CoachProfilePage> {
     });
   }
 
-  void uploadImageOnPressed() async {
-    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
-      if (result?.files.single.path != null) {
-        String filePath = result!.files.single.path!;
-
-        API.post(context, '/profile/upload-profile-picture',
-            filePath: filePath);
-      }
-    });
-  }
-
   void uploadProfilePictureOnPressed() {
     FilePicker.platform.pickFiles().then((FilePickerResult? result) {
       if (result?.files.single.path != null) {
         String filePath = result!.files.single.path!;
 
         API
-            .guestPost('/profile/upload-profile-picture', filePath: filePath)
+            .post(context, '/profile/upload-profile-picture',
+                filePath: filePath)
             .then((Response res) {
           if (res.hasError) {
             return;
@@ -110,7 +100,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
+    String imageUrl = '${API.getURL('/profile/get-profile-picture', authToken)}&now=${DateTime.now().millisecondsSinceEpoch.toString()}';
 
     String description = user.description;
 
@@ -145,7 +135,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                       bottom: 0.0,
                       right: 0.0,
                       child: FloatingActionButton(
-                        onPressed: uploadImageOnPressed,
+                        onPressed: uploadProfilePictureOnPressed,
                         mini: true,
                         child: const Icon(Icons.camera_alt_rounded),
                       ),

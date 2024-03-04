@@ -285,119 +285,138 @@ class _MeetingPageState extends State<MeetingPage> {
               onPressed: groupNameOnPressed,
               child: Text('Group Name: ${meet!.groupName}'),
             ),
-            const SizedBox(height: 10),
-            if (!editMode)
-              ElevatedButton(
-                onPressed: editOnPressed,
-                child: const Text('Edit'),
-              ),
-            if (!editMode) const SizedBox(height: 15),
-            TextFormField(
-              controller: maxMembersController,
-              decoration: const InputDecoration(
-                labelText: 'Max Members',
-                border: OutlineInputBorder(),
-              ),
-              readOnly: !editMode,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: dateController,
-              decoration: const InputDecoration(
-                labelText: 'Date',
-                prefixIcon: Icon(Icons.calendar_today),
-                border: OutlineInputBorder(),
-              ),
-              readOnly: true,
-              onTap: datePickerOnTap,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: startTimeController,
-              decoration: const InputDecoration(
-                labelText: 'Start Time',
-                prefixIcon: Icon(Icons.access_time),
-                border: OutlineInputBorder(),
-              ),
-              readOnly: true,
-              onTap: startTimePickerOnTap,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: endTimeController,
-              decoration: const InputDecoration(
-                labelText: 'End Time',
-                prefixIcon: Icon(Icons.access_time),
-                border: OutlineInputBorder(),
-              ),
-              readOnly: true,
-              onTap: endTimePickerOnTap,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: cityController,
-              decoration: const InputDecoration(
-                labelText: "City",
-                border: OutlineInputBorder(),
-              ),
-              readOnly: !editMode,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: streetController,
-              decoration: const InputDecoration(
-                labelText: "Street",
-                border: OutlineInputBorder(),
-              ),
-              readOnly: !editMode,
-            ),
-            const SizedBox(height: 20),
-            if (editMode)
-              Text(
-                userMessage,
-                style: const TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            if (editMode) const SizedBox(height: 0),
-            if (editMode)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: cancelEditOnPressed,
-                    child: const Text('Cancel Edit'),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: updateMeetingOnPressed,
-                    child: const Text('Update Meeting'),
+            DefaultTabController(
+              length: 2,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const TabBar(tabs: [
+                    Tab(text: "General"),
+                    Tab(text: "Participants"),
+                  ]),
+                  SizedBox(
+                    height: 400,
+                    child: TabBarView(
+                      children: [
+                        ListView(
+                          children: [
+                            const SizedBox(height: 15),
+                            if (!editMode)
+                              ElevatedButton(
+                                onPressed: editOnPressed,
+                                child: const Text('Edit'),
+                              ),
+                            if (!editMode) const SizedBox(height: 20),
+                            TextFormField(
+                              controller: maxMembersController,
+                              decoration: const InputDecoration(
+                                labelText: 'Max Members',
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: !editMode,
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: dateController,
+                              decoration: const InputDecoration(
+                                labelText: 'Date',
+                                prefixIcon: Icon(Icons.calendar_today),
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: true,
+                              onTap: datePickerOnTap,
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: startTimeController,
+                              decoration: const InputDecoration(
+                                labelText: 'Start Time',
+                                prefixIcon: Icon(Icons.access_time),
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: true,
+                              onTap: startTimePickerOnTap,
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: endTimeController,
+                              decoration: const InputDecoration(
+                                labelText: 'End Time',
+                                prefixIcon: Icon(Icons.access_time),
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: true,
+                              onTap: endTimePickerOnTap,
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: cityController,
+                              decoration: const InputDecoration(
+                                labelText: "City",
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: !editMode,
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: streetController,
+                              decoration: const InputDecoration(
+                                labelText: "Street",
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: !editMode,
+                            ),
+                            const SizedBox(height: 20),
+                            if (editMode)
+                              Text(
+                                userMessage,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                            if (editMode) const SizedBox(height: 0),
+                            if (editMode)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: cancelEditOnPressed,
+                                    child: const Text('Cancel Edit'),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  ElevatedButton(
+                                    onPressed: updateMeetingOnPressed,
+                                    child: const Text('Update Meeting'),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                        SingleChildScrollView(
+                          child: Column(
+                            children: meet!.members
+                                .map((participant) => Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(participant.name),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete),
+                                          onPressed: () {
+                                            viewParticipant(participant);
+                                          },
+                                        ),
+                                      ],
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            const SizedBox(height: 20),
-            const Text('Participants',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            SingleChildScrollView(
-              child: Column(
-                children: meet!.members
-                    .map((participant) => Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(participant.name),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                viewParticipant(participant);
-                              },
-                            ),
-                          ],
-                        ))
-                    .toList(),
-              ),
             ),
-            const SizedBox(height: 80),
           ],
         ),
       ),
