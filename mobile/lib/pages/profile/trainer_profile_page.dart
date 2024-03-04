@@ -8,32 +8,6 @@ import 'package:mobile/api.dart';
 import 'package:mobile/schemas.dart';
 import 'package:mobile/pages/profile/edit_details.dart';
 
-bool isValidPhoneNumber(String phoneNumber) {
-  if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
-      !phoneNumber.startsWith('+')) {
-    return false;
-  }
-
-  if (phoneNumber.length < 10 || phoneNumber.length > 14) {
-    return false;
-  }
-
-  return true;
-}
-
-bool _containsOnlyDigits(String str) {
-  for (int i = 0; i < str.length; i++) {
-    if (!isDigit(str[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool isDigit(String s) {
-  return double.tryParse(s) != null;
-}
-
 class TrainerProfilePage extends StatefulWidget {
   const TrainerProfilePage({super.key});
 
