@@ -16,8 +16,7 @@ class _GroupsPageState extends State<GroupsPage> {
   MyGroupsSchema? myGroups;
 
   void leadingPageOnPressed() {
-    Provider.of<AppModel>(context, listen: false)
-        .moveToProfilePage();
+    Provider.of<AppModel>(context, listen: false).moveToProfilePage();
   }
 
   void createGroupOnPressed() {

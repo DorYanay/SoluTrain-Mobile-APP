@@ -20,12 +20,14 @@ class _GroupPageState extends State<GroupPage> {
     final month = meeting.meetDate.month.toString().padLeft(2, '0');
     final day = meeting.meetDate.day.toString().padLeft(2, '0');
 
-    return '$month/$day';
+    final hour = meeting.meetDate.hour.toString().padLeft(2, '0');
+    final minute = meeting.meetDate.minute.toString().padLeft(2, '0');
+
+    return '$month/$day $hour:$minute In ${meeting.city}, ${meeting.street}';
   }
 
   void leadingPageOnPressed() {
-    Provider.of<AppModel>(context, listen: false)
-        .moveToGroupsPage();
+    Provider.of<AppModel>(context, listen: false).moveToGroupsPage();
   }
 
   void createMeetingOnPressed() {
@@ -99,7 +101,7 @@ class _GroupPageState extends State<GroupPage> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Leader: ${fullGroup!.group.coachName}',
+              'Coach: ${fullGroup!.group.coachName}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 10),
@@ -108,93 +110,117 @@ class _GroupPageState extends State<GroupPage> {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(16),
+            DefaultTabController(
+              length: 3,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Meetings',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      ElevatedButton(
-                        onPressed: createMeetingOnPressed,
-                        child: const Text('Create Meeting'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  // Meetings List
-                  ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: fullGroup!.meets.length,
-                    itemBuilder: (context, index) {
-                      final meeting = fullGroup!.meets[index];
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(getMeetingTitle(meeting)),
-                          ElevatedButton(
-                            onPressed: () {
-                              viewMeetingOnPressed(meeting);
-                            },
-                            child: const Text('View'),
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const TabBar(tabs: [
+                    Tab(text: "Meetings"),
+                    Tab(text: "Participants"),
+                  ]),
+                  SizedBox(
+                    //Add this to give height
+                    height: 400,
+                    child: TabBarView(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Participants',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  // Participants List
-                  ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: fullGroup!.members.length,
-                    itemBuilder: (context, index) {
-                      final participant = fullGroup!.members[index];
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(participant.name),
-                          ElevatedButton(
-                            onPressed: () {
-                              removeParticipantOnPressed(participant);
-                            },
-                            child: const Text('Remove'),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Meetings',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: createMeetingOnPressed,
+                                    child: const Text('Create Meeting'),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: fullGroup!.meets.length,
+                                itemBuilder: (context, index) {
+                                  final meeting = fullGroup!.meets[index];
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(getMeetingTitle(meeting)),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          viewMeetingOnPressed(meeting);
+                                        },
+                                        child: const Text('View'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      );
-                    },
+                        ),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Participants',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 10),
+                              // Participants List
+                              ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: fullGroup!.members.length,
+                                itemBuilder: (context, index) {
+                                  final participant = fullGroup!.members[index];
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(participant.name),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          removeParticipantOnPressed(
+                                              participant);
+                                        },
+                                        child: const Text('Remove'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                              // Add more participants as needed
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  // Add more participants as needed
                 ],
               ),
             ),

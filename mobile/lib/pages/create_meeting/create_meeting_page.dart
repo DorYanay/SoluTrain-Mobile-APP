@@ -36,6 +36,11 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
 
   String userMessage = "";
 
+  void leadingPageOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToGroupPage(widget.groupId);
+  }
+
   void datePickerOnTap() {
     showDatePicker(
       context: context,
@@ -161,6 +166,10 @@ class _CreateMeetingPageState extends State<CreateMeetingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: leadingPageOnPressed,
+        ),
         title: const Text('Create Meeting'),
       ),
       body: Padding(

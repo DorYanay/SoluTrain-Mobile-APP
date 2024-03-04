@@ -44,8 +44,7 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
       Provider.of<AppModel>(context, listen: false)
           .moveToSearchGroupPage(area[0]);
     } else {
-      Provider.of<AppModel>(context, listen: false)
-          .moveToMyGroupsPage();
+      Provider.of<AppModel>(context, listen: false).moveToMyGroupsPage();
     }
   }
 

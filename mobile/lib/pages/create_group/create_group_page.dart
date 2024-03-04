@@ -20,8 +20,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   bool waitingForRequest = false;
 
   void leadingPageOnPressed() {
-    Provider.of<AppModel>(context, listen: false)
-        .moveToGroupsPage();
+    Provider.of<AppModel>(context, listen: false).moveToGroupsPage();
   }
 
   void createGroupOnPressed() {

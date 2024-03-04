@@ -18,8 +18,7 @@ class _SearchGroupsPageState extends State<SearchGroupsPage> {
   List<GroupSchema>? groups;
 
   void leadingPageOnPressed() {
-    Provider.of<AppModel>(context, listen: false)
-        .moveToSelectAreaPage();
+    Provider.of<AppModel>(context, listen: false).moveToSelectAreaPage();
   }
 
   void viewGroupOnPressed(GroupSchema group) {
