@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/app_model.dart';
 import 'package:mobile/schemas.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 
 import 'package:mobile/api.dart';
 
@@ -138,18 +136,18 @@ class _CertificatesViewState extends State<CertificatesView> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Certificates'),
+          const Text('Certificates'),
           ElevatedButton(
             onPressed: uploadCertificateOnPressed,
             style: ElevatedButton.styleFrom(
-              onPrimary: Colors.black, // Text color
+              foregroundColor: Colors.black, // Text color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8), // Rounded corners
               ),
-              padding:
-                  EdgeInsets.symmetric(vertical: 6, horizontal: 6), // Padding
+              padding: const EdgeInsets.symmetric(
+                  vertical: 6, horizontal: 6), // Padding
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.add_box), // Icon
@@ -163,9 +161,9 @@ class _CertificatesViewState extends State<CertificatesView> {
           ),
         ],
       ),
-      content: Container(
-        width: 300, // Set your desired width
-        height: 300, // Set your desired height
+      content: SizedBox(
+        width: 300,
+        height: 300,
         child: Scrollbar(
             trackVisibility: true,
             thumbVisibility: true,

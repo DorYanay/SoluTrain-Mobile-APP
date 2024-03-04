@@ -71,8 +71,8 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
       return;
     }
 
-    Provider.of<AppModel>(context, listen: false)
-        .moveToViewCoachPage(viewMeet!.group.coachId, widget.groupId, widget.meetingId);
+    Provider.of<AppModel>(context, listen: false).moveToViewCoachPage(
+        viewMeet!.group.coachId, widget.groupId, widget.meetingId);
   }
 
   void registerMeetingOnPressed() {
@@ -129,7 +129,8 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
     }
 
     final meetFullText = viewMeet!.meet.full ? 'The meet is full' : '';
-    final registerButtonText = viewMeet!.meet.registered ? "Unregister" : "Register";
+    final registerButtonText =
+        viewMeet!.meet.registered ? "Unregister" : "Register";
 
     return Scaffold(
       appBar: AppBar(
@@ -146,9 +147,7 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.blue,
-                textStyle: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 20),
+                textStyle: const TextStyle(color: Colors.black, fontSize: 20),
               ),
               onPressed: groupNameOnPressed,
               child: Text(viewMeet!.meet.groupName),
@@ -156,9 +155,7 @@ class _ViewMeetingPageState extends State<ViewMeetingPage> {
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.blue,
-                textStyle: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 20),
+                textStyle: const TextStyle(color: Colors.black, fontSize: 20),
               ),
               onPressed: coachNameOnPressed,
               child: Text(viewMeet!.group.coachName),

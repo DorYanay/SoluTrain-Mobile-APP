@@ -1,15 +1,40 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/formaters.dart';
-import 'package:mobile/pages/profile/certificates_view.dart';
-import 'package:mobile/pages/view_coach/view_coach_page.dart';
-import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
-import 'package:mobile/app_model.dart';
 
-import '../../api.dart';
-import 'edit_details.dart';
+import 'package:mobile/app_model.dart';
+import 'package:mobile/api.dart';
+import 'package:mobile/schemas.dart';
+import 'package:mobile/formaters.dart';
+import 'package:mobile/pages/profile/certificates_view.dart';
+import 'package:mobile/pages/profile/edit_details.dart';
+
+bool isValidPhoneNumber(String phoneNumber) {
+  if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
+      !phoneNumber.startsWith('+')) {
+    return false;
+  }
+
+  if (phoneNumber.length < 10 || phoneNumber.length > 14) {
+    return false;
+  }
+
+  return true;
+}
+
+bool _containsOnlyDigits(String str) {
+  for (int i = 0; i < str.length; i++) {
+    if (!isDigit(str[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool isDigit(String s) {
+  return double.tryParse(s) != null;
+}
 
 class CoachProfilePage extends StatefulWidget {
   const CoachProfilePage({super.key});
@@ -89,23 +114,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
     });
   }
 
-  // void uploadProfilePictureOnPressed() {
-  //   FilePicker.platform.pickFiles().then((FilePickerResult? result) {
-  //     if (result?.files.single.path != null) {
-  //       String filePath = result!.files.single.path!;
-  //
-  //       API
-  //           .post(context, '/profile/upload-profile-picture',
-  //           filePath: filePath)
-  //           .then((Response res) {
-  //         // Handle response if needed
-  //       }).onError((error, stackTrace) {
-  //         // Handle error if needed
-  //       });
-  //     }
-  //   });
-  // }
-
   void uploadProfilePictureOnPressed() {
     FilePicker.platform.pickFiles().then((FilePickerResult? result) {
       if (result?.files.single.path != null) {
@@ -133,8 +141,6 @@ class _CoachProfilePage extends State<CoachProfilePage> {
     String description = user.description;
 
     int age = calculateAge(user.dateOfBirth);
-
-    String gender = user.gender;
 
     return Scaffold(
       appBar: AppBar(
@@ -167,7 +173,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                       child: FloatingActionButton(
                         onPressed: uploadImageOnPressed,
                         mini: true,
-                        child: Icon(Icons.camera_alt_rounded),
+                        child: const Icon(Icons.camera_alt_rounded),
                       ),
                     ),
                   ],
@@ -230,7 +236,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   ),
                   Text(
                     user.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 16.0,
@@ -295,7 +301,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                         ),
                         Row(
                           children: [
-                            Text(
+                            const Text(
                               'Age:',
                               style: TextStyle(
                                 color: Colors.black87,
@@ -306,7 +312,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             ),
                             Text(
                               '$age',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.black87,
                                   letterSpacing: 2.0,
                                   fontSize: 14.0,
@@ -316,7 +322,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                         ),
                         Row(
                           children: [
-                            Text(
+                            const Text(
                               'Gender:',
                               style: TextStyle(
                                 color: Colors.black87,
@@ -327,7 +333,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                             ),
                             Text(
                               user.gender,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.black87,
                                   letterSpacing: 2.0,
                                   fontSize: 14.0,
@@ -383,7 +389,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   const SizedBox(
                     width: 2.0,
                   ),
-                  Text(
+                  const Text(
                     'Email', // Change to user.email or appropriate data
                     style: TextStyle(
                       color: Colors.black87,
@@ -396,7 +402,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   ),
                   Text(
                     user.email,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
@@ -409,7 +415,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
               ),
               Row(
                 children: <Widget>[
-                  Icon(
+                  const Icon(
                     Icons.phone,
                     color: Colors.black87,
                     size: 35.0,
@@ -417,7 +423,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   const SizedBox(
                     width: 2.0,
                   ),
-                  Text(
+                  const Text(
                     'Phone', // Change to user.phone or appropriate data
                     style: TextStyle(
                       color: Colors.black87,
@@ -430,7 +436,7 @@ class _CoachProfilePage extends State<CoachProfilePage> {
                   ),
                   Text(
                     user.phone,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
@@ -442,30 +448,4 @@ class _CoachProfilePage extends State<CoachProfilePage> {
       ),
     ); //scaffold
   }
-}
-
-bool isValidPhoneNumber(String phoneNumber) {
-  if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
-      !phoneNumber.startsWith('+')) {
-    return false;
-  }
-
-  if (phoneNumber.length < 10 || phoneNumber.length > 14) {
-    return false;
-  }
-
-  return true;
-}
-
-bool _containsOnlyDigits(String str) {
-  for (int i = 0; i < str.length; i++) {
-    if (!isDigit(str[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool isDigit(String s) {
-  return double.tryParse(s) != null;
 }

@@ -19,19 +19,20 @@ class _MyMeetingsPageState extends State<MyMeetingsPage> {
   @override
   void initState() {
     super.initState();
-      API.post(context, '/my-meets/get').then((Response res) {
-        if (res.hasError) {
-          return;
-        }
+    API.post(context, '/my-meets/get').then((Response res) {
+      if (res.hasError) {
+        return;
+      }
 
-        setState(() {
-          meetings = MyMeetsSchema.fromJson(res.data);
-        });
+      setState(() {
+        meetings = MyMeetsSchema.fromJson(res.data);
       });
+    });
   }
 
-  void viewMeetingOnPressed(MeetInfoSchema meeting){
-    Provider.of<AppModel>(context, listen: false).moveToViewMeetingPage(meeting.meetId, meeting.groupId);
+  void viewMeetingOnPressed(MeetInfoSchema meeting) {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewMeetingPage(meeting.meetId, meeting.groupId);
   }
 
   @override
@@ -48,44 +49,44 @@ class _MyMeetingsPageState extends State<MyMeetingsPage> {
     meetings!.meets.sort((a, b) => a.meetDate.compareTo(b.meetDate));
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Meetings'),
-      ),
-      body: ListView.builder(
-        itemCount: meetings!.meets.length,
-        itemBuilder: (context, index) {
-          final meeting = meetings!.meets[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[200],
+        appBar: AppBar(
+          title: const Text('Meetings'),
+        ),
+        body: ListView.builder(
+          itemCount: meetings!.meets.length,
+          itemBuilder: (context, index) {
+            final meeting = meetings!.meets[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey[200],
+                ),
+                child: ListTile(
+                  title: Text(
+                    '${meeting.groupName} Meeting ${(DateFormat('dd-MM-yyyy').format(meeting.meetDate))}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Address: ${meeting.city}, ${meeting.street}'),
+                      Text(
+                          'Time: ${meeting.startTime.hour}:${meeting.startTime.minute.toString().padLeft(2, '0')} - ${meeting.endTime.hour}:${meeting.endTime.minute.toString().padLeft(2, '0')}'),
+                      Text('Duration: ${meeting.duration} minutes'),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.arrow_forward),
+                    onPressed: () {
+                      viewMeetingOnPressed(meeting);
+                    },
+                  ),
+                ),
               ),
-              child: ListTile(
-                title: Text(
-                  '${meeting.groupName} Meeting ${(DateFormat('dd-MM-yyyy').format(meeting.meetDate))}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Address: ${meeting.city}, ${meeting.street}'),
-                    Text('Time: ${meeting.startTime.hour}:${meeting.startTime.minute.toString().padLeft(2, '0')} - ${meeting.endTime.hour}:${meeting.endTime.minute.toString().padLeft(2, '0')}'),
-                    Text('Duration: ${meeting.duration} minutes'),
-                  ],
-                ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    viewMeetingOnPressed(meeting);
-                  },
-                ),
-              ),
-            ),
-          );
-        },
-      )
-    );
+            );
+          },
+        ));
   }
 }

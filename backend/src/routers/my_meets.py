@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from src.models import db_dependency
 from src.models.groups import check_trainer_in_meet, get_group_by_id, get_meet, get_trainer_meets
 from src.models.users import User
-from src.schemas import MeetInfoSchema, MyMeetsSchema, MeetViewInfoSchema, GroupSchema
+from src.schemas import GroupSchema, MeetInfoSchema, MeetViewInfoSchema, MyMeetsSchema
 from src.security import get_current_user
 
 router = APIRouter(dependencies=[Depends(get_current_user)])

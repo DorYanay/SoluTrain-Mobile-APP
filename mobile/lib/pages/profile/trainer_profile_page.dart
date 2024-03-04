@@ -1,12 +1,38 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/api.dart';
-import 'package:mobile/pages/profile/edit_details.dart';
-import 'package:mobile/schemas.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/app_model.dart';
 import 'package:mobile/formaters.dart';
+import 'package:mobile/api.dart';
+import 'package:mobile/schemas.dart';
+import 'package:mobile/pages/profile/edit_details.dart';
+
+bool isValidPhoneNumber(String phoneNumber) {
+  if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
+      !phoneNumber.startsWith('+')) {
+    return false;
+  }
+
+  if (phoneNumber.length < 10 || phoneNumber.length > 14) {
+    return false;
+  }
+
+  return true;
+}
+
+bool _containsOnlyDigits(String str) {
+  for (int i = 0; i < str.length; i++) {
+    if (!isDigit(str[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool isDigit(String s) {
+  return double.tryParse(s) != null;
+}
 
 class TrainerProfilePage extends StatefulWidget {
   const TrainerProfilePage({super.key});
@@ -79,12 +105,20 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
     });
   }
 
-  void uploadImageOnPressed() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      String filePath = result.files.single.path!;
-      print(filePath);
-    }
+  void uploadProfilePictureOnPressed() {
+    FilePicker.platform.pickFiles().then((FilePickerResult? result) {
+      if (result?.files.single.path != null) {
+        String filePath = result!.files.single.path!;
+
+        API
+            .guestPost('/profile/upload-profile-picture', filePath: filePath)
+            .then((Response res) {
+          if (res.hasError) {
+            return;
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -96,8 +130,6 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
     String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
 
     int age = calculateAge(user.dateOfBirth);
-
-    String gender = user.gender;
 
     return Scaffold(
       appBar: AppBar(
@@ -128,9 +160,9 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       bottom: 0.0,
                       right: 0.0,
                       child: FloatingActionButton(
-                        onPressed: uploadImageOnPressed,
+                        onPressed: uploadProfilePictureOnPressed,
                         mini: true,
-                        child: Icon(Icons.camera_alt_rounded),
+                        child: const Icon(Icons.camera_alt_rounded),
                       ),
                     ),
                   ],
@@ -175,7 +207,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       ),
                       Text(
                         user.name,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.black87,
                             letterSpacing: 2.0,
                             fontSize: 16.0,
@@ -189,16 +221,16 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                       ElevatedButton(
                         onPressed: uploadCertificateOnPressed,
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.white70, // Background color
-                          onPrimary: Colors.black87, // Text color
+                          backgroundColor: Colors.white70, // Background color
+                          foregroundColor: Colors.black87, // Text color
                           shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.circular(8), // Rounded corners
                           ),
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 6, horizontal: 6), // Padding
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.add_box), // Icon
@@ -236,7 +268,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
               ),
               Row(
                 children: [
-                  Text(
+                  const Text(
                     'Age:',
                     style: TextStyle(
                       color: Colors.black87,
@@ -247,7 +279,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   ),
                   Text(
                     '$age',
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
@@ -257,7 +289,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
               ),
               Row(
                 children: [
-                  Text(
+                  const Text(
                     'Gender:',
                     style: TextStyle(
                       color: Colors.black87,
@@ -268,7 +300,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   ),
                   Text(
                     user.gender,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
@@ -293,7 +325,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
               ),
               Row(
                 children: <Widget>[
-                  Icon(
+                  const Icon(
                     Icons.email,
                     color: Colors.black87,
                     size: 35.0,
@@ -301,7 +333,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   const SizedBox(
                     width: 2.0,
                   ),
-                  Text(
+                  const Text(
                     'Email', // Change to user.email or appropriate data
                     style: TextStyle(
                       color: Colors.black87,
@@ -314,7 +346,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   ),
                   Text(
                     user.email,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
@@ -327,7 +359,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
               ),
               Row(
                 children: <Widget>[
-                  Icon(
+                  const Icon(
                     Icons.phone,
                     color: Colors.black87,
                     size: 35.0,
@@ -335,7 +367,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   const SizedBox(
                     width: 2.0,
                   ),
-                  Text(
+                  const Text(
                     'Phone', // Change to user.phone or appropriate data
                     style: TextStyle(
                       color: Colors.black87,
@@ -348,7 +380,7 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
                   ),
                   Text(
                     user.phone,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black87,
                         letterSpacing: 2.0,
                         fontSize: 14.0,
@@ -360,30 +392,4 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
       ),
     ); //scaffold
   }
-}
-
-bool isValidPhoneNumber(String phoneNumber) {
-  if (!_containsOnlyDigits(phoneNumber.replaceAll('+', '')) &&
-      !phoneNumber.startsWith('+')) {
-    return false;
-  }
-
-  if (phoneNumber.length < 10 || phoneNumber.length > 14) {
-    return false;
-  }
-
-  return true;
-}
-
-bool _containsOnlyDigits(String str) {
-  for (int i = 0; i < str.length; i++) {
-    if (!isDigit(str[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool isDigit(String s) {
-  return double.tryParse(s) != null;
 }

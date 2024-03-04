@@ -89,8 +89,8 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
   }
 
   void viewCoachOnPressed() {
-    Provider.of<AppModel>(context, listen: false)
-        .moveToViewCoachPage(groupViewInfo!.group.coachId, groupViewInfo!.group.groupId, null);
+    Provider.of<AppModel>(context, listen: false).moveToViewCoachPage(
+        groupViewInfo!.group.coachId, groupViewInfo!.group.groupId, null);
   }
 
   void viewMeetingOnPressed(MeetInfoSchema meeting) {
@@ -147,10 +147,12 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: ((widget.fromSearchGroups) ? IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: leadingPageOnPressed,
-    ) : null),
+        leading: ((widget.fromSearchGroups)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: leadingPageOnPressed,
+              )
+            : null),
         title: const Text('Group Details'),
       ),
       body: Padding(
@@ -184,10 +186,8 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
                 TextButton(
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blue,
-                    textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16
-                    ),
+                    textStyle:
+                        const TextStyle(color: Colors.black, fontSize: 16),
                   ),
                   onPressed: viewCoachOnPressed,
                   child: Text(groupViewInfo!.group.coachName),

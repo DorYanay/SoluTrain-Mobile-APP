@@ -74,7 +74,8 @@ class _ViewCoachPage extends State<ViewCoachPage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = API.getURL('/view-coach/get-profile-picture', authToken, params: {
+    String imageUrl =
+        API.getURL('/view-coach/get-profile-picture', authToken, params: {
       'coach_id': widget.coachId,
     });
 
