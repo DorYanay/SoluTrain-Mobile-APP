@@ -16,6 +16,7 @@ class UserBaseSchema(BaseModel):
     phone: str
     gender: Gender
     date_of_birth: str
+    description: str
 
     @staticmethod
     def from_model(user: User) -> UserBaseSchema:
@@ -26,6 +27,7 @@ class UserBaseSchema(BaseModel):
             phone=user.phone,
             gender=user.gender,
             date_of_birth=user.date_of_birth,
+            description=user.description,
         )
 
 

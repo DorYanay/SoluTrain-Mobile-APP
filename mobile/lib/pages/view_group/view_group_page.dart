@@ -23,7 +23,10 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
     final month = meeting.meetDate.month.toString().padLeft(2, '0');
     final day = meeting.meetDate.day.toString().padLeft(2, '0');
 
-    return '$month/$day';
+    final hour = meeting.meetDate.hour.toString().padLeft(2, '0');
+    final minute = meeting.meetDate.minute.toString().padLeft(2, '0');
+
+    return '$month/$day $hour:$minute In ${meeting.city}, ${meeting.street}';
   }
 
   void registerGroupOnPressed() {
@@ -66,6 +69,11 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
         refresh();
       });
     }
+  }
+
+  void viewCoachOnPressed() {
+    Provider.of<AppModel>(context, listen: false)
+        .moveToViewCoachPage(groupViewInfo!.group.coachId, groupViewInfo!.group.groupId, null);
   }
 
   void viewMeetingOnPressed(MeetInfoSchema meeting) {
@@ -146,9 +154,24 @@ class _ViewGroupPageState extends State<ViewGroupPage> {
               ],
             ),
             const SizedBox(height: 10),
-            Text(
-              'Leader: ${groupViewInfo!.group.coachName}',
-              style: const TextStyle(fontSize: 16),
+            Row(
+              children: [
+                const Text(
+                  'Coach:',
+                  style: TextStyle(fontSize: 16),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                    textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16
+                    ),
+                  ),
+                  onPressed: viewCoachOnPressed,
+                  child: Text(groupViewInfo!.group.coachName),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Text(

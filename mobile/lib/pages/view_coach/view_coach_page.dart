@@ -21,6 +21,25 @@ class ViewCoachPage extends StatefulWidget {
 }
 
 class _ViewCoachPage extends State<ViewCoachPage> {
+  ViewCoachSchema? coachInfo;
+
+  @override
+  void initState() {
+    super.initState();
+
+    API.post(context, '/view-coach/get', params: {
+      'coach_id': widget.coachId,
+    }).then((Response res) {
+      if (res.hasError) {
+        return;
+      }
+
+      setState(() {
+        coachInfo = ViewCoachSchema.fromJson(res.data);
+      });
+    });
+  }
+
   void showCertificatesOnPressed() {
     String userAutoToken =
         Provider.of<AppModel>(context, listen: false).authToken!;
@@ -30,17 +49,22 @@ class _ViewCoachPage extends State<ViewCoachPage> {
 
   @override
   Widget build(BuildContext context) {
-    UserSchema user = Provider.of<AppModel>(context).user!;
+    if (coachInfo == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Coach Profile'),
+        ),
+        body: const Text("Loading..."),
+      );
+    }
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = API.getURL('/profile/get-profile-picture', authToken);
+    String imageUrl = API.getURL('/view-coach/get-profile-picture', authToken, params: {
+      'coach_id': widget.coachId,
+    });
 
-    int age = calculateAge(user.dateOfBirth);
-
-    String description = user.description;
-
-    String gender = user.gender;
+    int age = calculateAge(coachInfo!.coach.dateOfBirth);
 
     return Scaffold(
       backgroundColor: Colors.grey[900],
@@ -111,7 +135,7 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                     ],
                   ),
                   Text(
-                    user.name,
+                    coachInfo!.coach.name,
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
@@ -130,7 +154,7 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                           ),
                         ),
                         ReadMoreText(
-                          description,
+                          coachInfo!.coach.description,
                           trimLines: 1,
                           preDataTextStyle:
                               const TextStyle(color: Colors.white),
@@ -207,7 +231,7 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                               ),
                             ),
                             Text(
-                              user.gender,
+                              coachInfo!.coach.gender,
                               style: TextStyle(
                                   color: Colors.amberAccent[200],
                                   letterSpacing: 2.0,
@@ -256,7 +280,7 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                     width: 3.0,
                   ),
                   Text(
-                    user.email,
+                    coachInfo!.coach.email,
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,
@@ -290,7 +314,7 @@ class _ViewCoachPage extends State<ViewCoachPage> {
                     width: 3.0,
                   ),
                   Text(
-                    user.phone,
+                    coachInfo!.coach.phone,
                     style: TextStyle(
                         color: Colors.amberAccent[200],
                         letterSpacing: 2.0,

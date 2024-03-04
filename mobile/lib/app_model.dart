@@ -154,7 +154,7 @@ class AppModel extends ChangeNotifier {
   }
 
   void moveToViewCoachPage(String coachId, String groupId, String? meetingId) {
-    currentPage = CurrentSinglePage.viewMeeting;
+    currentPage = CurrentSinglePage.viewCoach;
     currentPageViewCoachId = coachId;
     currentPageViewGroupId = groupId;
     currentPageViewMeetingId = meetingId;

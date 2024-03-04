@@ -7,9 +7,10 @@ class UserBaseSchema {
   final String phone;
   final String gender;
   final DateTime dateOfBirth;
+  final String description;
 
   UserBaseSchema(this.userId, this.name, this.email, this.phone, this.gender,
-      this.dateOfBirth);
+      this.dateOfBirth, this.description);
 
   factory UserBaseSchema.fromJson(dynamic data) {
     return UserBaseSchema(
@@ -19,6 +20,7 @@ class UserBaseSchema {
       data['phone'] as String,
       data['gender'] as String,
       DateTime.parse(data['date_of_birth'] as String),
+      data['description'] as String,
     );
   }
 }
