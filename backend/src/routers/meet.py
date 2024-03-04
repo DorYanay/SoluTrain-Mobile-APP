@@ -17,10 +17,15 @@ def route_get(meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), cu
     if not current_user.is_coach:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only coach can get meet")
 
-    meet = get_meet(db, meet_id, current_user.user_id)
+    meet_data = get_meet(db, meet_id)
 
-    if meet is None:
+    if meet_data is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
+
+    meet, coach_id = meet_data
+
+    if coach_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not the coach of this meet")
 
     group_data = get_group_by_id(db, meet.group_id)
 
@@ -52,10 +57,15 @@ def route_update_details(
     if not current_user.is_coach:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only coach can update meet")
 
-    meet = get_meet(db, meet_id, current_user.user_id)
+    meet_data = get_meet(db, meet_id)
 
-    if meet is None:
+    if meet_data is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
+
+    meet, coach_id = meet_data
+
+    if coach_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not the coach of this meet")
 
     # update
     max_members = meet.max_members
@@ -91,10 +101,15 @@ def route_remove_member(
     if not current_user.is_coach:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only coach can remove member from meet")
 
-    meet = get_meet(db, meet_id, current_user.user_id)
+    meet_data = get_meet(db, meet_id)
 
-    if meet is None:
+    if meet_data is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
+
+    meet, coach_id = meet_data
+
+    if coach_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not the coach of this meet")
 
     group_data = get_group_by_id(db, meet.group_id)
 

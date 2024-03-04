@@ -8,11 +8,13 @@ from src.models.groups import (
     add_member_to_group,
     add_member_to_meet,
     check_member_in_group,
-    check_trainer_in_meet,
+    check_member_in_meet,
     get_group_by_id,
     get_group_meets,
     get_group_meets_info,
     get_group_members,
+    get_meet,
+    get_meet_members_count,
     remove_member_from_group,
     remove_member_from_meet,
 )
@@ -110,21 +112,25 @@ def route_unregister_to_group(
 def route_register_to_meet(
     meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> None:
-    coach_id, registered_to_group, registered_to_meet, meet_is_full = check_trainer_in_meet(db, current_user.user_id, meet_id)
+    meet_data = get_meet(db, meet_id)
 
-    if coach_id is None:
+    if meet_data is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
+
+    meet, coach_id = meet_data
 
     if coach_id == current_user.user_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are the coach of this group")
 
-    if not registered_to_group:
+    if not check_member_in_group(db, meet.group_id, current_user.user_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not registered to the group")
 
-    if registered_to_meet:
+    if check_member_in_meet(db, meet.group_id, current_user.user_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are already registered to this meet")
 
-    if meet_is_full:
+    meet_full = get_meet_members_count(db, meet_id) >= meet.max_members
+
+    if meet_full:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The meeting is full")
 
     add_member_to_meet(db, meet_id, current_user.user_id)
@@ -136,20 +142,44 @@ def route_register_to_meet(
 def route_unregister_to_meet(
     meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> None:
-    coach_id, registered_to_group, registered_to_meet, _ = check_trainer_in_meet(db, current_user.user_id, meet_id)
+    meet_data = get_meet(db, meet_id)
 
-    if coach_id is None:
+    if meet_data is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
+
+    meet, coach_id = meet_data
 
     if coach_id == current_user.user_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are the coach of this group")
 
-    if not registered_to_group:
+    if not check_member_in_group(db, meet.group_id, current_user.user_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not registered to the group")
 
-    if not registered_to_meet:
+    if not check_member_in_meet(db, meet.group_id, current_user.user_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not registered to this meet")
 
     remove_member_from_meet(db, meet_id, current_user.user_id)
 
     return None
+
+
+@router.post("/remove-member")
+def route_remove_member(
+    group_id: UUID, member_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> GroupFullSchema:
+    group_data = get_group_by_id(db, group_id)
+
+    if not group_data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+
+    group, coach_name = group_data
+
+    if group.coach_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not the coach of this group")
+
+    if not check_member_in_group(db, group_id, member_id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Member not found in the group")
+
+    remove_member_from_group(db, group_id, member_id)
+
+    return route_get_as_coach(group.group_id, db, current_user)

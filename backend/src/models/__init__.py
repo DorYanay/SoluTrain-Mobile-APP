@@ -37,7 +37,6 @@ def init_db() -> None:
 
         g_pool = psycopg_pool.ConnectionPool(
             conninfo=conninfo,
-            # sslmode="require",
             min_size=1,
             max_size=2,
             reconnect_failed=lambda conn: print("check", conn),

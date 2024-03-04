@@ -4,7 +4,7 @@ import psycopg
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.models import db_dependency
-from src.models.groups import check_trainer_in_meet, get_group_by_id, get_meet, get_trainer_meets
+from src.models.groups import check_member_in_meet, get_group_by_id, get_meet, get_meet_members_count, get_trainer_meets
 from src.models.users import User
 from src.schemas import GroupSchema, MeetInfoSchema, MeetViewInfoSchema, MyMeetsSchema
 from src.security import get_current_user
@@ -32,15 +32,12 @@ def route_get(db: psycopg.Connection = Depends(db_dependency), current_user: Use
 def route_get_meeting(
     meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
 ) -> MeetViewInfoSchema:
-    coach_id, registered_to_group, registered_to_meet, meet_full = check_trainer_in_meet(db, current_user.user_id, meet_id)
+    meet_data = get_meet(db, meet_id)
 
-    if coach_id is None or not registered_to_group:
+    if meet_data is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
 
-    meet = get_meet(db, meet_id, coach_id)
-
-    if meet is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
+    meet = meet_data[0]
 
     group_data = get_group_by_id(db, meet.group_id)
 
@@ -49,7 +46,10 @@ def route_get_meeting(
 
     group, coach_name = group_data
 
+    meet_full = get_meet_members_count(db, meet_id) >= meet.max_members
+    registered = check_member_in_meet(db, meet_id, current_user.user_id)
+
     return MeetViewInfoSchema(
         group=GroupSchema.from_model(group, coach_name),
-        meet=MeetInfoSchema.from_model(meet, group.name, meet_full, registered_to_meet),
+        meet=MeetInfoSchema.from_model(meet, group.name, meet_full, registered),
     )

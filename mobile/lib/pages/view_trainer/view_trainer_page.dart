@@ -21,11 +21,42 @@ class ViewTrainerPage extends StatefulWidget {
 class _ViewTrainerPageState extends State<ViewTrainerPage> {
   UserBaseSchema? trainer;
 
+  void leadingPageOnPressed() {
+    if (widget.meetingId == null) {
+      Provider.of<AppModel>(context, listen: false)
+          .moveToGroupPage(widget.groupId);
+    } else {
+      Provider.of<AppModel>(context, listen: false)
+          .moveToMeetingPage(widget.meetingId!, widget.groupId);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    API.post(context, '/view-trainer/get', params: {
+      'trainer_id': widget.trainerId,
+    }).then((Response res) {
+      if (res.hasError) {
+        return;
+      }
+
+      setState(() {
+        trainer = UserBaseSchema.fromJson(res.data);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (trainer == null) {
       return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: leadingPageOnPressed,
+          ),
           title: const Text('View Trainer'),
         ),
         body: const Text("Loading..."),
@@ -34,13 +65,20 @@ class _ViewTrainerPageState extends State<ViewTrainerPage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = '${API.getURL('/profile/get-profile-picture', authToken)}&now=${DateTime.now().millisecondsSinceEpoch.toString()}';
+    String imageUrl =
+        '${API.getURL('/view-trainer/get-profile-picture', authToken, params: {
+          'trainer_id': widget.trainerId
+        })}&now=${DateTime.now().millisecondsSinceEpoch.toString()}';
 
     int age = calculateAge(trainer!.dateOfBirth);
 
     return Scaffold(
-      backgroundColor: Colors.black12,
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: leadingPageOnPressed,
+        ),
         title: const Text(
           'View Trainer',
           style: TextStyle(

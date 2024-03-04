@@ -16,6 +16,14 @@ class TrainerProfilePage extends StatefulWidget {
 }
 
 class _TrainerProfilePageState extends State<TrainerProfilePage> {
+  bool _refresh = false;
+
+  void refresh() {
+    setState(() {
+      _refresh = !_refresh;
+    });
+  }
+
   void uploadCertificateOnPressed() {
     FilePicker.platform.pickFiles().then((FilePickerResult? result) {
       if (result?.files.single.path != null) {
@@ -85,11 +93,14 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
         String filePath = result!.files.single.path!;
 
         API
-            .guestPost('/profile/upload-profile-picture', filePath: filePath)
+            .post(context, '/profile/upload-profile-picture',
+                filePath: filePath)
             .then((Response res) {
           if (res.hasError) {
             return;
           }
+
+          refresh();
         });
       }
     });
@@ -101,7 +112,8 @@ class _TrainerProfilePageState extends State<TrainerProfilePage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = '${API.getURL('/profile/get-profile-picture', authToken)}&now=${DateTime.now().millisecondsSinceEpoch.toString()}';
+    String imageUrl =
+        '${API.getURL('/profile/get-profile-picture', authToken)}&now=${DateTime.now().millisecondsSinceEpoch.toString()}';
 
     int age = calculateAge(user.dateOfBirth);
 

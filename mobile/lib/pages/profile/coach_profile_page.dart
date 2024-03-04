@@ -18,6 +18,14 @@ class CoachProfilePage extends StatefulWidget {
 }
 
 class _CoachProfilePage extends State<CoachProfilePage> {
+  bool _refresh = false;
+
+  void refresh() {
+    setState(() {
+      _refresh = !_refresh;
+    });
+  }
+
   void showCertificatesOnPressed() {
     String userAutoToken =
         Provider.of<AppModel>(context, listen: false).authToken!;
@@ -89,6 +97,8 @@ class _CoachProfilePage extends State<CoachProfilePage> {
           if (res.hasError) {
             return;
           }
+
+          refresh();
         });
       }
     });
@@ -100,7 +110,8 @@ class _CoachProfilePage extends State<CoachProfilePage> {
 
     String authToken = Provider.of<AppModel>(context).authToken!;
 
-    String imageUrl = '${API.getURL('/profile/get-profile-picture', authToken)}&now=${DateTime.now().millisecondsSinceEpoch.toString()}';
+    String imageUrl =
+        '${API.getURL('/profile/get-profile-picture', authToken)}&now=${DateTime.now().millisecondsSinceEpoch.toString()}';
 
     String description = user.description;
 

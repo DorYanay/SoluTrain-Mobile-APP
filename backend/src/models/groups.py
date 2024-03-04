@@ -303,6 +303,17 @@ def add_member_to_group(db: psycopg.Connection, group_id: UUID, user_id: UUID) -
 def remove_member_from_group(db: psycopg.Connection, group_id: int, user_id: UUID) -> None:
     with db.cursor() as cursor:
         cursor.execute(
+            """
+            DELETE FROM public.meeting_members
+            WHERE ((meeting_id IN (SELECT id FROM public.meetings WHERE group_id = %s)) AND user_id = %s);
+            """,
+            (
+                str(group_id),
+                str(user_id),
+            ),
+        )
+
+        cursor.execute(
             """DELETE FROM public.group_members
             WHERE (group_id = %s AND user_id = %s);
             """,
@@ -435,16 +446,16 @@ def check_member_in_group(db: psycopg.Connection, group_id: UUID, user_id: UUID)
 
 
 @db_named_query
-def get_meet(db: psycopg.Connection, meet_id: UUID, coach_id: UUID) -> Meet | None:
+def get_meet(db: psycopg.Connection, meet_id: UUID) -> tuple[Meet, UUID] | None:
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT m.id, m.group_id, m.max_members, m.date, m.duration, m.city, m.street
+            SELECT m.id, m.group_id, m.max_members, m.date, m.duration, m.city, m.street, g.coach_id
             FROM public.meetings AS m
             JOIN public.groups AS g ON m.group_id = g.id
-            WHERE (m.id = %s AND g.coach_id = %s);
+            WHERE (m.id = %s);
             """,
-            (str(meet_id), str(coach_id)),
+            [str(meet_id)],
         )
         db.commit()
 
@@ -463,7 +474,9 @@ def get_meet(db: psycopg.Connection, meet_id: UUID, coach_id: UUID) -> Meet | No
             street=row[6],
         )
 
-        return meet
+        coach_id = row[7]
+
+        return meet, coach_id
 
 
 @db_named_query
@@ -503,41 +516,40 @@ def get_meet_members(db: psycopg.Connection, meet_id: UUID) -> list[User]:
 
 
 @db_named_query
-def check_trainer_in_meet(db: psycopg.Connection, trainer_id: UUID, meet_id: UUID) -> tuple[UUID | None, bool, bool, bool]:
-    """
-    Return 4 values.
-    First is coach_id if exits meet, None otherwise.
-    Second is True if trainer is registered to group, False otherwise.
-    Third is True if trainer is registered to meet, False otherwise.
-    Fourth is True if meet is full, False otherwise.
-    """
+def get_meet_members_count(db: psycopg.Connection, meet_id: UUID) -> int:
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT g.coach_id, gm.user_id, mm.user_id, COUNT(mm2.user_id) >= m.max_members
-            FROM public.meetings AS m
-            JOIN public.groups AS g ON m.group_id = g.id
-            LEFT JOIN public.group_members AS gm ON g.id = gm.group_id
-            LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
-            LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
-            WHERE ((m.id = %s) AND (gm.user_id = %s OR gm.user_id IS NULL) AND (mm.user_id = %s OR mm.user_id IS NULL))
-            GROUP BY m.id, g.coach_id, gm.user_id, mm.user_id, m.max_members;
+            SELECT COUNT(user_id) FROM public.meeting_members
+            WHERE meeting_id = %s;
             """,
-            (str(meet_id), str(trainer_id), str(trainer_id)),
+            [str(meet_id)],
         )
         db.commit()
 
         row = cursor.fetchone()
 
         if row is None:
-            return None, False, False, False
+            return 0
 
-        coach_id = row[0]
-        registered_to_group = row[1] is not None
-        registered_to_meet = row[2] is not None
-        meet_is_full = row[3]
+        return int(row[0])
 
-        return coach_id, registered_to_group, registered_to_meet, meet_is_full
+
+@db_named_query
+def check_member_in_meet(db: psycopg.Connection, meet_id: UUID, user_id: UUID) -> bool:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT mm.meeting_id, mm.user_id FROM public.meeting_members AS mm
+            WHERE (meeting_id = %s AND user_id = %s);
+            """,
+            [str(meet_id), str(user_id)],
+        )
+        db.commit()
+
+        row = cursor.fetchone()
+
+        return row is not None
 
 
 @db_named_query
@@ -578,14 +590,14 @@ def get_group_meets_info(db: psycopg.Connection, group_id: UUID, user_id: UUID) 
     with db.cursor() as cursor:
         cursor.execute(
             """
-            SELECT m.id, m.date, m.duration, m.city, m.street, m.max_members, COUNT(mm.user_id), mm2.user_id
+            SELECT m.id, m.date, m.duration, m.city, m.street, m.max_members, COUNT(mm.user_id),
+                    %s IN (SELECT user_id FROM public.meeting_members WHERE meeting_id = m.id)
             FROM public.meetings AS m
             LEFT JOIN public.meeting_members AS mm ON m.id = mm.meeting_id
-            LEFT JOIN public.meeting_members AS mm2 ON m.id = mm2.meeting_id
-            WHERE (m.group_id = %s AND (mm2.user_id = %s OR mm2.user_id IS NULL))
-            GROUP BY (m.id, mm2.user_id);
+            WHERE (m.group_id = %s)
+            GROUP BY (m.id);
             """,
-            (str(group_id), str(user_id)),
+            (str(user_id), str(group_id)),
         )
         db.commit()
 

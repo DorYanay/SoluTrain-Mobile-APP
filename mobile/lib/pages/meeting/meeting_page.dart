@@ -245,9 +245,22 @@ class _MeetingPageState extends State<MeetingPage> {
     });
   }
 
-  void viewParticipant(UserBaseSchema participant) {
+  void viewParticipantOnPressed(UserBaseSchema participant) {
     Provider.of<AppModel>(context, listen: false).moveToViewTrainerPage(
         participant.userId, widget.groupId, widget.meetingId);
+  }
+
+  void removeParticipantOnPressed(UserBaseSchema participant) {
+    API.post(context, '/meet/remove-member', params: {
+      'meet_id': widget.meetingId,
+      'member_id': participant.userId,
+    }).then((Response res) {
+      if (res.hasError) {
+        return;
+      }
+
+      refresh();
+    });
   }
 
   @override
@@ -396,18 +409,30 @@ class _MeetingPageState extends State<MeetingPage> {
                           child: Column(
                             children: meet!.members
                                 .map((participant) => Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(participant.name),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete),
-                                          onPressed: () {
-                                            viewParticipant(participant);
-                                          },
-                                        ),
-                                      ],
-                                    ))
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          TextButton(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.blue,
+                                              textStyle: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 20),
+                                            ),
+                                            onPressed: () {
+                                              viewParticipantOnPressed(
+                                                  participant);
+                                            },
+                                            child: Text(participant.name),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              removeParticipantOnPressed(
+                                                  participant);
+                                            },
+                                            child: const Text('Remove'),
+                                          ),
+                                        ]))
                                 .toList(),
                           ),
                         ),

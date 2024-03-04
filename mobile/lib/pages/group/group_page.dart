@@ -45,7 +45,20 @@ class _GroupPageState extends State<GroupPage> {
         .moveToViewTrainerPage(participant.userId, widget.groupId, null);
   }
 
-  void removeParticipantOnPressed(UserBaseSchema user) {}
+  void removeParticipantOnPressed(UserBaseSchema participant) {
+    API.post(context, '/group/remove-member', params: {
+      'group_id': widget.groupId,
+      'member_id': participant.userId,
+    }).then((Response res) {
+      if (res.hasError) {
+        return;
+      }
+
+      setState(() {
+        fullGroup = GroupFullSchema.fromJson(res.data);
+      });
+    });
+  }
 
   @override
   void initState() {
