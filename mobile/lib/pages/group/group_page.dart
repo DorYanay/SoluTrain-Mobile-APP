@@ -125,26 +125,20 @@ class _GroupPageState extends State<GroupPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'Group Name: ${fullGroup!.group.name}',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              'Group Name: ${fullGroup!.group.name}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: ElevatedButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  textStyle: const TextStyle(color: Colors.black, fontSize: 15),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-                  child: ElevatedButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      textStyle:
-                          const TextStyle(color: Colors.black, fontSize: 20),
-                    ),
-                    onPressed: deleteGroupOnPressed,
-                    child: const Text('Delete Group'),
-                  ),
-                ),
-              ],
+                onPressed: deleteGroupOnPressed,
+                child: const Text('Delete Group'),
+              ),
             ),
             const SizedBox(height: 10),
             Text(
@@ -167,7 +161,7 @@ class _GroupPageState extends State<GroupPage> {
                     Tab(text: "Participants"),
                   ]),
                   SizedBox(
-                    height: 400,
+                    height: 350,
                     child: TabBarView(
                       children: [
                         Container(
