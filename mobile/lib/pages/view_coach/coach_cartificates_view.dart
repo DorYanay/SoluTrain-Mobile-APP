@@ -9,7 +9,8 @@ import 'package:mobile/schemas.dart';
 import 'package:mobile/api.dart';
 
 class CoachCertificatesView extends StatefulWidget {
-  static void open(BuildContext context, String autoToken, List<FileSchema> certificates) {
+  static void open(
+      BuildContext context, String autoToken, List<FileSchema> certificates) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {

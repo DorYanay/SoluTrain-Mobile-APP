@@ -4,7 +4,7 @@ import psycopg
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.models import db_dependency
-from src.models.groups import get_group_by_id, get_meet, get_meet_members, remove_member_from_meet, update_meet
+from src.models.groups import delete_meet, get_group_by_id, get_meet, get_meet_members, remove_member_from_meet, update_meet
 from src.models.notifications import create_notification
 from src.models.users import User
 from src.schemas import MeetSchema
@@ -146,3 +146,36 @@ def route_remove_member(
     create_notification(db, member_id, f"You have been removed from meet in {group.name} by {current_user.name}")
 
     return MeetSchema.from_model(meet, group.name, members)
+
+
+@router.post("/delete-meet")
+def route_delete_meet(
+    meet_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
+    if not current_user.is_coach:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only coach can delete meet")
+
+    meet_data = get_meet(db, meet_id)
+
+    if meet_data is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meet not found")
+
+    meet, coach_id = meet_data
+
+    if coach_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not the coach of this meet")
+
+    group_data = get_group_by_id(db, meet.group_id)
+
+    if group_data is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error: group not found")
+
+    group = group_data[0]
+
+    members = get_meet_members(db, meet_id)
+
+    delete_meet(db, meet_id)
+
+    # send notification to the members
+    for member in members:
+        create_notification(db, member.user_id, f"Meet in {group.name} has been deleted by {current_user.name}")

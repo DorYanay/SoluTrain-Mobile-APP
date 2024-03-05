@@ -9,6 +9,8 @@ from src.models.groups import (
     add_member_to_meet,
     check_member_in_group,
     check_member_in_meet,
+    delete_group,
+    delete_meet,
     get_group_by_id,
     get_group_meets,
     get_group_meets_info,
@@ -209,3 +211,30 @@ def route_remove_member(
     create_notification(db, member_id, f"You have been removed from the group {group.name} by {current_user.name}")
 
     return route_get_as_coach(group.group_id, db, current_user)
+
+
+@router.post("/delete-group")
+def route_delete_group(
+    group_id: UUID, db: psycopg.Connection = Depends(db_dependency), current_user: User = Depends(get_current_user)
+) -> None:
+    group_data = get_group_by_id(db, group_id)
+
+    if not group_data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+
+    group, _ = group_data
+
+    if group.coach_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are not the coach of this group")
+
+    meets = get_group_meets(db, group_id)
+    members = get_group_members(db, group_id)
+
+    for meet in meets:
+        delete_meet(db, meet.meet_id)
+
+    delete_group(db, group_id)
+
+    # send notification to the members
+    for member in members:
+        create_notification(db, member.user_id, f"The group {group.name} has been deleted by {current_user.name}")

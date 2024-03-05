@@ -91,6 +91,19 @@ class _MeetingPageState extends State<MeetingPage> {
     });
   }
 
+  void deleteMeetOnPressed() {
+    API.post(context, '/meet/delete-meet', params: {
+      'meet_id': widget.meetingId,
+    }).then((Response res) {
+      if (res.hasError) {
+        return;
+      }
+
+      Provider.of<AppModel>(context, listen: false)
+          .moveToGroupPage(widget.groupId);
+    });
+  }
+
   void editOnPressed() {
     clearData();
 
@@ -323,6 +336,21 @@ class _MeetingPageState extends State<MeetingPage> {
                         ListView(
                           children: [
                             const SizedBox(height: 15),
+                            if (!editMode)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(100, 0, 100, 0),
+                                child: ElevatedButton(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                    textStyle: const TextStyle(
+                                        color: Colors.black, fontSize: 20),
+                                  ),
+                                  onPressed: deleteMeetOnPressed,
+                                  child: const Text('Delete Meet'),
+                                ),
+                              ),
+                            if (!editMode) const SizedBox(height: 10),
                             if (!editMode)
                               ElevatedButton(
                                 onPressed: editOnPressed,

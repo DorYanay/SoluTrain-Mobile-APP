@@ -664,3 +664,44 @@ def get_trainer_meets(db: psycopg.Connection, user_id: UUID) -> list[tuple[Meet,
             meets.append((meet, group_name, full, registered))
 
         return meets
+
+
+@db_named_query
+def delete_meet(db: psycopg.Connection, meet_id: UUID) -> None:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            DELETE FROM public.meeting_members
+            WHERE meeting_id = %s;
+            """,
+            [str(meet_id)],
+        )
+        cursor.execute(
+            """
+            DELETE FROM public.meetings
+            WHERE id = %s;
+            """,
+            [str(meet_id)],
+        )
+        db.commit()
+
+
+@db_named_query
+def delete_group(db: psycopg.Connection, group_id: UUID) -> None:
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            DELETE FROM public.group_members
+            WHERE group_id = %s;
+            """,
+            [str(group_id)],
+        )
+
+        cursor.execute(
+            """
+            DELETE FROM public.groups
+            WHERE id = %s;
+            """,
+            [str(group_id)],
+        )
+        db.commit()
