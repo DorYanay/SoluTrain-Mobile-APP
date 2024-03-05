@@ -51,10 +51,14 @@ class _ViewCoachPage extends State<ViewCoachPage> {
   }
 
   void showCertificatesOnPressed() {
+    if (coachInfo == null) {
+      return;
+    }
+
     String userAutoToken =
         Provider.of<AppModel>(context, listen: false).authToken!;
 
-    CoachCertificatesView.open(context, userAutoToken);
+    CoachCertificatesView.open(context, userAutoToken, coachInfo!.certificates);
   }
 
   @override

@@ -9,47 +9,28 @@ import 'package:mobile/schemas.dart';
 import 'package:mobile/api.dart';
 
 class CoachCertificatesView extends StatefulWidget {
-  static void open(BuildContext context, String autoToken) {
+  static void open(BuildContext context, String autoToken, List<FileSchema> certificates) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return CoachCertificatesView(autoToken);
+        return CoachCertificatesView(autoToken, certificates);
       },
     );
   }
 
   final String autoToken;
-  const CoachCertificatesView(this.autoToken, {super.key});
+  final List<FileSchema> certificates;
+
+  const CoachCertificatesView(this.autoToken, this.certificates, {super.key});
 
   @override
   State<CoachCertificatesView> createState() => _CoachCertificatesView();
 }
 
 class _CoachCertificatesView extends State<CoachCertificatesView> {
-  CertificatesSchema certificatesData = CertificatesSchema([]);
-
   @override
   void initState() {
     super.initState();
-
-    refreshCertificates();
-  }
-
-  void refreshCertificates() {
-    API.guestPost(
-      '/profile/get-certificates',
-      params: {"auth_token": widget.autoToken},
-    ).then((Response res) {
-      if (res.hasError) {
-        return;
-      }
-
-      CertificatesSchema newData = CertificatesSchema.fromJson(res.data);
-
-      setState(() {
-        certificatesData = newData;
-      });
-    });
   }
 
   void downloadCertificateOnPressed(FileSchema certificate) {
@@ -107,7 +88,7 @@ class _CoachCertificatesView extends State<CoachCertificatesView> {
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: certificatesData.certificates.map((certificate) {
+                children: widget.certificates.map((certificate) {
                   return ListTile(
                     title: Text(certificate.name),
                     trailing: Row(
