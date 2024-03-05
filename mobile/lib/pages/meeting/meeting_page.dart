@@ -216,9 +216,8 @@ class _MeetingPageState extends State<MeetingPage> {
       return;
     }
 
-    DateTime meetFullDate = date;
-    meetFullDate
-        .add(Duration(hours: startTime.hour, minutes: startTime.minute));
+    DateTime meetFullDate =
+        date.add(Duration(hours: startTime.hour, minutes: startTime.minute));
 
     setState(() {
       userMessage = "";
