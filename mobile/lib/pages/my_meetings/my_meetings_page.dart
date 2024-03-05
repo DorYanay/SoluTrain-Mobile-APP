@@ -16,6 +16,13 @@ class MyMeetingsPage extends StatefulWidget {
 class _MyMeetingsPageState extends State<MyMeetingsPage> {
   MyMeetsSchema? meetings;
 
+  int _compareToMeetings(MeetInfoSchema a, MeetInfoSchema b) {
+    if (a.meetDate.compareTo(b.meetDate) == 0) {
+      return a.meetDate.compareTo(b.meetDate);
+    }
+    return a.startTime.compareTo(b.startTime);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +53,7 @@ class _MyMeetingsPageState extends State<MyMeetingsPage> {
       );
     }
 
-    meetings!.meets.sort((a, b) => a.meetDate.compareTo(b.meetDate));
+    meetings!.meets.sort(_compareToMeetings);
 
     return Scaffold(
         appBar: AppBar(

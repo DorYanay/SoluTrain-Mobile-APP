@@ -20,8 +20,8 @@ class _GroupPageState extends State<GroupPage> {
     final month = meeting.meetDate.month.toString().padLeft(2, '0');
     final day = meeting.meetDate.day.toString().padLeft(2, '0');
 
-    final hour = meeting.meetDate.hour.toString().padLeft(2, '0');
-    final minute = meeting.meetDate.minute.toString().padLeft(2, '0');
+    final hour = meeting.startTime.hour.toString().padLeft(2, '0');
+    final minute = meeting.startTime.minute.toString().padLeft(2, '0');
 
     return '$month/$day $hour:$minute In ${meeting.city}, ${meeting.street}';
   }
