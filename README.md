@@ -210,14 +210,17 @@ flowchart TD
 
 ## Demo
 
-<p float="left">
+<div>
   <img src="docs/login.jpg" width="40%" style="padding: 0 3vw;" />
   <img src="docs/coach-profile.jpg" width="40%" style="padding: 0 3vw;" />
-</p>
+</div>
 
-![Video](docs/demo.mp4)
+<video controls>
+  <source src="docs/demo.mp4" type="video/mp4">
+  Your browser does not support the video.
+</video>
 
-[Presentation](docs/solutrain.pptx)
+[Presentation (PowerPoint)](docs/solutrain.pptx)
 
 ## Get Started
 
