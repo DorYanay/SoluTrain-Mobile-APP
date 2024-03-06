@@ -210,10 +210,10 @@ flowchart TD
 
 ## Demo
 
-<div>
+<p float="left">
   <img src="docs/login.jpg" width="40%" style="padding: 0 3vw;" />
   <img src="docs/coach-profile.jpg" width="40%" style="padding: 0 3vw;" />
-</div>
+</p>
 
 <video controls>
   <source src="docs/demo.mp4" type="video/mp4">
