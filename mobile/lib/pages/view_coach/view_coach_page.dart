@@ -58,7 +58,8 @@ class _ViewCoachPage extends State<ViewCoachPage> {
     String userAutoToken =
         Provider.of<AppModel>(context, listen: false).authToken!;
 
-    CoachCertificatesView.open(context, userAutoToken, coachInfo!.certificates);
+    CoachCertificatesView.open(
+        context, userAutoToken, widget.coachId, coachInfo!.certificates);
   }
 
   @override

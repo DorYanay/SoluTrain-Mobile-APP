@@ -9,20 +9,22 @@ import 'package:mobile/schemas.dart';
 import 'package:mobile/api.dart';
 
 class CoachCertificatesView extends StatefulWidget {
-  static void open(
-      BuildContext context, String autoToken, List<FileSchema> certificates) {
+  static void open(BuildContext context, String autoToken, String coachId,
+      List<FileSchema> certificates) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return CoachCertificatesView(autoToken, certificates);
+        return CoachCertificatesView(autoToken, coachId, certificates);
       },
     );
   }
 
+  final String coachId;
   final String autoToken;
   final List<FileSchema> certificates;
 
-  const CoachCertificatesView(this.autoToken, this.certificates, {super.key});
+  const CoachCertificatesView(this.autoToken, this.coachId, this.certificates,
+      {super.key});
 
   @override
   State<CoachCertificatesView> createState() => _CoachCertificatesView();
@@ -35,8 +37,9 @@ class _CoachCertificatesView extends State<CoachCertificatesView> {
   }
 
   void downloadCertificateOnPressed(FileSchema certificate) {
-    String certificateUrl = API.getURL(
-        'profile/get-certificate', widget.autoToken, params: {
+    String certificateUrl =
+        API.getURL('view-coach/get-certificate', widget.autoToken, params: {
+      'coach_id': widget.coachId,
       'certificate_id': certificate.fileId,
       'auth_token': widget.autoToken
     });
