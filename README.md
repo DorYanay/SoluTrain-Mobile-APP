@@ -208,6 +208,17 @@ flowchart TD
 
 * Note: Any page can navigate to the Select-Area, My-Groups, My-Meetings, Profile and Login (by Logout).
 
+## Demo
+
+<p float="left">
+  <img src="docs/login.jpg" width="40%" style="padding: 0 3vw;" />
+  <img src="docs/coach-profile.jpg" width="40%" style="padding: 0 3vw;" />
+</p>
+
+![Video](docs/demo.mp4)
+
+[Presentation](docs/solutrain.pptx)
+
 ## Get Started
 
 For running the mobile app open the project in Android Studio and run the app. \
