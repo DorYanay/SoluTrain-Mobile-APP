@@ -215,10 +215,7 @@ flowchart TD
   <img src="docs/coach-profile.jpg" width="40%" style="padding: 0 3vw;" />
 </p>
 
-<video controls>
-  <source src="docs/demo.mp4" type="video/mp4">
-  Your browser does not support the video.
-</video>
+![Video](docs/demo.mp4)
 
 [Presentation (PowerPoint)](docs/solutrain.pptx)
 
