@@ -292,6 +292,6 @@ MIT
 
 * Dor Yanay - [GitHub](http://www.github.com/DorYanay)
 * Omer Priel
-* Ori Sharaby
-* Stav Avitan
-* Stav Sharon
+* Ori Sharaby - [GitHub](https://github.com/OriSharaby)
+* Stav Avitan - [GitHub](https://github.com/stav-avitan)
+* Stav Sharon - [GitHub](https://github.com/stayo1)
