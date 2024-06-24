@@ -1,4 +1,4 @@
-# SoluTrain
+# SoluTrain - Software Engineering Course
 
 ## Requirements
 
